@@ -42,7 +42,7 @@ type registerRequest struct {
 	LastName    string `json:"last_name"`
 	DateOfBirth string `json:"date_of_birth"` // YYYY-MM-DD
 	Country     string `json:"country"`       // ISO 3166-1 alpha-2
-	Currency    string `json:"currency"`      // ISO 4217
+	PlayerCurrency string `json:"player_currency"` // ISO 4217 — currency for wallet and bonusWallet
 }
 
 type loginRequest struct {
@@ -88,7 +88,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	if req.Country == "" || len(req.Country) != 2 {
 		errs["country"] = "country must be a 2-letter ISO code"
 	}
-	if req.Currency == "" || len(req.Currency) != 3 {
+	if req.PlayerCurrency == "" || len(req.PlayerCurrency) != 3 {
 		errs["currency"] = "currency must be a 3-letter ISO code"
 	}
 
@@ -118,7 +118,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		LastName:    strings.TrimSpace(req.LastName),
 		DateOfBirth: dob,
 		Country:     strings.ToUpper(req.Country),
-		Currency:    strings.ToUpper(req.Currency),
+		PlayerCurrency: strings.ToUpper(req.PlayerCurrency),
 		BrandID:     brandID,
 	})
 	if err != nil {

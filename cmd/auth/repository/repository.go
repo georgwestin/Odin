@@ -32,7 +32,7 @@ func (r *Repository) CreatePlayer(ctx context.Context, p *models.Player) error {
 
 	_, err := r.pool.Exec(ctx, query,
 		p.ID, p.BrandID, p.Email, p.Username, p.PasswordHash,
-		p.FirstName, p.LastName, p.DateOfBirth, p.Country, p.Currency,
+		p.FirstName, p.LastName, p.DateOfBirth, p.Country, p.PlayerCurrency,
 		p.KYCStatus, p.Status, p.Roles, p.CreatedAt, p.UpdatedAt,
 	)
 	if err != nil {
@@ -53,7 +53,7 @@ func (r *Repository) FindByEmail(ctx context.Context, brandID uuid.UUID, email s
 	p := &models.Player{}
 	err := r.pool.QueryRow(ctx, query, brandID, email).Scan(
 		&p.ID, &p.BrandID, &p.Email, &p.Username, &p.PasswordHash,
-		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.Currency,
+		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.PlayerCurrency,
 		&p.KYCStatus, &p.Status, &p.Roles, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {
@@ -77,7 +77,7 @@ func (r *Repository) FindByUsername(ctx context.Context, brandID uuid.UUID, user
 	p := &models.Player{}
 	err := r.pool.QueryRow(ctx, query, brandID, username).Scan(
 		&p.ID, &p.BrandID, &p.Email, &p.Username, &p.PasswordHash,
-		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.Currency,
+		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.PlayerCurrency,
 		&p.KYCStatus, &p.Status, &p.Roles, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {
@@ -101,7 +101,7 @@ func (r *Repository) FindByID(ctx context.Context, id uuid.UUID) (*models.Player
 	p := &models.Player{}
 	err := r.pool.QueryRow(ctx, query, id).Scan(
 		&p.ID, &p.BrandID, &p.Email, &p.Username, &p.PasswordHash,
-		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.Currency,
+		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.PlayerCurrency,
 		&p.KYCStatus, &p.Status, &p.Roles, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {

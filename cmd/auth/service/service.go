@@ -66,9 +66,9 @@ type RegisterRequest struct {
 	FirstName   string
 	LastName    string
 	DateOfBirth time.Time
-	Country     string
-	Currency    string
-	BrandID     uuid.UUID
+	Country        string
+	PlayerCurrency string
+	BrandID        uuid.UUID
 }
 
 // RegisterResult contains the outcome of a registration.
@@ -113,7 +113,7 @@ func (s *Service) Register(ctx context.Context, req *RegisterRequest) (*Register
 		LastName:     req.LastName,
 		DateOfBirth:  req.DateOfBirth,
 		Country:      req.Country,
-		Currency:     req.Currency,
+		PlayerCurrency: req.PlayerCurrency,
 		KYCStatus:    models.KYCPending,
 		Status:       models.PlayerStatusActive,
 		Roles:        []string{"player"},
@@ -126,7 +126,7 @@ func (s *Service) Register(ctx context.Context, req *RegisterRequest) (*Register
 	}
 
 	// Create wallet via internal call to the wallet service.
-	if err := s.createWallet(ctx, player.ID, player.BrandID, player.Currency); err != nil {
+	if err := s.createWallet(ctx, player.ID, player.BrandID, player.PlayerCurrency); err != nil {
 		s.logger.Error("failed to create wallet for new player",
 			zap.String("player_id", player.ID.String()),
 			zap.Error(err),
@@ -141,7 +141,7 @@ func (s *Service) Register(ctx context.Context, req *RegisterRequest) (*Register
 		"email":      player.Email,
 		"username":   player.Username,
 		"country":    player.Country,
-		"currency":   player.Currency,
+		"currency":   player.PlayerCurrency,
 		"created_at": player.CreatedAt.Format(time.RFC3339),
 	}
 	if err := s.kafkaProducer.Publish(ctx, kafka.TopicPlayerRegistered, player.ID.String(), event); err != nil {

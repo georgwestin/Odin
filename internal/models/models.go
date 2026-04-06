@@ -69,38 +69,137 @@ const (
 )
 
 // Player represents a registered player in the platform.
+// Unique identifier is email. Has a playerCurrency defining the currency
+// for wallet and bonusWallet.
 type Player struct {
-	ID           uuid.UUID  `json:"id" db:"id"`
-	BrandID      uuid.UUID  `json:"brand_id" db:"brand_id"`
-	Email        string     `json:"email" db:"email"`
-	Username     string     `json:"username" db:"username"`
-	PasswordHash string     `json:"-" db:"password_hash"`
-	FirstName    string     `json:"first_name" db:"first_name"`
-	LastName     string     `json:"last_name" db:"last_name"`
-	DateOfBirth  time.Time  `json:"date_of_birth" db:"date_of_birth"`
+	ID             uuid.UUID  `json:"id" db:"id"`
+	BrandID        uuid.UUID  `json:"brand_id" db:"brand_id"`
+	Email          string     `json:"email" db:"email"`
+	Username       string     `json:"username" db:"username"`
+	PasswordHash   string     `json:"-" db:"password_hash"`
+	FirstName      string     `json:"first_name" db:"first_name"`
+	LastName       string     `json:"last_name" db:"last_name"`
+	Phone          string     `json:"phone,omitempty" db:"phone"`
+	DateOfBirth    time.Time  `json:"date_of_birth" db:"date_of_birth"`
 	Country        string     `json:"country" db:"country"`
-	Currency       string     `json:"currency" db:"currency"`         // Player's chosen currency (playerCurrency)
+	PlayerCurrency string     `json:"player_currency" db:"player_currency"` // Currency for wallet and bonusWallet
 	KYCStatus      KYCStatus  `json:"kyc_status" db:"kyc_status"`
-	Status       string     `json:"status" db:"status"`
-	Roles        []string   `json:"roles" db:"roles"`
-	LastLoginAt  *time.Time `json:"last_login_at,omitempty" db:"last_login_at"`
-	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
+	Status         string     `json:"status" db:"status"`
+	Roles          []string   `json:"roles" db:"roles"`
+	LastLoginAt    *time.Time `json:"last_login_at,omitempty" db:"last_login_at"`
+	LastLoginIP    string     `json:"last_login_ip,omitempty" db:"last_login_ip"`
+	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at" db:"updated_at"`
 }
 
-// Wallet holds the balance for a player in a specific currency.
+// Wallet holds the real-money balance for a player.
+// Currency matches the player's playerCurrency.
 type Wallet struct {
-	ID            uuid.UUID `json:"id" db:"id"`
-	PlayerID      uuid.UUID `json:"player_id" db:"player_id"`
-	BrandID       uuid.UUID `json:"brand_id" db:"brand_id"`
-	Currency      string    `json:"currency" db:"currency"`
-	Balance       Decimal   `json:"balance" db:"balance"`
-	BonusBalance  Decimal   `json:"bonus_balance" db:"bonus_balance"`
-	LockedBalance Decimal   `json:"locked_balance" db:"locked_balance"`
-	Version       int64     `json:"version" db:"version"`
-	CreatedAt     time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at" db:"updated_at"`
+	ID             uuid.UUID `json:"id" db:"id"`
+	PlayerID       uuid.UUID `json:"player_id" db:"player_id"`
+	BrandID        uuid.UUID `json:"brand_id" db:"brand_id"`
+	Currency       string    `json:"currency" db:"currency"`
+	PlayerCurrency string    `json:"player_currency" db:"player_currency"`
+	Balance        Decimal   `json:"balance" db:"balance"`
+	BonusBalance   Decimal   `json:"bonus_balance" db:"bonus_balance"`
+	LockedBalance  Decimal   `json:"locked_balance" db:"locked_balance"`
+	Version        int64     `json:"version" db:"version"`
+	CreatedAt      time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
 }
+
+// LoginSession records a player's login/logout activity with IP tracking.
+type LoginSession struct {
+	ID          uuid.UUID  `json:"id" db:"id"`
+	PlayerID    uuid.UUID  `json:"player_id" db:"player_id"`
+	BrandID     uuid.UUID  `json:"brand_id" db:"brand_id"`
+	IPAddress   string     `json:"ip_address" db:"ip_address"`
+	UserAgent   string     `json:"user_agent,omitempty" db:"user_agent"`
+	Country     string     `json:"country,omitempty" db:"country"`
+	LoginAt     time.Time  `json:"login_at" db:"login_at"`
+	LogoutAt    *time.Time `json:"logout_at,omitempty" db:"logout_at"`
+	LogoutType  string     `json:"logout_type,omitempty" db:"logout_type"` // manual, expired, forced
+	IsActive    bool       `json:"is_active" db:"is_active"`
+	CreatedAt   time.Time  `json:"created_at" db:"created_at"`
+}
+
+// LoginSession logout type constants.
+const (
+	LogoutManual  = "manual"
+	LogoutExpired = "expired"
+	LogoutForced  = "forced"
+)
+
+// BonusWallet holds bonus funds with an associated wagering requirement.
+// A player can have multiple active bonus wallets (one per bonus award).
+type BonusWallet struct {
+	ID                uuid.UUID  `json:"id" db:"id"`
+	PlayerID          uuid.UUID  `json:"player_id" db:"player_id"`
+	BrandID           uuid.UUID  `json:"brand_id" db:"brand_id"`
+	Currency          string     `json:"currency" db:"currency"`
+	Balance           Decimal    `json:"balance" db:"balance"`
+	WageringRequired  Decimal    `json:"wagering_required" db:"wagering_required"`
+	WageringCompleted Decimal    `json:"wagering_completed" db:"wagering_completed"`
+	Source            string     `json:"source" db:"source"`       // welcome_bonus, deposit_bonus, free_spins, etc.
+	BonusID           *uuid.UUID `json:"bonus_id,omitempty" db:"bonus_id"`
+	Status            string     `json:"status" db:"status"`       // active, completed, expired, forfeited
+	ExpiresAt         *time.Time `json:"expires_at,omitempty" db:"expires_at"`
+	CreatedAt         time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at" db:"updated_at"`
+}
+
+// Payment represents a deposit or withdrawal transaction.
+// State machine: initiated → pending → settled (or failed/cancelled)
+type Payment struct {
+	ID              uuid.UUID  `json:"id" db:"id"`
+	PlayerID        uuid.UUID  `json:"player_id" db:"player_id"`
+	BrandID         uuid.UUID  `json:"brand_id" db:"brand_id"`
+	Type            string     `json:"type" db:"type"`                // deposit, withdrawal
+	Status          string     `json:"status" db:"status"`            // initiated, pending, settled, failed, cancelled
+	Amount          Decimal    `json:"amount" db:"amount"`            // amount in source currency
+	Currency        string     `json:"currency" db:"currency"`        // source currency of payment
+	PlayerAmount    Decimal    `json:"player_amount" db:"player_amount"`
+	PlayerCurrency  string     `json:"player_currency" db:"player_currency"`
+	BaseAmount      Decimal    `json:"base_amount,omitempty" db:"base_amount"`
+	BaseCurrency    string     `json:"base_currency,omitempty" db:"base_currency"`
+	PaymentMethod   string     `json:"payment_method,omitempty" db:"payment_method"`   // swish, trustly, visa, etc.
+	PaymentProvider string     `json:"payment_provider,omitempty" db:"payment_provider"`
+	ExternalRef     string     `json:"external_ref,omitempty" db:"external_ref"`
+	IdempotencyKey  string     `json:"idempotency_key" db:"idempotency_key"`
+	WalletID        *uuid.UUID `json:"wallet_id,omitempty" db:"wallet_id"`
+	LedgerEntryID   *uuid.UUID `json:"ledger_entry_id,omitempty" db:"ledger_entry_id"`
+	Description     string     `json:"description,omitempty" db:"description"`
+	FailureReason   string     `json:"failure_reason,omitempty" db:"failure_reason"`
+	IPAddress       string     `json:"ip_address,omitempty" db:"ip_address"`
+	InitiatedAt     time.Time  `json:"initiated_at" db:"initiated_at"`
+	PendingAt       *time.Time `json:"pending_at,omitempty" db:"pending_at"`
+	SettledAt       *time.Time `json:"settled_at,omitempty" db:"settled_at"`
+	CreatedAt       time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at" db:"updated_at"`
+}
+
+// Payment status constants.
+const (
+	PaymentStatusInitiated = "initiated"
+	PaymentStatusPending   = "pending"
+	PaymentStatusSettled   = "settled"
+	PaymentStatusFailed    = "failed"
+	PaymentStatusCancelled = "cancelled"
+)
+
+// Payment type constants.
+const (
+	PaymentTypeDeposit    = "deposit"
+	PaymentTypeWithdrawal = "withdrawal"
+)
+
+// BonusWallet status constants.
+const (
+	BonusWalletActive    = "active"
+	BonusWalletCompleted = "completed"
+	BonusWalletExpired   = "expired"
+	BonusWalletForfeited = "forfeited"
+)
 
 // LedgerEntry is an immutable record of every balance-changing operation.
 // Each entry records the amount in four currencies:
