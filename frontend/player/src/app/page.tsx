@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { GameCard } from "@/components/GameCard";
 import { SportEventCard } from "@/components/SportEventCard";
 import { QuickDeposit } from "@/components/QuickDeposit";
 import { ResponsibleGambling } from "@/components/ResponsibleGambling";
-import { sanityClient } from "@/lib/sanity";
+import { useLocale } from "@/lib/locale-context";
 
 interface FeaturedGame {
   id: string;
@@ -361,6 +361,7 @@ export default function HomePage() {
 
 /** Self-contained hero that fetches content from Sanity CMS client-side. */
 function CmsHero() {
+  const { locale } = useLocale();
   const [headline, setHeadline] = useState("Välkommen till SwedBet");
   const [subheadline, setSubheadline] = useState(
     "Det smarta spelbolaget. Casino, betting och live casino med snabba uttag."
@@ -369,19 +370,8 @@ function CmsHero() {
   const [ctaUrl, setCtaUrl] = useState("/register");
   const [gradientFrom, setGradientFrom] = useState("");
   const [gradientTo, setGradientTo] = useState("");
-  const fetched = useRef(false);
 
   useEffect(() => {
-    if (fetched.current) return;
-    fetched.current = true;
-
-    // Detect locale from cookie first, then URL, default to Swedish
-    const cookieMatch = document.cookie.match(/odin_locale=(\w+)/);
-    const cookieLang = cookieMatch ? cookieMatch[1] : null;
-    const segment = window.location.pathname.split("/")[1];
-    const lang = cookieLang || (["en", "fi", "no"].includes(segment) ? segment : "sv");
-
-    // Use plain fetch to avoid any client library issues
     fetch(
       `https://mqk9lpso.apicdn.sanity.io/v2024-01-01/data/query/production?query=${encodeURIComponent(
         '*[_type == "banner" && brand->slug.current == "swedbet" && placement == "hero" && isActive == true][0]{headline_sv, headline_en, subheadline_sv, subheadline_en, ctaText_sv, ctaText_en, ctaUrl, gradientFrom, gradientTo}'
@@ -391,9 +381,9 @@ function CmsHero() {
       .then((data: any) => {
         const b = data?.result;
         if (!b) return;
-        const h = (lang === "en" ? b.headline_en : b.headline_sv) || b.headline_sv;
-        const s = (lang === "en" ? b.subheadline_en : b.subheadline_sv) || b.subheadline_sv;
-        const c = (lang === "en" ? b.ctaText_en : b.ctaText_sv) || b.ctaText_sv;
+        const h = (locale === "en" ? b.headline_en : b.headline_sv) || b.headline_sv;
+        const s = (locale === "en" ? b.subheadline_en : b.subheadline_sv) || b.subheadline_sv;
+        const c = (locale === "en" ? b.ctaText_en : b.ctaText_sv) || b.ctaText_sv;
         if (h) setHeadline(h);
         if (s) setSubheadline(s);
         if (c) setCtaText(c);
@@ -401,10 +391,8 @@ function CmsHero() {
         if (b.gradientFrom) setGradientFrom(b.gradientFrom);
         if (b.gradientTo) setGradientTo(b.gradientTo);
       })
-      .catch((err) => {
-        console.error("CmsHero fetch error:", err);
-      });
-  }, []);
+      .catch(() => {});
+  }, [locale]);
 
   const bgStyle = gradientFrom
     ? { background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo || "#0066FF"})` }

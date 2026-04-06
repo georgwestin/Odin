@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useBrand } from "@/components/BrandProvider";
+import { useLocale } from "@/lib/locale-context";
 import { localeNames, isValidLocale, type Locale } from "@/lib/i18n-config";
 
 const FLAGS: Record<Locale, string> = {
@@ -15,40 +14,13 @@ const FLAGS: Record<Locale, string> = {
 
 export function Footer() {
   const brand = useBrand();
-  const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-  const [locale, setLocale] = useState<Locale>("en");
+  const { locale: currentLocale, setLocale } = useLocale();
 
-  useEffect(() => {
-    const cookieMatch = document.cookie.match(/odin_locale=(\w+)/);
-    const cookieLang = cookieMatch ? cookieMatch[1] : null;
-    if (cookieLang && isValidLocale(cookieLang)) {
-      setLocale(cookieLang);
-    } else {
-      const segment = pathname.split("/")[1];
-      setLocale(isValidLocale(segment) ? segment : "sv");
-    }
-    setMounted(true);
-  }, [pathname]);
-
-  // Only show languages configured for this brand in Sanity
   const availableLocales = (brand.supportedLanguages || ["sv", "en"]).filter(
     (l): l is Locale => isValidLocale(l)
   );
 
-  // Use default locale for server render to avoid hydration mismatch
-  const currentLocale = mounted ? locale : "en";
-
-  function switchLocale(targetLocale: Locale) {
-    document.cookie = `odin_locale=${targetLocale};path=/;max-age=31536000`;
-    setLocale(targetLocale);
-    // Reload to re-fetch all CMS content in the new language
-    window.location.reload();
-  }
-
-  function l(path: string): string {
-    return path;
-  }
+  const isSv = currentLocale === "sv";
 
   return (
     <footer className="bg-[#0f1923] text-white/50">
@@ -65,7 +37,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm leading-relaxed">
-              {currentLocale === "sv"
+              {isSv
                 ? "Det smarta spelbolaget för svenska spelare. Licensierat av Spelinspektionen."
                 : "The smart gaming company. Licensed by Spelinspektionen."}
             </p>
@@ -75,17 +47,17 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm mb-3">Casino</h4>
             <div className="space-y-2">
-              <Link href={l("/casino")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Alla spel" : "All games"}
+              <Link href="/casino" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Alla spel" : "All games"}
               </Link>
-              <Link href={l("/casino?category=slots")} className="block text-sm hover:text-white transition-colors">
+              <Link href="/casino?category=slots" className="block text-sm hover:text-white transition-colors">
                 Slots
               </Link>
-              <Link href={l("/live-casino")} className="block text-sm hover:text-white transition-colors">
+              <Link href="/live-casino" className="block text-sm hover:text-white transition-colors">
                 Live Casino
               </Link>
-              <Link href={l("/casino?category=table")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Bordsspel" : "Table games"}
+              <Link href="/casino?category=table" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Bordsspel" : "Table games"}
               </Link>
             </div>
           </div>
@@ -94,16 +66,16 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm mb-3">Betting</h4>
             <div className="space-y-2">
-              <Link href={l("/sports")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Alla sporter" : "All sports"}
+              <Link href="/sports" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Alla sporter" : "All sports"}
               </Link>
-              <Link href={l("/sports?sport=football")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Fotboll" : "Football"}
+              <Link href="/sports?sport=football" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Fotboll" : "Football"}
               </Link>
-              <Link href={l("/sports?sport=hockey")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Ishockey" : "Ice Hockey"}
+              <Link href="/sports?sport=hockey" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Ishockey" : "Ice Hockey"}
               </Link>
-              <Link href={l("/sports?sport=tennis")} className="block text-sm hover:text-white transition-colors">
+              <Link href="/sports?sport=tennis" className="block text-sm hover:text-white transition-colors">
                 Tennis
               </Link>
             </div>
@@ -113,17 +85,17 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm mb-3">Support</h4>
             <div className="space-y-2">
-              <Link href={l("/help")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Hjälpcenter" : "Help center"}
+              <Link href="/help" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Hjälpcenter" : "Help center"}
               </Link>
-              <Link href={l("/contact")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Kontakta oss" : "Contact us"}
+              <Link href="/contact" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Kontakta oss" : "Contact us"}
               </Link>
-              <Link href={l("/terms")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Villkor" : "Terms"}
+              <Link href="/terms" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Villkor" : "Terms"}
               </Link>
-              <Link href={l("/privacy")} className="block text-sm hover:text-white transition-colors">
-                {currentLocale === "sv" ? "Integritetspolicy" : "Privacy policy"}
+              <Link href="/privacy" className="block text-sm hover:text-white transition-colors">
+                {isSv ? "Integritetspolicy" : "Privacy policy"}
               </Link>
             </div>
           </div>
@@ -131,22 +103,22 @@ export function Footer() {
           {/* Language Selector */}
           <div>
             <h4 className="text-white font-semibold text-sm mb-3">
-              {currentLocale === "sv" ? "Språk" : "Language"}
+              {isSv ? "Språk" : "Language"}
             </h4>
             <div className="space-y-1.5">
-              {availableLocales.map((locale) => (
+              {availableLocales.map((loc) => (
                 <button
-                  key={locale}
-                  onClick={() => switchLocale(locale)}
+                  key={loc}
+                  onClick={() => setLocale(loc)}
                   className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                    locale === currentLocale
+                    loc === currentLocale
                       ? "bg-white/10 text-white font-medium"
                       : "text-white/50 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <span className="text-base">{FLAGS[locale]}</span>
-                  <span>{localeNames[locale]}</span>
-                  {locale === currentLocale && (
+                  <span className="text-base">{FLAGS[loc]}</span>
+                  <span>{localeNames[loc]}</span>
+                  {loc === currentLocale && (
                     <svg className="w-3.5 h-3.5 ml-auto text-[#00CC9F]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
@@ -160,7 +132,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <p>
-            {currentLocale === "sv"
+            {isSv
               ? "SwedBet drivs under svensk spellicens utfärdad av Spelinspektionen. 18+ | Spela ansvarsfullt."
               : "SwedBet operates under a Swedish gambling license issued by Spelinspektionen. 18+ | Play responsibly."}
           </p>

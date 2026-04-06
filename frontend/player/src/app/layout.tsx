@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { BrandProvider } from "@/components/BrandProvider";
-import { TranslationProvider } from "@/lib/i18n";
+import { LocaleProvider } from "@/lib/locale-context";
 import { AuthLoader } from "@/components/AuthLoader";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BetSlip } from "@/components/BetSlip";
@@ -28,12 +28,14 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-brand-background text-brand-text font-body antialiased">
         <BrandProvider>
-          <AuthLoader>
-            <SiteHeader />
-            <main>{children}</main>
-            <Footer />
-            <BetSlip />
-          </AuthLoader>
+          <LocaleProvider>
+            <AuthLoader>
+              <SiteHeader />
+              <main>{children}</main>
+              <Footer />
+              <BetSlip />
+            </AuthLoader>
+          </LocaleProvider>
         </BrandProvider>
       </body>
     </html>
