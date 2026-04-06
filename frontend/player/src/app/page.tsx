@@ -7,6 +7,7 @@ import { GameCard } from "@/components/GameCard";
 import { SportEventCard } from "@/components/SportEventCard";
 import { QuickDeposit } from "@/components/QuickDeposit";
 import { ResponsibleGambling } from "@/components/ResponsibleGambling";
+import { SanityBanner } from "@/components/SanityBanner";
 
 interface FeaturedGame {
   id: string;
@@ -131,25 +132,30 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-secondary via-[#1e2a4a] to-brand-primary/90">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(0,102,255,0.3)_0%,_transparent_60%)]" />
-        <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
-          <div className="max-w-xl">
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
-              Valkommen till{" "}
-              <span className="text-brand-accent">Swedbet</span>
-            </h1>
-            <p className="mt-4 text-lg sm:text-xl text-white/70 max-w-md">
-              Det smarta spelbolaget. Casino, betting och live casino med snabba
-              uttag.
-            </p>
-            <div className="mt-8">
-              <QuickDeposit />
+      {/* Hero Section — CMS-driven with static fallback */}
+      <SanityBanner
+        placement="hero"
+        fallback={
+          <section className="relative overflow-hidden bg-gradient-to-br from-brand-secondary via-[#1e2a4a] to-brand-primary/90">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(0,102,255,0.3)_0%,_transparent_60%)]" />
+            <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
+              <div className="max-w-xl">
+                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+                  Valkommen till{" "}
+                  <span className="text-brand-accent">Swedbet</span>
+                </h1>
+                <p className="mt-4 text-lg sm:text-xl text-white/70 max-w-md">
+                  Det smarta spelbolaget. Casino, betting och live casino med snabba
+                  uttag.
+                </p>
+                <div className="mt-8">
+                  <QuickDeposit />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        }
+      />
 
       {/* Popular Games - Horizontal Scroll — dark section */}
       <section style={{ backgroundColor: "#010D13" }}>
