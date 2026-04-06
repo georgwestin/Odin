@@ -38,16 +38,16 @@ interface LiveEvent {
 }
 
 const PLACEHOLDER_GAMES: FeaturedGame[] = [
-  { id: "1", name: "Starburst", provider: "NetEnt", thumbnailUrl: "", category: "slots", isPopular: true },
-  { id: "2", name: "Book of Dead", provider: "Play'n GO", thumbnailUrl: "", category: "slots", isPopular: true },
-  { id: "3", name: "Mega Moolah", provider: "Microgaming", thumbnailUrl: "", category: "slots" },
-  { id: "4", name: "Gonzo's Quest", provider: "NetEnt", thumbnailUrl: "", category: "slots" },
-  { id: "5", name: "Sweet Bonanza", provider: "Pragmatic Play", thumbnailUrl: "", category: "slots", isNew: true },
-  { id: "6", name: "Gates of Olympus", provider: "Pragmatic Play", thumbnailUrl: "", category: "slots", isNew: true },
-  { id: "7", name: "Lightning Roulette", provider: "Evolution", thumbnailUrl: "", category: "live", isPopular: true },
-  { id: "8", name: "Crazy Time", provider: "Evolution", thumbnailUrl: "", category: "live", isPopular: true },
-  { id: "9", name: "Dead or Alive 2", provider: "NetEnt", thumbnailUrl: "", category: "slots" },
-  { id: "10", name: "Reactoonz", provider: "Play'n GO", thumbnailUrl: "", category: "slots" },
+  { id: "sweet-bonanza-1000", name: "Sweet Bonanza 1000", provider: "Pragmatic Play", thumbnailUrl: "https://cdn.mint.io/production/games/images/sweet_bonanza_1000-eaa318e2df1742ce95a0030564c8df04.png", category: "slots", isNew: true, isPopular: true },
+  { id: "gates-of-olympus-1000", name: "Gates of Olympus 1000", provider: "Pragmatic Play", thumbnailUrl: "https://cdn.mint.io/production/games/images/gates_of_olympus_1000-9079a11814b04e93a159e220ce7494c3.png", category: "slots", isNew: true, isPopular: true },
+  { id: "wanted-dead-or-a-wild", name: "Wanted Dead or a Wild", provider: "Hacksaw Gaming", thumbnailUrl: "https://cdn.mint.io/production/games/images/wanted-dead-or-a-wild-79b41f71993ec33e3c6f3c5e4f48570b.png", category: "slots", isPopular: true },
+  { id: "mental", name: "Mental", provider: "Nolimit City", thumbnailUrl: "https://cdn.mint.io/production/games/images/mental-ff2d4673f3bb0120fb8424fa63108311.png", category: "slots", isPopular: true },
+  { id: "fire-in-the-hole-3", name: "Fire in the Hole 3", provider: "Nolimit City", thumbnailUrl: "https://cdn.mint.io/production/games/images/fire-in-the-hole-3-f88f7401e66348b24a9af5c684677b00.png", category: "slots", isNew: true, isPopular: true },
+  { id: "chaos-crew-2", name: "Chaos Crew 2", provider: "Hacksaw Gaming", thumbnailUrl: "https://cdn.mint.io/production/games/images/chaos-crew-2-2e03414eea4d8c276c69c5916f12dda4.png", category: "slots", isNew: true, isPopular: true },
+  { id: "lightning-roulette", name: "Lightning Roulette", provider: "Evolution", thumbnailUrl: "https://cdn.mint.io/production/games/images/immersive-roulette-066a301e6632725813a55e5dde308937.png", category: "live", isPopular: true },
+  { id: "tombstone-rip", name: "Tombstone RIP", provider: "Nolimit City", thumbnailUrl: "https://cdn.mint.io/production/games/images/tombstone-rip-3e1e531f095265057b1046919d3fb4e8.png", category: "slots", isPopular: true },
+  { id: "starlight-princess-1000", name: "Starlight Princess 1000", provider: "Pragmatic Play", thumbnailUrl: "https://cdn.mint.io/production/games/images/starlight-princess-1000-2bfa4c79244cf71474e66b8897b93b9f.png", category: "slots", isNew: true, isPopular: true },
+  { id: "plinko", name: "Plinko", provider: "Spribe", thumbnailUrl: "https://cdn.mint.io/production/games/images/plinko-76a1ae7ca428ec1cc9497e4f52c76976.png", category: "instant", isPopular: true },
 ];
 
 const PLACEHOLDER_EVENTS: LiveEvent[] = [

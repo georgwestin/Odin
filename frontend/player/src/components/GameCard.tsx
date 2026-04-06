@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 interface GameCardProps {
   id: string;
@@ -26,6 +27,9 @@ const PROVIDER_COLORS: Record<string, string> = {
   "Push Gaming": "#2a9d8f",
   "Hacksaw Gaming": "#f77f00",
   "ELK Studios": "#264653",
+  "PG Soft": "#6d28d9",
+  Playson: "#0891b2",
+  Spribe: "#059669",
 };
 
 function getInitials(name: string): string {
@@ -57,15 +61,17 @@ export function GameCard({
   return (
     <Link
       href={`/casino/${id}`}
-      className="group relative bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-200"
+      className="group relative bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-200"
     >
       {/* Thumbnail */}
       <div className="aspect-[3/4] relative overflow-hidden">
         {thumbnailUrl ? (
-          <img
+          <Image
             src={thumbnailUrl}
             alt={name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
           />
         ) : (
@@ -80,7 +86,7 @@ export function GameCard({
         )}
 
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+        <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-10">
           {isNew && (
             <span className="bg-[#0066FF] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
               NYTT
@@ -100,15 +106,15 @@ export function GameCard({
 
         {/* RTP tooltip on hover */}
         {rtp && (
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
             <span className="bg-black/70 text-white text-[10px] font-medium px-2 py-0.5 rounded-full">
               RTP {rtp}
             </span>
           </div>
         )}
 
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+        {/* Hover Overlay — gradient from bottom + centered Spela button */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
           <span className="bg-[#44c868] hover:bg-[#3ab85c] text-white font-bold text-sm px-8 py-2.5 rounded-full transform scale-90 group-hover:scale-100 transition-transform duration-200">
             Spela
           </span>
@@ -120,7 +126,7 @@ export function GameCard({
         <p className="text-sm font-semibold text-[#272b33] truncate font-body">
           {name}
         </p>
-        <p className="text-xs text-gray-500 font-body">{provider}</p>
+        <p className="text-xs text-gray-400 font-body">{provider}</p>
       </div>
     </Link>
   );
