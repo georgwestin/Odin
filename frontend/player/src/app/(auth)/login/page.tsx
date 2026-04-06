@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { useBrand } from "@/components/BrandProvider";
 import type { ApiError } from "@/lib/api";
 
 export default function LoginPage() {
@@ -12,7 +11,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
   const { login } = useAuth();
-  const brand = useBrand();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +23,7 @@ export default function LoginPage() {
     setError("");
 
     if (!email || !password) {
-      setError("Please enter your email and password.");
+      setError("Ange din e-post och ditt losenord.");
       return;
     }
 
@@ -35,35 +33,40 @@ export default function LoginPage() {
       router.push(redirect);
     } catch (err) {
       const apiErr = err as ApiError;
-      setError(apiErr.message || "Invalid email or password.");
+      setError(apiErr.message || "Felaktig e-post eller losenord.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-brand-surface-alt">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-primary flex items-center justify-center font-heading font-extrabold text-black text-2xl">
-            {brand.name.charAt(0)}
-          </div>
-          <h1 className="font-heading text-2xl font-bold text-white">
-            Welcome Back
+          <Link href="/" className="inline-flex items-center gap-1 mb-6">
+            <span className="font-heading font-black text-3xl text-brand-secondary">
+              Swed
+            </span>
+            <span className="font-heading font-black text-3xl text-brand-primary">
+              bet
+            </span>
+          </Link>
+          <h1 className="font-heading text-2xl font-bold text-brand-text">
+            Valkommen tillbaka
           </h1>
           <p className="text-brand-text-muted text-sm mt-1">
-            Log in to your {brand.name} account
+            Logga in pa ditt Swedbet-konto
           </p>
         </div>
 
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-brand-surface rounded-2xl p-6 sm:p-8 border border-white/5"
+          className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border"
         >
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-brand-danger/10 border border-brand-danger/20 text-brand-danger text-sm">
+            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-brand-danger/20 text-brand-danger text-sm">
               {error}
             </div>
           )}
@@ -72,9 +75,9 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-brand-text-muted mb-1.5"
+                className="block text-sm font-medium text-brand-text mb-1.5"
               >
-                Email
+                E-post
               </label>
               <input
                 id="email"
@@ -82,17 +85,17 @@ export default function LoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full bg-brand-background border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary/50 transition-colors"
+                placeholder="din@email.se"
+                className="w-full bg-white border border-brand-border rounded-xl px-4 py-3 text-sm text-brand-text placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-colors"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-brand-text-muted mb-1.5"
+                className="block text-sm font-medium text-brand-text mb-1.5"
               >
-                Password
+                Losenord
               </label>
               <div className="relative">
                 <input
@@ -101,13 +104,13 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full bg-brand-background border border-white/10 rounded-lg px-4 py-3 pr-10 text-sm text-white placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary/50 transition-colors"
+                  placeholder="Ange ditt losenord"
+                  className="w-full bg-white border border-brand-border rounded-xl px-4 py-3 pr-10 text-sm text-brand-text placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-text-muted hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-text-muted hover:text-brand-text"
                 >
                   {showPassword ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -129,36 +132,34 @@ export default function LoginPage() {
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                className="w-4 h-4 rounded border-white/20 bg-brand-background text-brand-primary focus:ring-brand-primary"
+                className="w-4 h-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
               />
-              <span className="text-xs text-brand-text-muted">
-                Remember me
-              </span>
+              <span className="text-xs text-brand-text-muted">Kom ihag mig</span>
             </label>
             <Link
               href="#"
-              className="text-xs text-brand-primary hover:text-brand-accent"
+              className="text-xs text-brand-primary hover:text-brand-primary-hover font-medium"
             >
-              Forgot password?
+              Glomt losenord?
             </Link>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-black font-bold py-3 rounded-lg transition-colors text-sm"
+            className="w-full mt-6 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-white font-bold py-3 rounded-pill transition-colors text-sm"
           >
-            {loading ? "Logging in..." : "Log In"}
+            {loading ? "Loggar in..." : "Logga in"}
           </button>
         </form>
 
         <p className="text-center mt-6 text-sm text-brand-text-muted">
-          Don&apos;t have an account?{" "}
+          Har du inget konto?{" "}
           <Link
             href="/register"
-            className="text-brand-primary hover:text-brand-accent font-medium"
+            className="text-brand-primary hover:text-brand-primary-hover font-semibold"
           >
-            Sign Up
+            Skapa konto
           </Link>
         </p>
       </div>

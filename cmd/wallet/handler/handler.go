@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,8 +17,10 @@ import (
 	"github.com/odin-platform/odin/cmd/wallet/repository"
 	"github.com/odin-platform/odin/cmd/wallet/service"
 	"github.com/odin-platform/odin/internal/auth"
+	"github.com/odin-platform/odin/internal/currency"
 	"github.com/odin-platform/odin/internal/httperr"
 	"github.com/odin-platform/odin/internal/middleware"
+	"github.com/odin-platform/odin/internal/models"
 )
 
 // Handler holds HTTP handlers for the wallet service.
@@ -35,6 +38,7 @@ func New(svc *service.Service, logger *zap.Logger) *Handler {
 
 type depositRequest struct {
 	Amount         string `json:"amount"`
+	Currency       string `json:"currency"`        // Source currency of the deposit.
 	IdempotencyKey string `json:"idempotency_key"`
 	ReferenceID    string `json:"reference_id"`
 	Description    string `json:"description"`
@@ -42,20 +46,24 @@ type depositRequest struct {
 
 type withdrawRequest struct {
 	Amount         string `json:"amount"`
+	Currency       string `json:"currency"`        // Currency for withdrawal.
 	IdempotencyKey string `json:"idempotency_key"`
 	ReferenceID    string `json:"reference_id"`
 	Description    string `json:"description"`
 }
 
 type transferRequest struct {
-	PlayerID       string `json:"player_id"`
-	BrandID        string `json:"brand_id"`
-	Amount         string `json:"amount"`
-	Type           string `json:"type"`
-	ReferenceID    string `json:"reference_id"`
-	ReferenceType  string `json:"reference_type"`
-	IdempotencyKey string `json:"idempotency_key"`
-	Description    string `json:"description"`
+	PlayerID        string `json:"player_id"`
+	BrandID         string `json:"brand_id"`
+	Amount          string `json:"amount"`
+	Currency        string `json:"currency"`          // Source currency of the amount.
+	BetCurrency     string `json:"bet_currency"`      // Currency the bet was placed in.
+	PlayerCurrency  string `json:"player_currency"`   // Player's chosen currency.
+	Type            string `json:"type"`
+	ReferenceID     string `json:"reference_id"`
+	ReferenceType   string `json:"reference_type"`
+	IdempotencyKey  string `json:"idempotency_key"`
+	Description     string `json:"description"`
 }
 
 type createWalletRequest struct {
@@ -87,12 +95,20 @@ func (h *Handler) Balance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]interface{}{
-		"balance":        wallet.Balance,
-		"bonus_balance":  wallet.BonusBalance,
-		"locked_balance": wallet.LockedBalance,
-		"currency":       wallet.Currency,
-	})
+	// Include brand currency context in balance response.
+	brandCurrConf := resolveBrandCurrencyConf(r.Context())
+	resp := map[string]interface{}{
+		"balance":         wallet.Balance,
+		"bonus_balance":   wallet.BonusBalance,
+		"locked_balance":  wallet.LockedBalance,
+		"currency":        wallet.Currency,
+		"player_currency": wallet.Currency,
+	}
+	if brandCurrConf != nil {
+		resp["base_currency"] = brandCurrConf.BaseCurrency
+		resp["reporting_currency"] = brandCurrConf.ReportingCurrency
+	}
+	writeJSON(w, http.StatusOK, resp)
 }
 
 // Transactions handles GET /wallet/transactions with cursor-based pagination.
@@ -167,14 +183,20 @@ func (h *Handler) Deposit(w http.ResponseWriter, r *http.Request) {
 
 	brandID, _ := middleware.GetBrandID(r.Context())
 
+	// Resolve brand currency config from context.
+	brandCurrConf := resolveBrandCurrencyConf(r.Context())
+
 	result, err := h.svc.Deposit(r.Context(), &service.MutationRequest{
-		PlayerID:       claims.PlayerID,
-		BrandID:        brandID,
-		Amount:         req.Amount,
-		ReferenceID:    req.ReferenceID,
-		ReferenceType:  "deposit",
-		IdempotencyKey: req.IdempotencyKey,
-		Description:    req.Description,
+		PlayerID:          claims.PlayerID,
+		BrandID:           brandID,
+		Amount:            req.Amount,
+		SourceCurrency:    req.Currency,
+		PlayerCurrency:    claims.Email, // Will be resolved from player record in service.
+		BrandCurrencyConf: brandCurrConf,
+		ReferenceID:       req.ReferenceID,
+		ReferenceType:     "deposit",
+		IdempotencyKey:    req.IdempotencyKey,
+		Description:       req.Description,
 	})
 	if err != nil {
 		h.handleMutationError(w, err, "deposit")
@@ -209,14 +231,18 @@ func (h *Handler) Withdraw(w http.ResponseWriter, r *http.Request) {
 
 	brandID, _ := middleware.GetBrandID(r.Context())
 
+	brandCurrConf := resolveBrandCurrencyConf(r.Context())
+
 	result, err := h.svc.Withdraw(r.Context(), &service.MutationRequest{
-		PlayerID:       claims.PlayerID,
-		BrandID:        brandID,
-		Amount:         req.Amount,
-		ReferenceID:    req.ReferenceID,
-		ReferenceType:  "withdrawal",
-		IdempotencyKey: req.IdempotencyKey,
-		Description:    req.Description,
+		PlayerID:          claims.PlayerID,
+		BrandID:           brandID,
+		Amount:            req.Amount,
+		SourceCurrency:    req.Currency,
+		BrandCurrencyConf: brandCurrConf,
+		ReferenceID:       req.ReferenceID,
+		ReferenceType:     "withdrawal",
+		IdempotencyKey:    req.IdempotencyKey,
+		Description:       req.Description,
 	})
 	if err != nil {
 		h.handleMutationError(w, err, "withdraw")
@@ -242,15 +268,21 @@ func (h *Handler) TransferDebit(w http.ResponseWriter, r *http.Request) {
 	playerID, _ := uuid.Parse(req.PlayerID)
 	brandID, _ := uuid.Parse(req.BrandID)
 
+	brandCurrConf := resolveBrandCurrencyConf(r.Context())
+
 	result, err := h.svc.Debit(r.Context(), &service.MutationRequest{
-		PlayerID:       playerID,
-		BrandID:        brandID,
-		Amount:         req.Amount,
-		Type:           req.Type,
-		ReferenceID:    req.ReferenceID,
-		ReferenceType:  req.ReferenceType,
-		IdempotencyKey: req.IdempotencyKey,
-		Description:    req.Description,
+		PlayerID:          playerID,
+		BrandID:           brandID,
+		Amount:            req.Amount,
+		SourceCurrency:    req.Currency,
+		BetCurrency:       req.BetCurrency,
+		PlayerCurrency:    req.PlayerCurrency,
+		BrandCurrencyConf: brandCurrConf,
+		Type:              req.Type,
+		ReferenceID:       req.ReferenceID,
+		ReferenceType:     req.ReferenceType,
+		IdempotencyKey:    req.IdempotencyKey,
+		Description:       req.Description,
 	})
 	if err != nil {
 		h.handleMutationError(w, err, "debit")
@@ -276,15 +308,21 @@ func (h *Handler) TransferCredit(w http.ResponseWriter, r *http.Request) {
 	playerID, _ := uuid.Parse(req.PlayerID)
 	brandID, _ := uuid.Parse(req.BrandID)
 
+	brandCurrConf := resolveBrandCurrencyConf(r.Context())
+
 	result, err := h.svc.Credit(r.Context(), &service.MutationRequest{
-		PlayerID:       playerID,
-		BrandID:        brandID,
-		Amount:         req.Amount,
-		Type:           req.Type,
-		ReferenceID:    req.ReferenceID,
-		ReferenceType:  req.ReferenceType,
-		IdempotencyKey: req.IdempotencyKey,
-		Description:    req.Description,
+		PlayerID:          playerID,
+		BrandID:           brandID,
+		Amount:            req.Amount,
+		SourceCurrency:    req.Currency,
+		BetCurrency:       req.BetCurrency,
+		PlayerCurrency:    req.PlayerCurrency,
+		BrandCurrencyConf: brandCurrConf,
+		Type:              req.Type,
+		ReferenceID:       req.ReferenceID,
+		ReferenceType:     req.ReferenceType,
+		IdempotencyKey:    req.IdempotencyKey,
+		Description:       req.Description,
 	})
 	if err != nil {
 		h.handleMutationError(w, err, "credit")
@@ -405,4 +443,17 @@ func writeJSON(w http.ResponseWriter, status int, v interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(v)
+}
+
+// resolveBrandCurrencyConf extracts brand currency configuration from the request context.
+func resolveBrandCurrencyConf(ctx context.Context) *currency.BrandCurrencyConfig {
+	brand, ok := models.BrandFromContext(ctx)
+	if !ok {
+		return nil
+	}
+	baseCurr, reportCurr := brand.Config.CurrencyConfig()
+	return &currency.BrandCurrencyConfig{
+		BaseCurrency:      baseCurr,
+		ReportingCurrency: reportCurr,
+	}
 }

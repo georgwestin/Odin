@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/odin-platform/odin/cmd/wallet/repository"
+	"github.com/odin-platform/odin/internal/currency"
 	"github.com/odin-platform/odin/internal/httperr"
 	"github.com/odin-platform/odin/internal/kafka"
 	"github.com/odin-platform/odin/internal/models"
@@ -30,17 +32,19 @@ const (
 
 // Service contains the business logic for the wallet service.
 type Service struct {
-	repo          *repository.Repository
-	kafkaProducer *kafka.Producer
-	logger        *zap.Logger
+	repo              *repository.Repository
+	kafkaProducer     *kafka.Producer
+	currencyConverter *currency.Converter
+	logger            *zap.Logger
 }
 
 // New creates a new wallet service.
 func New(repo *repository.Repository, kafkaProducer *kafka.Producer, logger *zap.Logger) *Service {
 	return &Service{
-		repo:          repo,
-		kafkaProducer: kafkaProducer,
-		logger:        logger,
+		repo:              repo,
+		kafkaProducer:     kafkaProducer,
+		currencyConverter: currency.NewConverter(),
+		logger:            logger,
 	}
 }
 
@@ -148,12 +152,17 @@ func (s *Service) ListTransactions(ctx context.Context, req *TransactionListRequ
 type MutationRequest struct {
 	PlayerID       uuid.UUID
 	BrandID        uuid.UUID
-	Amount         string // Positive decimal string.
+	Amount         string // Positive decimal string in the source currency.
 	Type           string // deposit, withdrawal, bet, win, bonus, etc.
 	ReferenceID    string
 	ReferenceType  string
 	IdempotencyKey string
 	Description    string
+	// Multi-currency fields
+	SourceCurrency    string // Currency of the Amount field (defaults to wallet currency).
+	BetCurrency       string // Currency the bet was placed in (empty for non-bet transactions).
+	BrandCurrencyConf *currency.BrandCurrencyConfig // Brand's base & reporting currencies.
+	PlayerCurrency    string // Player's chosen currency.
 }
 
 // MutationResult is returned after a successful balance mutation.
@@ -359,23 +368,80 @@ func (s *Service) executeMutation(ctx context.Context, wallet *models.Wallet, re
 		return nil, fmt.Errorf("update balance: %w", err)
 	}
 
-	// Insert ledger entry.
+	// Build multi-currency amounts.
 	now := time.Now().UTC()
+	sourceCurrency := req.SourceCurrency
+	if sourceCurrency == "" {
+		sourceCurrency = lockedWallet.Currency
+	}
+	playerCurr := req.PlayerCurrency
+	if playerCurr == "" {
+		playerCurr = lockedWallet.Currency
+	}
+
+	var baseAmt, playerAmt, reportAmt, betAmt string
+	var baseCurr, reportCurr, betCurr string
+
+	if req.BrandCurrencyConf != nil {
+		baseCurr = req.BrandCurrencyConf.BaseCurrency
+		reportCurr = req.BrandCurrencyConf.ReportingCurrency
+
+		ma, convErr := s.currencyConverter.BuildMultiAmount(
+			req.Amount, sourceCurrency,
+			*req.BrandCurrencyConf, playerCurr, req.BetCurrency,
+		)
+		if convErr != nil {
+			s.logger.Warn("currency conversion failed, using source amount for all",
+				zap.Error(convErr), zap.String("source_currency", sourceCurrency))
+			baseAmt = req.Amount
+			playerAmt = req.Amount
+			reportAmt = req.Amount
+		} else {
+			baseAmt = ma.BaseAmount
+			playerAmt = ma.PlayerAmount
+			reportAmt = ma.ReportAmount
+			betAmt = ma.BetAmount
+			betCurr = ma.BetCurrency
+		}
+	} else {
+		baseCurr = lockedWallet.Currency
+		reportCurr = lockedWallet.Currency
+		baseAmt = req.Amount
+		playerAmt = req.Amount
+		reportAmt = req.Amount
+	}
+
+	exchangeInfo, _ := json.Marshal(map[string]string{
+		"source_currency": sourceCurrency,
+		"source_amount":   req.Amount,
+		"timestamp":       now.Format(time.RFC3339),
+	})
+
+	// Insert ledger entry.
 	entry := &models.LedgerEntry{
-		ID:              uuid.New(),
-		WalletID:        lockedWallet.ID,
-		PlayerID:        req.PlayerID,
-		BrandID:         req.BrandID,
-		TransactionType: req.Type,
-		Amount:          models.Decimal(req.Amount),
-		BalanceBefore:   lockedWallet.Balance,
-		BalanceAfter:    newBalanceStr,
-		Currency:        lockedWallet.Currency,
-		ReferenceID:     req.ReferenceID,
-		ReferenceType:   req.ReferenceType,
-		IdempotencyKey:  req.IdempotencyKey,
-		Description:     req.Description,
-		CreatedAt:       now,
+		ID:               uuid.New(),
+		WalletID:         lockedWallet.ID,
+		PlayerID:         req.PlayerID,
+		BrandID:          req.BrandID,
+		TransactionType:  req.Type,
+		Amount:           models.Decimal(req.Amount),
+		BalanceBefore:    lockedWallet.Balance,
+		BalanceAfter:     newBalanceStr,
+		Currency:         lockedWallet.Currency,
+		BaseAmount:       models.Decimal(baseAmt),
+		BaseCurrency:     baseCurr,
+		PlayerAmount:     models.Decimal(playerAmt),
+		PlayerCurrency:   playerCurr,
+		ReportAmount:     models.Decimal(reportAmt),
+		ReportCurrency:   reportCurr,
+		BetAmount:        models.Decimal(betAmt),
+		BetCurrency:      betCurr,
+		ExchangeRateInfo: string(exchangeInfo),
+		ReferenceID:      req.ReferenceID,
+		ReferenceType:    req.ReferenceType,
+		IdempotencyKey:   req.IdempotencyKey,
+		Description:      req.Description,
+		CreatedAt:        now,
 	}
 
 	if err := s.repo.InsertLedgerEntry(ctx, tx, entry); err != nil {
@@ -388,15 +454,23 @@ func (s *Service) executeMutation(ctx context.Context, wallet *models.Wallet, re
 
 	// Publish wallet.transaction event (best-effort).
 	event := map[string]interface{}{
-		"entry_id":    entry.ID.String(),
-		"player_id":  req.PlayerID.String(),
-		"brand_id":   req.BrandID.String(),
-		"wallet_id":  lockedWallet.ID.String(),
-		"type":       req.Type,
-		"amount":     req.Amount,
-		"balance":    string(newBalanceStr),
-		"currency":   lockedWallet.Currency,
-		"created_at": now.Format(time.RFC3339),
+		"entry_id":         entry.ID.String(),
+		"player_id":       req.PlayerID.String(),
+		"brand_id":        req.BrandID.String(),
+		"wallet_id":       lockedWallet.ID.String(),
+		"type":            req.Type,
+		"amount":          req.Amount,
+		"balance":         string(newBalanceStr),
+		"currency":        lockedWallet.Currency,
+		"base_amount":     baseAmt,
+		"base_currency":   baseCurr,
+		"player_amount":   playerAmt,
+		"player_currency": playerCurr,
+		"report_amount":   reportAmt,
+		"report_currency": reportCurr,
+		"bet_amount":      betAmt,
+		"bet_currency":    betCurr,
+		"created_at":      now.Format(time.RFC3339),
 	}
 	if err := s.kafkaProducer.Publish(ctx, kafka.TopicWalletTransaction, req.PlayerID.String(), event); err != nil {
 		s.logger.Error("failed to publish wallet.transaction event",

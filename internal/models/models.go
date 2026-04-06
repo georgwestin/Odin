@@ -78,9 +78,9 @@ type Player struct {
 	FirstName    string     `json:"first_name" db:"first_name"`
 	LastName     string     `json:"last_name" db:"last_name"`
 	DateOfBirth  time.Time  `json:"date_of_birth" db:"date_of_birth"`
-	Country      string     `json:"country" db:"country"`
-	Currency     string     `json:"currency" db:"currency"`
-	KYCStatus    KYCStatus  `json:"kyc_status" db:"kyc_status"`
+	Country        string     `json:"country" db:"country"`
+	Currency       string     `json:"currency" db:"currency"`         // Player's chosen currency (playerCurrency)
+	KYCStatus      KYCStatus  `json:"kyc_status" db:"kyc_status"`
 	Status       string     `json:"status" db:"status"`
 	Roles        []string   `json:"roles" db:"roles"`
 	LastLoginAt  *time.Time `json:"last_login_at,omitempty" db:"last_login_at"`
@@ -103,6 +103,11 @@ type Wallet struct {
 }
 
 // LedgerEntry is an immutable record of every balance-changing operation.
+// Each entry records the amount in four currencies:
+//   - Base currency: the brand's operational currency
+//   - Player currency: the player's chosen currency
+//   - Reporting currency: the brand's reporting/regulatory currency
+//   - Bet currency: the currency the bet was placed in (empty for non-bet transactions)
 type LedgerEntry struct {
 	ID              uuid.UUID `json:"id" db:"id"`
 	WalletID        uuid.UUID `json:"wallet_id" db:"wallet_id"`
@@ -113,14 +118,25 @@ type LedgerEntry struct {
 	BalanceBefore   Decimal   `json:"balance_before" db:"balance_before"`
 	BalanceAfter    Decimal   `json:"balance_after" db:"balance_after"`
 	Currency        string    `json:"currency" db:"currency"`
-	ReferenceID     string    `json:"reference_id" db:"reference_id"`
-	ReferenceType   string    `json:"reference_type" db:"reference_type"`
-	IdempotencyKey  string    `json:"idempotency_key" db:"idempotency_key"`
-	Description     string    `json:"description,omitempty" db:"description"`
-	CreatedAt       time.Time `json:"created_at" db:"created_at"`
+	// Multi-currency fields
+	BaseAmount       Decimal `json:"base_amount" db:"base_amount"`
+	BaseCurrency     string  `json:"base_currency" db:"base_currency"`
+	PlayerAmount     Decimal `json:"player_amount" db:"player_amount"`
+	PlayerCurrency   string  `json:"player_currency" db:"player_currency"`
+	ReportAmount     Decimal `json:"report_amount" db:"report_amount"`
+	ReportCurrency   string  `json:"report_currency" db:"report_currency"`
+	BetAmount        Decimal `json:"bet_amount,omitempty" db:"bet_amount"`
+	BetCurrency      string  `json:"bet_currency,omitempty" db:"bet_currency"`
+	ExchangeRateInfo string  `json:"exchange_rate_info,omitempty" db:"exchange_rate_info"`
+	ReferenceID      string  `json:"reference_id" db:"reference_id"`
+	ReferenceType    string  `json:"reference_type" db:"reference_type"`
+	IdempotencyKey   string  `json:"idempotency_key" db:"idempotency_key"`
+	Description      string  `json:"description,omitempty" db:"description"`
+	CreatedAt        time.Time `json:"created_at" db:"created_at"`
 }
 
 // Bet represents a wager placed by a player.
+// Stake and payout are recorded in all four currency representations.
 type Bet struct {
 	ID         uuid.UUID      `json:"id" db:"id"`
 	PlayerID   uuid.UUID      `json:"player_id" db:"player_id"`
@@ -128,9 +144,23 @@ type Bet struct {
 	WalletID   uuid.UUID      `json:"wallet_id" db:"wallet_id"`
 	Stake      Decimal        `json:"stake" db:"stake"`
 	Currency   string         `json:"currency" db:"currency"`
-	Payout     Decimal        `json:"payout" db:"payout"`
-	Status     string         `json:"status" db:"status"`
-	BetType    string         `json:"bet_type" db:"bet_type"`
+	// Multi-currency stake
+	StakeBase       Decimal `json:"stake_base" db:"stake_base"`
+	BaseCurrency    string  `json:"base_currency" db:"base_currency"`
+	StakePlayer     Decimal `json:"stake_player" db:"stake_player"`
+	PlayerCurrency  string  `json:"player_currency" db:"player_currency"`
+	StakeReport     Decimal `json:"stake_report" db:"stake_report"`
+	ReportCurrency  string  `json:"report_currency" db:"report_currency"`
+	StakeBet        Decimal `json:"stake_bet" db:"stake_bet"`
+	BetCurrency     string  `json:"bet_currency" db:"bet_currency"`
+	Payout          Decimal `json:"payout" db:"payout"`
+	// Multi-currency payout (populated on settlement)
+	PayoutBase      Decimal `json:"payout_base,omitempty" db:"payout_base"`
+	PayoutPlayer    Decimal `json:"payout_player,omitempty" db:"payout_player"`
+	PayoutReport    Decimal `json:"payout_report,omitempty" db:"payout_report"`
+	PayoutBet       Decimal `json:"payout_bet,omitempty" db:"payout_bet"`
+	Status          string  `json:"status" db:"status"`
+	BetType         string  `json:"bet_type" db:"bet_type"`
 	Selections []BetSelection `json:"selections" db:"-"`
 	SettledAt  *time.Time     `json:"settled_at,omitempty" db:"settled_at"`
 	CreatedAt  time.Time      `json:"created_at" db:"created_at"`

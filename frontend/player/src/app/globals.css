@@ -3,29 +3,84 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #d4a017;
-  --brand-primary-hover: #b8860b;
-  --brand-secondary: #1a1a2e;
-  --brand-accent: #e6c200;
-  --brand-surface: #16213e;
-  --brand-surface-alt: #0f3460;
-  --brand-background: #0a0a1a;
-  --brand-text: #e0e0e0;
-  --brand-text-muted: #8a8aa0;
-  --brand-success: #00c853;
-  --brand-danger: #ff1744;
-  --brand-warning: #ff9100;
-  --font-heading: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --brand-primary: #0066FF;
+  --brand-primary-hover: #0052CC;
+  --brand-secondary: #1A1A2E;
+  --brand-accent: #00C853;
+  --brand-accent-hover: #00A844;
+  --brand-surface: #FFFFFF;
+  --brand-surface-alt: #F5F5F7;
+  --brand-background: #FFFFFF;
+  --brand-text: #1A1A2E;
+  --brand-text-muted: #4A4A68;
+  --brand-border: #E8E8ED;
+  --brand-success: #34C759;
+  --brand-danger: #FF3B30;
+  --brand-warning: #FF9500;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
   background-color: var(--brand-background);
   color: var(--brand-text);
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--brand-surface-alt) var(--brand-background);
+  scrollbar-color: #D1D1D6 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #D1D1D6;
+  border-radius: 3px;
+}
+
+/* Hide scrollbar for horizontal scrolling containers */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Focus visible styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for interactive elements */
+a, button {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Input styling overrides for light theme */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%234A4A68'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 36px;
 }

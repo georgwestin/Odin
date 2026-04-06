@@ -9,12 +9,29 @@ type brandContextKey struct{}
 
 // BrandConfig holds brand-specific configuration for a white-label instance.
 type BrandConfig struct {
-	Theme            string   `json:"theme"`
-	LogoURL          string   `json:"logo_url"`
-	SupportEmail     string   `json:"support_email"`
-	DefaultCurrency  string   `json:"default_currency"`
-	AllowedCountries []string `json:"allowed_countries"`
-	LicenseInfo      string   `json:"license_info"`
+	Theme             string            `json:"theme"`
+	LogoURL           string            `json:"logo_url"`
+	SupportEmail      string            `json:"support_email"`
+	DefaultCurrency   string            `json:"default_currency"`
+	BaseCurrency      string            `json:"base_currency"`
+	ReportingCurrency string            `json:"reporting_currency"`
+	AllowedCurrencies []string          `json:"allowed_currencies"`
+	AllowedCountries  []string          `json:"allowed_countries"`
+	LicenseInfo       string            `json:"license_info"`
+}
+
+// CurrencyConfig returns the brand's base and reporting currency settings.
+// Falls back to DefaultCurrency if base/reporting are not explicitly set.
+func (bc BrandConfig) CurrencyConfig() (baseCurrency, reportingCurrency string) {
+	baseCurrency = bc.BaseCurrency
+	if baseCurrency == "" {
+		baseCurrency = bc.DefaultCurrency
+	}
+	reportingCurrency = bc.ReportingCurrency
+	if reportingCurrency == "" {
+		reportingCurrency = baseCurrency
+	}
+	return
 }
 
 // BrandContextSet stores a Brand in the given context.

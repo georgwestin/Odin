@@ -107,7 +107,12 @@ func (r *Repository) UpdateWalletBalance(ctx context.Context, tx pgx.Tx, walletI
 func (r *Repository) CheckIdempotencyKey(ctx context.Context, tx pgx.Tx, key string) (*models.LedgerEntry, error) {
 	query := `
 		SELECT id, wallet_id, player_id, brand_id, transaction_type, amount,
-			balance_before, balance_after, currency, reference_id, reference_type,
+			balance_before, balance_after, currency,
+			base_amount, base_currency, player_amount, player_currency,
+			report_amount, report_currency,
+			COALESCE(bet_amount, 0), COALESCE(bet_currency, ''),
+			COALESCE(exchange_rate_info, ''),
+			reference_id, reference_type,
 			idempotency_key, description, created_at
 		FROM ledger_entries
 		WHERE idempotency_key = $1`
@@ -116,7 +121,12 @@ func (r *Repository) CheckIdempotencyKey(ctx context.Context, tx pgx.Tx, key str
 	err := tx.QueryRow(ctx, query, key).Scan(
 		&e.ID, &e.WalletID, &e.PlayerID, &e.BrandID,
 		&e.TransactionType, &e.Amount, &e.BalanceBefore, &e.BalanceAfter,
-		&e.Currency, &e.ReferenceID, &e.ReferenceType,
+		&e.Currency,
+		&e.BaseAmount, &e.BaseCurrency, &e.PlayerAmount, &e.PlayerCurrency,
+		&e.ReportAmount, &e.ReportCurrency,
+		&e.BetAmount, &e.BetCurrency,
+		&e.ExchangeRateInfo,
+		&e.ReferenceID, &e.ReferenceType,
 		&e.IdempotencyKey, &e.Description, &e.CreatedAt,
 	)
 	if err != nil {
@@ -132,14 +142,26 @@ func (r *Repository) CheckIdempotencyKey(ctx context.Context, tx pgx.Tx, key str
 func (r *Repository) InsertLedgerEntry(ctx context.Context, tx pgx.Tx, e *models.LedgerEntry) error {
 	query := `
 		INSERT INTO ledger_entries (id, wallet_id, player_id, brand_id, transaction_type, amount,
-			balance_before, balance_after, currency, reference_id, reference_type,
+			balance_before, balance_after, currency,
+			base_amount, base_currency, player_amount, player_currency,
+			report_amount, report_currency, bet_amount, bet_currency,
+			exchange_rate_info,
+			reference_id, reference_type,
 			idempotency_key, description, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
+			NULLIF($16, '0'), NULLIF($17, ''),
+			NULLIF($18, ''),
+			$19, $20, $21, $22, $23)`
 
 	_, err := tx.Exec(ctx, query,
 		e.ID, e.WalletID, e.PlayerID, e.BrandID,
 		e.TransactionType, e.Amount, e.BalanceBefore, e.BalanceAfter,
-		e.Currency, e.ReferenceID, e.ReferenceType,
+		e.Currency,
+		e.BaseAmount, e.BaseCurrency, e.PlayerAmount, e.PlayerCurrency,
+		e.ReportAmount, e.ReportCurrency,
+		string(e.BetAmount), string(e.BetCurrency),
+		e.ExchangeRateInfo,
+		e.ReferenceID, e.ReferenceType,
 		e.IdempotencyKey, e.Description, e.CreatedAt,
 	)
 	if err != nil {
@@ -157,7 +179,12 @@ func (r *Repository) ListTransactions(ctx context.Context, walletID uuid.UUID, c
 	if cursor != nil {
 		query := `
 			SELECT id, wallet_id, player_id, brand_id, transaction_type, amount,
-				balance_before, balance_after, currency, reference_id, reference_type,
+				balance_before, balance_after, currency,
+				base_amount, base_currency, player_amount, player_currency,
+				report_amount, report_currency,
+				COALESCE(bet_amount, 0), COALESCE(bet_currency, ''),
+				COALESCE(exchange_rate_info, ''),
+				reference_id, reference_type,
 				idempotency_key, description, created_at
 			FROM ledger_entries
 			WHERE wallet_id = $1
@@ -168,7 +195,12 @@ func (r *Repository) ListTransactions(ctx context.Context, walletID uuid.UUID, c
 	} else {
 		query := `
 			SELECT id, wallet_id, player_id, brand_id, transaction_type, amount,
-				balance_before, balance_after, currency, reference_id, reference_type,
+				balance_before, balance_after, currency,
+				base_amount, base_currency, player_amount, player_currency,
+				report_amount, report_currency,
+				COALESCE(bet_amount, 0), COALESCE(bet_currency, ''),
+				COALESCE(exchange_rate_info, ''),
+				reference_id, reference_type,
 				idempotency_key, description, created_at
 			FROM ledger_entries
 			WHERE wallet_id = $1
@@ -187,7 +219,12 @@ func (r *Repository) ListTransactions(ctx context.Context, walletID uuid.UUID, c
 		if err := rows.Scan(
 			&e.ID, &e.WalletID, &e.PlayerID, &e.BrandID,
 			&e.TransactionType, &e.Amount, &e.BalanceBefore, &e.BalanceAfter,
-			&e.Currency, &e.ReferenceID, &e.ReferenceType,
+			&e.Currency,
+			&e.BaseAmount, &e.BaseCurrency, &e.PlayerAmount, &e.PlayerCurrency,
+			&e.ReportAmount, &e.ReportCurrency,
+			&e.BetAmount, &e.BetCurrency,
+			&e.ExchangeRateInfo,
+			&e.ReferenceID, &e.ReferenceType,
 			&e.IdempotencyKey, &e.Description, &e.CreatedAt,
 		); err != nil {
 			return nil, fmt.Errorf("scan ledger entry: %w", err)

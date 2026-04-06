@@ -4,37 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { useBrand } from "@/components/BrandProvider";
 import type { ApiError } from "@/lib/api";
-
-const COUNTRIES = [
-  "United Kingdom",
-  "Germany",
-  "Sweden",
-  "Finland",
-  "Norway",
-  "Denmark",
-  "Netherlands",
-  "Malta",
-  "Ireland",
-  "Canada",
-  "Australia",
-  "New Zealand",
-  "Austria",
-  "Switzerland",
-  "Portugal",
-  "Spain",
-  "Italy",
-  "France",
-  "Belgium",
-  "Brazil",
-  "Japan",
-];
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
-  const brand = useBrand();
 
   const [form, setForm] = useState({
     email: "",
@@ -42,7 +16,7 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
     dateOfBirth: "",
-    country: "",
+    personnummer: "",
     acceptTerms: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -62,42 +36,45 @@ export default function RegisterPage() {
     const errs: Record<string, string> = {};
 
     if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errs.email = "Please enter a valid email address.";
+      errs.email = "Ange en giltig e-postadress.";
     }
 
     if (!form.username || form.username.length < 3) {
-      errs.username = "Username must be at least 3 characters.";
+      errs.username = "Anvandarnamn maste vara minst 3 tecken.";
     }
 
     if (!form.password || form.password.length < 8) {
-      errs.password = "Password must be at least 8 characters.";
+      errs.password = "Losenord maste vara minst 8 tecken.";
     }
 
     if (form.password !== form.confirmPassword) {
-      errs.confirmPassword = "Passwords do not match.";
+      errs.confirmPassword = "Losenorden matchar inte.";
     }
 
     if (!form.dateOfBirth) {
-      errs.dateOfBirth = "Date of birth is required.";
+      errs.dateOfBirth = "Fodelsedatum kravs.";
     } else {
       const dob = new Date(form.dateOfBirth);
       const today = new Date();
       let age = today.getFullYear() - dob.getFullYear();
       const monthDiff = today.getMonth() - dob.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < dob.getDate())
+      ) {
         age--;
       }
       if (age < 18) {
-        errs.dateOfBirth = "You must be at least 18 years old to register.";
+        errs.dateOfBirth = "Du maste vara minst 18 ar for att registrera dig.";
       }
     }
 
-    if (!form.country) {
-      errs.country = "Please select your country.";
+    if (!form.personnummer || !/^\d{6,8}-?\d{4}$/.test(form.personnummer)) {
+      errs.personnummer = "Ange ett giltigt personnummer (YYMMDD-XXXX).";
     }
 
     if (!form.acceptTerms) {
-      errs.acceptTerms = "You must accept the terms and conditions.";
+      errs.acceptTerms = "Du maste acceptera villkoren.";
     }
 
     setErrors(errs);
@@ -117,48 +94,55 @@ export default function RegisterPage() {
         password: form.password,
         username: form.username,
         dateOfBirth: form.dateOfBirth,
-        country: form.country,
+        country: "Sweden",
         acceptTerms: form.acceptTerms,
       });
       router.push("/");
     } catch (err) {
       const apiErr = err as ApiError;
-      setApiError(apiErr.message || "Registration failed. Please try again.");
+      setApiError(
+        apiErr.message || "Registreringen misslyckades. Forsok igen."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const inputClass = (field: string) =>
-    `w-full bg-brand-background border rounded-lg px-4 py-3 text-sm text-white placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-colors ${
+    `w-full bg-white border rounded-xl px-4 py-3 text-sm text-brand-text placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors ${
       errors[field]
-        ? "border-brand-danger/50"
-        : "border-white/10 focus:border-brand-primary/50"
+        ? "border-brand-danger/50 focus:border-brand-danger"
+        : "border-brand-border focus:border-brand-primary"
     }`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-brand-surface-alt">
       <div className="w-full max-w-lg">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-primary flex items-center justify-center font-heading font-extrabold text-black text-2xl">
-            {brand.name.charAt(0)}
-          </div>
-          <h1 className="font-heading text-2xl font-bold text-white">
-            Create Account
+          <Link href="/" className="inline-flex items-center gap-1 mb-6">
+            <span className="font-heading font-black text-3xl text-brand-secondary">
+              Swed
+            </span>
+            <span className="font-heading font-black text-3xl text-brand-primary">
+              bet
+            </span>
+          </Link>
+          <h1 className="font-heading text-2xl font-bold text-brand-text">
+            Skapa konto
           </h1>
           <p className="text-brand-text-muted text-sm mt-1">
-            Join {brand.name} and start playing
+            Ga med i Swedbet och borja spela idag
           </p>
         </div>
 
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-brand-surface rounded-2xl p-6 sm:p-8 border border-white/5"
+          className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-brand-border"
         >
           {apiError && (
-            <div className="mb-4 p-3 rounded-lg bg-brand-danger/10 border border-brand-danger/20 text-brand-danger text-sm">
+            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-brand-danger/20 text-brand-danger text-sm">
               {apiError}
             </div>
           )}
@@ -166,8 +150,11 @@ export default function RegisterPage() {
           <div className="space-y-4">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-brand-text-muted mb-1.5">
-                Email
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-brand-text mb-1.5"
+              >
+                E-post
               </label>
               <input
                 id="email"
@@ -175,7 +162,7 @@ export default function RegisterPage() {
                 autoComplete="email"
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
-                placeholder="you@example.com"
+                placeholder="din@email.se"
                 className={inputClass("email")}
               />
               {errors.email && (
@@ -185,8 +172,11 @@ export default function RegisterPage() {
 
             {/* Username */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-brand-text-muted mb-1.5">
-                Username
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-brand-text mb-1.5"
+              >
+                Anvandarnamn
               </label>
               <input
                 id="username"
@@ -194,19 +184,24 @@ export default function RegisterPage() {
                 autoComplete="username"
                 value={form.username}
                 onChange={(e) => updateField("username", e.target.value)}
-                placeholder="Choose a username"
+                placeholder="Valj ett anvandarnamn"
                 className={inputClass("username")}
               />
               {errors.username && (
-                <p className="text-xs text-brand-danger mt-1">{errors.username}</p>
+                <p className="text-xs text-brand-danger mt-1">
+                  {errors.username}
+                </p>
               )}
             </div>
 
             {/* Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-brand-text-muted mb-1.5">
-                  Password
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-brand-text mb-1.5"
+                >
+                  Losenord
                 </label>
                 <input
                   id="password"
@@ -214,36 +209,48 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   value={form.password}
                   onChange={(e) => updateField("password", e.target.value)}
-                  placeholder="Min 8 characters"
+                  placeholder="Minst 8 tecken"
                   className={inputClass("password")}
                 />
                 {errors.password && (
-                  <p className="text-xs text-brand-danger mt-1">{errors.password}</p>
+                  <p className="text-xs text-brand-danger mt-1">
+                    {errors.password}
+                  </p>
                 )}
               </div>
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-brand-text-muted mb-1.5">
-                  Confirm Password
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-brand-text mb-1.5"
+                >
+                  Bekrafta losenord
                 </label>
                 <input
                   id="confirmPassword"
                   type="password"
                   autoComplete="new-password"
                   value={form.confirmPassword}
-                  onChange={(e) => updateField("confirmPassword", e.target.value)}
-                  placeholder="Repeat password"
+                  onChange={(e) =>
+                    updateField("confirmPassword", e.target.value)
+                  }
+                  placeholder="Upprepa losenord"
                   className={inputClass("confirmPassword")}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-xs text-brand-danger mt-1">{errors.confirmPassword}</p>
+                  <p className="text-xs text-brand-danger mt-1">
+                    {errors.confirmPassword}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Date of Birth */}
             <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-brand-text-muted mb-1.5">
-                Date of Birth
+              <label
+                htmlFor="dob"
+                className="block text-sm font-medium text-brand-text mb-1.5"
+              >
+                Fodelsedatum
               </label>
               <input
                 id="dob"
@@ -260,34 +267,39 @@ export default function RegisterPage() {
                 className={inputClass("dateOfBirth")}
               />
               {errors.dateOfBirth && (
-                <p className="text-xs text-brand-danger mt-1">{errors.dateOfBirth}</p>
+                <p className="text-xs text-brand-danger mt-1">
+                  {errors.dateOfBirth}
+                </p>
               )}
               <p className="text-xs text-brand-text-muted mt-1">
-                You must be 18 or older to register.
+                Du maste vara 18 ar eller aldre for att registrera dig.
               </p>
             </div>
 
-            {/* Country */}
+            {/* Personnummer */}
             <div>
-              <label htmlFor="country" className="block text-sm font-medium text-brand-text-muted mb-1.5">
-                Country
-              </label>
-              <select
-                id="country"
-                value={form.country}
-                onChange={(e) => updateField("country", e.target.value)}
-                className={inputClass("country")}
+              <label
+                htmlFor="personnummer"
+                className="block text-sm font-medium text-brand-text mb-1.5"
               >
-                <option value="">Select your country</option>
-                {COUNTRIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              {errors.country && (
-                <p className="text-xs text-brand-danger mt-1">{errors.country}</p>
+                Personnummer
+              </label>
+              <input
+                id="personnummer"
+                type="text"
+                value={form.personnummer}
+                onChange={(e) => updateField("personnummer", e.target.value)}
+                placeholder="YYMMDD-XXXX"
+                className={inputClass("personnummer")}
+              />
+              {errors.personnummer && (
+                <p className="text-xs text-brand-danger mt-1">
+                  {errors.personnummer}
+                </p>
               )}
+              <p className="text-xs text-brand-text-muted mt-1">
+                Kravs for verifiering enligt svensk spellag.
+              </p>
             </div>
 
             {/* Terms */}
@@ -297,22 +309,30 @@ export default function RegisterPage() {
                   type="checkbox"
                   checked={form.acceptTerms}
                   onChange={(e) => updateField("acceptTerms", e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded border-white/20 bg-brand-background text-brand-primary focus:ring-brand-primary"
+                  className="mt-0.5 w-4 h-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
                 />
                 <span className="text-xs text-brand-text-muted leading-relaxed">
-                  I confirm I am at least 18 years old and I accept the{" "}
-                  <Link href="#" className="text-brand-primary hover:underline">
-                    Terms & Conditions
+                  Jag bekraftar att jag ar minst 18 ar och accepterar{" "}
+                  <Link
+                    href="#"
+                    className="text-brand-primary hover:underline"
+                  >
+                    Allmanna villkor
                   </Link>{" "}
-                  and{" "}
-                  <Link href="#" className="text-brand-primary hover:underline">
-                    Privacy Policy
+                  och{" "}
+                  <Link
+                    href="#"
+                    className="text-brand-primary hover:underline"
+                  >
+                    Integritetspolicyn
                   </Link>
                   .
                 </span>
               </label>
               {errors.acceptTerms && (
-                <p className="text-xs text-brand-danger mt-1">{errors.acceptTerms}</p>
+                <p className="text-xs text-brand-danger mt-1">
+                  {errors.acceptTerms}
+                </p>
               )}
             </div>
           </div>
@@ -320,19 +340,19 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 bg-brand-primary hover:bg-brand-primary-hover disabled:opacity-50 text-black font-bold py-3 rounded-lg transition-colors text-sm"
+            className="w-full mt-6 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-bold py-3 rounded-pill transition-colors text-sm"
           >
-            {loading ? "Creating Account..." : "Create Account"}
+            {loading ? "Skapar konto..." : "Skapa konto"}
           </button>
         </form>
 
         <p className="text-center mt-6 text-sm text-brand-text-muted">
-          Already have an account?{" "}
+          Har du redan ett konto?{" "}
           <Link
             href="/login"
-            className="text-brand-primary hover:text-brand-accent font-medium"
+            className="text-brand-primary hover:text-brand-primary-hover font-semibold"
           >
-            Log In
+            Logga in
           </Link>
         </p>
       </div>

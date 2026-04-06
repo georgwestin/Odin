@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
+import { GameCard } from "@/components/GameCard";
 
 interface Game {
   id: string;
@@ -16,13 +16,13 @@ interface Game {
 }
 
 const CATEGORIES = [
-  { id: "all", label: "All Games" },
+  { id: "all", label: "Alla spel" },
+  { id: "popular", label: "Populara" },
+  { id: "new", label: "Nya spel" },
   { id: "slots", label: "Slots" },
-  { id: "table", label: "Table Games" },
+  { id: "table", label: "Bordsspel" },
   { id: "live", label: "Live Casino" },
-  { id: "jackpot", label: "Jackpots" },
-  { id: "new", label: "New" },
-  { id: "popular", label: "Popular" },
+  { id: "jackpot", label: "Jackpottar" },
 ];
 
 const PLACEHOLDER_GAMES: Game[] = [
@@ -52,6 +52,7 @@ export default function CasinoPage() {
   const [category, setCategory] = useState(initialCategory);
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     api
@@ -93,143 +94,115 @@ export default function CasinoPage() {
   }, [games, category, search, providerFilter]);
 
   return (
-    <div className="min-h-screen max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold text-white mb-2">
-          Casino
-        </h1>
-        <p className="text-brand-text-muted">
-          Browse our collection of {games.length}+ games
-        </p>
-      </div>
-
-      {/* Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-text-muted"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search games or providers..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-brand-surface border border-white/10 rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-          />
-        </div>
-        <select
-          value={providerFilter}
-          onChange={(e) => setProviderFilter(e.target.value)}
-          className="bg-brand-surface border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-        >
-          <option value="all">All Providers</option>
-          {providers.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Category Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setCategory(cat.id)}
-            className={`shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-              category === cat.id
-                ? "bg-brand-primary text-black"
-                : "bg-brand-surface text-brand-text-muted hover:text-white hover:bg-brand-surface-alt"
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Game Grid */}
-      {filtered.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-brand-text-muted text-lg">No games found.</p>
-          <p className="text-brand-text-muted text-sm mt-1">
-            Try adjusting your search or filters.
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-heading text-3xl font-bold text-brand-text mb-2">
+            Casino
+          </h1>
+          <p className="text-brand-text-muted">
+            Utforska vart utbud av {games.length}+ spel
           </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {filtered.map((game) => (
-            <Link
-              key={game.id}
-              href={`/casino/${game.id}`}
-              className="group relative bg-brand-surface rounded-xl overflow-hidden hover:ring-2 hover:ring-brand-primary/50 transition-all"
+
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <svg
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-text-muted"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
             >
-              {/* Thumbnail */}
-              <div className="aspect-[3/4] bg-gradient-to-br from-brand-surface-alt to-brand-secondary flex items-center justify-center relative">
-                {game.thumbnailUrl ? (
-                  <img
-                    src={game.thumbnailUrl}
-                    alt={game.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="text-center p-3">
-                    <div className="w-10 h-10 mx-auto mb-1 rounded-lg bg-brand-primary/20 flex items-center justify-center">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-brand-primary">
-                        <rect x="3" y="3" width="18" height="18" rx="3" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <circle cx="15.5" cy="8.5" r="1.5" />
-                        <circle cx="8.5" cy="15.5" r="1.5" />
-                        <circle cx="15.5" cy="15.5" r="1.5" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Sok spel eller leverantor..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-white border border-brand-border rounded-xl pl-10 pr-4 py-3 text-sm text-brand-text placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary"
+            />
+          </div>
+          <select
+            value={providerFilter}
+            onChange={(e) => setProviderFilter(e.target.value)}
+            className="bg-white border border-brand-border rounded-xl px-4 py-3 text-sm text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary"
+          >
+            <option value="all">Alla leverantorer</option>
+            {providers.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </div>
 
-                {/* Badges */}
-                <div className="absolute top-2 left-2 flex gap-1">
-                  {game.isNew && (
-                    <span className="bg-brand-success text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      NEW
-                    </span>
-                  )}
-                  {game.isPopular && (
-                    <span className="bg-brand-warning text-black text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      HOT
-                    </span>
-                  )}
-                </div>
-
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="bg-brand-primary text-black font-bold text-sm px-6 py-2 rounded-lg transform scale-90 group-hover:scale-100 transition-transform">
-                    Play
-                  </span>
-                </div>
-              </div>
-
-              {/* Info */}
-              <div className="p-3">
-                <p className="text-sm font-semibold text-white truncate">
-                  {game.name}
-                </p>
-                <p className="text-xs text-brand-text-muted">{game.provider}</p>
-              </div>
-            </Link>
+        {/* Category Tabs */}
+        <div className="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => {
+                setCategory(cat.id);
+                setVisibleCount(12);
+              }}
+              className={`shrink-0 px-5 py-2.5 rounded-pill text-sm font-medium transition-colors border ${
+                category === cat.id
+                  ? "bg-brand-primary text-white border-brand-primary"
+                  : "bg-white text-brand-text-muted border-brand-border hover:text-brand-text hover:border-brand-text-muted"
+              }`}
+            >
+              {cat.label}
+            </button>
           ))}
         </div>
-      )}
+
+        {/* Game Grid */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-brand-text-muted text-lg">
+              Inga spel hittades.
+            </p>
+            <p className="text-brand-text-muted text-sm mt-1">
+              Prova att andra din sokning eller dina filter.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {filtered.slice(0, visibleCount).map((game) => (
+                <GameCard
+                  key={game.id}
+                  id={game.id}
+                  name={game.name}
+                  provider={game.provider}
+                  thumbnailUrl={game.thumbnailUrl}
+                  isNew={game.isNew}
+                  isPopular={game.isPopular}
+                />
+              ))}
+            </div>
+
+            {/* Load More */}
+            {visibleCount < filtered.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 12)}
+                  className="bg-white border border-brand-border hover:border-brand-primary hover:text-brand-primary text-brand-text-muted font-semibold text-sm px-8 py-3 rounded-pill transition-colors"
+                >
+                  Visa fler spel ({filtered.length - visibleCount} kvar)
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

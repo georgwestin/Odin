@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import { useBrand } from "@/components/BrandProvider";
+import { GameCard } from "@/components/GameCard";
+import { SportEventCard } from "@/components/SportEventCard";
+import { QuickDeposit } from "@/components/QuickDeposit";
+import { ResponsibleGambling } from "@/components/ResponsibleGambling";
 
 interface FeaturedGame {
   id: string;
@@ -11,6 +14,8 @@ interface FeaturedGame {
   provider: string;
   thumbnailUrl: string;
   category: string;
+  isNew?: boolean;
+  isPopular?: boolean;
 }
 
 interface LiveEvent {
@@ -33,82 +38,79 @@ interface LiveEvent {
 }
 
 const PLACEHOLDER_GAMES: FeaturedGame[] = [
-  { id: "1", name: "Starburst", provider: "NetEnt", thumbnailUrl: "", category: "slots" },
-  { id: "2", name: "Book of Dead", provider: "Play'n GO", thumbnailUrl: "", category: "slots" },
+  { id: "1", name: "Starburst", provider: "NetEnt", thumbnailUrl: "", category: "slots", isPopular: true },
+  { id: "2", name: "Book of Dead", provider: "Play'n GO", thumbnailUrl: "", category: "slots", isPopular: true },
   { id: "3", name: "Mega Moolah", provider: "Microgaming", thumbnailUrl: "", category: "slots" },
   { id: "4", name: "Gonzo's Quest", provider: "NetEnt", thumbnailUrl: "", category: "slots" },
-  { id: "5", name: "Lightning Roulette", provider: "Evolution", thumbnailUrl: "", category: "live" },
-  { id: "6", name: "Crazy Time", provider: "Evolution", thumbnailUrl: "", category: "live" },
+  { id: "5", name: "Sweet Bonanza", provider: "Pragmatic Play", thumbnailUrl: "", category: "slots", isNew: true },
+  { id: "6", name: "Gates of Olympus", provider: "Pragmatic Play", thumbnailUrl: "", category: "slots", isNew: true },
+  { id: "7", name: "Lightning Roulette", provider: "Evolution", thumbnailUrl: "", category: "live", isPopular: true },
+  { id: "8", name: "Crazy Time", provider: "Evolution", thumbnailUrl: "", category: "live", isPopular: true },
+  { id: "9", name: "Dead or Alive 2", provider: "NetEnt", thumbnailUrl: "", category: "slots" },
+  { id: "10", name: "Reactoonz", provider: "Play'n GO", thumbnailUrl: "", category: "slots" },
 ];
 
 const PLACEHOLDER_EVENTS: LiveEvent[] = [
   {
     id: "e1",
-    sportName: "Football",
-    competitionName: "Premier League",
-    homeTeam: "Arsenal",
-    awayTeam: "Chelsea",
+    sportName: "Fotboll",
+    competitionName: "Allsvenskan",
+    homeTeam: "Malmo FF",
+    awayTeam: "AIK",
     score: { home: 1, away: 0 },
     startTime: new Date().toISOString(),
     isLive: true,
-    markets: [
-      {
-        name: "Match Result",
-        selections: [
-          { id: "s1", name: "Arsenal", odds: 1.65 },
-          { id: "s2", name: "Draw", odds: 3.8 },
-          { id: "s3", name: "Chelsea", odds: 5.2 },
-        ],
-      },
-    ],
+    markets: [{ name: "1X2", selections: [{ id: "s1", name: "1", odds: 1.85 }, { id: "s2", name: "X", odds: 3.6 }, { id: "s3", name: "2", odds: 4.2 }] }],
   },
   {
     id: "e2",
-    sportName: "Tennis",
-    competitionName: "ATP Australian Open",
-    homeTeam: "Djokovic",
-    awayTeam: "Alcaraz",
-    startTime: new Date(Date.now() + 3600000).toISOString(),
-    isLive: false,
-    markets: [
-      {
-        name: "Match Winner",
-        selections: [
-          { id: "s4", name: "Djokovic", odds: 2.1 },
-          { id: "s5", name: "Alcaraz", odds: 1.75 },
-        ],
-      },
-    ],
+    sportName: "Ishockey",
+    competitionName: "SHL",
+    homeTeam: "Farjestad",
+    awayTeam: "Frolunda",
+    score: { home: 3, away: 2 },
+    startTime: new Date().toISOString(),
+    isLive: true,
+    markets: [{ name: "1X2", selections: [{ id: "s4", name: "1", odds: 2.1 }, { id: "s5", name: "X", odds: 4.0 }, { id: "s6", name: "2", odds: 2.8 }] }],
   },
   {
     id: "e3",
-    sportName: "Basketball",
-    competitionName: "NBA",
-    homeTeam: "Lakers",
-    awayTeam: "Celtics",
-    score: { home: 88, away: 92 },
-    startTime: new Date().toISOString(),
-    isLive: true,
-    markets: [
-      {
-        name: "Match Winner",
-        selections: [
-          { id: "s6", name: "Lakers", odds: 2.35 },
-          { id: "s7", name: "Celtics", odds: 1.55 },
-        ],
-      },
-    ],
+    sportName: "Tennis",
+    competitionName: "ATP Stockholm Open",
+    homeTeam: "Ruud",
+    awayTeam: "Rune",
+    startTime: new Date(Date.now() + 3600000).toISOString(),
+    isLive: false,
+    markets: [{ name: "Vinnare", selections: [{ id: "s7", name: "Ruud", odds: 1.75 }, { id: "s8", name: "Rune", odds: 2.05 }] }],
+  },
+  {
+    id: "e4",
+    sportName: "Fotboll",
+    competitionName: "Premier League",
+    homeTeam: "Arsenal",
+    awayTeam: "Chelsea",
+    startTime: new Date(Date.now() + 7200000).toISOString(),
+    isLive: false,
+    markets: [{ name: "1X2", selections: [{ id: "s9", name: "1", odds: 1.65 }, { id: "s10", name: "X", odds: 3.8 }, { id: "s11", name: "2", odds: 5.2 }] }],
   },
 ];
 
+const CATEGORIES = [
+  { id: "popular", label: "Populara" },
+  { id: "new", label: "Nya" },
+  { id: "slots", label: "Slots" },
+  { id: "table", label: "Bordsspel" },
+  { id: "live", label: "Live Casino" },
+];
+
 export default function HomePage() {
-  const brand = useBrand();
   const [games, setGames] = useState<FeaturedGame[]>(PLACEHOLDER_GAMES);
   const [events, setEvents] = useState<LiveEvent[]>(PLACEHOLDER_EVENTS);
+  const [activeCategory, setActiveCategory] = useState("popular");
 
   useEffect(() => {
     api
-      .get<{ items: FeaturedGame[] }>("/casino/games?featured=true&limit=6")
+      .get<{ items: FeaturedGame[] }>("/casino/games?featured=true&limit=10")
       .then((res) => setGames(res.items))
       .catch(() => {});
 
@@ -118,233 +120,359 @@ export default function HomePage() {
       .catch(() => {});
   }, []);
 
+  // Filter games by category (client-side for demo)
+  const filteredGames = games.filter((g) => {
+    if (activeCategory === "popular") return g.isPopular;
+    if (activeCategory === "new") return g.isNew;
+    return g.category === activeCategory;
+  });
+
+  const displayGames = filteredGames.length > 0 ? filteredGames : games.slice(0, 5);
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-secondary via-brand-background to-brand-surface-alt">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--brand-primary)_0%,_transparent_50%)] opacity-10" />
-        <div className="relative max-w-7xl mx-auto px-4 py-20 sm:py-32">
-          <div className="max-w-2xl">
-            <h1 className="font-heading text-4xl sm:text-6xl font-extrabold text-white leading-tight">
-              Your Game.{" "}
-              <span className="text-brand-primary">Your Rules.</span>
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-secondary via-[#1e2a4a] to-brand-primary/90">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(0,102,255,0.3)_0%,_transparent_60%)]" />
+        <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
+          <div className="max-w-xl">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+              Valkommen till{" "}
+              <span className="text-brand-accent">Swedbet</span>
             </h1>
-            <p className="mt-4 text-lg sm:text-xl text-brand-text-muted max-w-lg">
-              Casino slots, live dealers, and sports betting -- all in one
-              platform. Welcome to {brand.name}.
+            <p className="mt-4 text-lg sm:text-xl text-white/70 max-w-md">
+              Det smarta spelbolaget. Casino, betting och live casino med snabba
+              uttag.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              {brand.features.casino && (
-                <Link
-                  href="/casino"
-                  className="bg-brand-primary hover:bg-brand-primary-hover text-black font-bold px-8 py-3 rounded-xl transition-colors text-sm"
-                >
-                  Play Casino
-                </Link>
-              )}
-              {brand.features.sports && (
-                <Link
-                  href="/sports"
-                  className="bg-white/10 hover:bg-white/15 text-white font-semibold px-8 py-3 rounded-xl transition-colors border border-white/10 text-sm"
-                >
-                  Bet on Sports
-                </Link>
-              )}
+            <div className="mt-8">
+              <QuickDeposit />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Games */}
-      {brand.features.casino && (
-        <section className="max-w-7xl mx-auto px-4 py-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-heading text-2xl font-bold text-white">
-              Featured Games
-            </h2>
-            <Link
-              href="/casino"
-              className="text-brand-primary hover:text-brand-accent text-sm font-medium"
-            >
-              View All
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {games.map((game) => (
-              <Link
-                key={game.id}
-                href={`/casino/${game.id}`}
-                className="group relative bg-brand-surface rounded-xl overflow-hidden hover:ring-2 hover:ring-brand-primary/50 transition-all"
-              >
-                <div className="aspect-[3/4] bg-gradient-to-br from-brand-surface-alt to-brand-secondary flex items-center justify-center">
-                  {game.thumbnailUrl ? (
-                    <img
-                      src={game.thumbnailUrl}
-                      alt={game.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 mx-auto mb-2 rounded-lg bg-brand-primary/20 flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-brand-primary">
-                          <rect x="3" y="3" width="18" height="18" rx="3" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <circle cx="15.5" cy="8.5" r="1.5" />
-                          <circle cx="8.5" cy="15.5" r="1.5" />
-                          <circle cx="15.5" cy="15.5" r="1.5" />
-                          <circle cx="12" cy="12" r="1.5" />
-                        </svg>
-                      </div>
-                      <p className="text-xs text-brand-text-muted">
-                        {game.provider}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                <div className="p-3">
-                  <p className="text-sm font-semibold text-white truncate">
-                    {game.name}
-                  </p>
-                  <p className="text-xs text-brand-text-muted">
-                    {game.provider}
-                  </p>
-                </div>
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="bg-brand-primary text-black font-bold text-sm px-6 py-2 rounded-lg">
-                    Play Now
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Popular Games - Horizontal Scroll */}
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-heading text-2xl font-bold text-brand-text">
+            Populara spel
+          </h2>
+          <Link
+            href="/casino"
+            className="text-brand-primary hover:text-brand-primary-hover text-sm font-semibold"
+          >
+            Visa alla
+          </Link>
+        </div>
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4">
+          {games.slice(0, 8).map((game) => (
+            <div key={game.id} className="shrink-0 w-40 sm:w-48">
+              <GameCard
+                id={game.id}
+                name={game.name}
+                provider={game.provider}
+                thumbnailUrl={game.thumbnailUrl}
+                isNew={game.isNew}
+                isPopular={game.isPopular}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {/* Live Events */}
-      {brand.features.sports && (
-        <section className="max-w-7xl mx-auto px-4 py-12">
+      {/* Category Tabs + Game Grid */}
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        {/* Category Tabs */}
+        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`shrink-0 px-5 py-2.5 rounded-pill text-sm font-medium transition-colors border ${
+                activeCategory === cat.id
+                  ? "bg-brand-primary text-white border-brand-primary"
+                  : "bg-white text-brand-text-muted border-brand-border hover:text-brand-text hover:border-brand-text-muted"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Game Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+          {displayGames.map((game) => (
+            <GameCard
+              key={game.id}
+              id={game.id}
+              name={game.name}
+              provider={game.provider}
+              thumbnailUrl={game.thumbnailUrl}
+              isNew={game.isNew}
+              isPopular={game.isPopular}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Sports Betting Preview - Dagens matcher */}
+      <section className="bg-brand-surface-alt py-12">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-heading text-2xl font-bold text-white">
-              Live & Upcoming
+            <h2 className="font-heading text-2xl font-bold text-brand-text">
+              Dagens matcher
             </h2>
             <Link
               href="/sports"
-              className="text-brand-primary hover:text-brand-accent text-sm font-medium"
+              className="text-brand-primary hover:text-brand-primary-hover text-sm font-semibold"
             >
-              All Sports
+              Alla sportevent
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             {events.map((event) => (
-              <Link
+              <SportEventCard
                 key={event.id}
-                href={`/sports/${event.id}`}
-                className="bg-brand-surface rounded-xl p-4 hover:ring-1 hover:ring-brand-primary/30 transition-all"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-brand-text-muted">
-                    {event.sportName} - {event.competitionName}
-                  </span>
-                  {event.isLive ? (
-                    <span className="flex items-center gap-1.5 text-xs font-semibold text-brand-danger">
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-danger animate-pulse" />
-                      LIVE
-                    </span>
-                  ) : (
-                    <span className="text-xs text-brand-text-muted">
-                      {new Date(event.startTime).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">
-                      {event.homeTeam}
-                    </p>
-                    <p className="text-sm font-semibold text-white">
-                      {event.awayTeam}
-                    </p>
-                  </div>
-                  {event.score && (
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-brand-primary">
-                        {event.score.home}
-                      </p>
-                      <p className="text-sm font-bold text-brand-primary">
-                        {event.score.away}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {event.markets[0] && (
-                  <div className="flex gap-2">
-                    {event.markets[0].selections.map((sel) => (
-                      <div
-                        key={sel.id}
-                        className="flex-1 bg-brand-surface-alt/60 rounded-lg py-2 text-center"
-                      >
-                        <p className="text-[10px] text-brand-text-muted truncate px-1">
-                          {sel.name}
-                        </p>
-                        <p className="text-sm font-bold text-brand-primary">
-                          {sel.odds.toFixed(2)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Link>
+                id={event.id}
+                sportName={event.sportName}
+                competitionName={event.competitionName}
+                homeTeam={event.homeTeam}
+                awayTeam={event.awayTeam}
+                score={event.score}
+                startTime={event.startTime}
+                isLive={event.isLive}
+                markets={event.markets}
+              />
             ))}
-          </div>
-        </section>
-      )}
-
-      {/* Promo Banner */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="bg-gradient-to-r from-brand-primary/20 via-brand-surface to-brand-primary/10 rounded-2xl p-8 sm:p-12 border border-brand-primary/20">
-          <div className="max-w-lg">
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-white mb-3">
-              Welcome Bonus
-            </h2>
-            <p className="text-brand-text-muted mb-6">
-              Get up to 100% on your first deposit plus free spins on selected
-              slots. Start your journey with {brand.name} today.
-            </p>
-            <Link
-              href="/register"
-              className="inline-block bg-brand-primary hover:bg-brand-primary-hover text-black font-bold px-8 py-3 rounded-xl transition-colors text-sm"
-            >
-              Claim Now
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 mt-12">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-text-muted">
-            <p>{brand.licenseText}</p>
-            <div className="flex gap-6">
-              <Link href="#" className="hover:text-white transition-colors">
-                Terms
-              </Link>
-              <Link href="#" className="hover:text-white transition-colors">
-                Privacy
-              </Link>
-              <Link href="#" className="hover:text-white transition-colors">
-                Responsible Gambling
-              </Link>
-              <a
-                href={`mailto:${brand.supportEmail}`}
-                className="hover:text-white transition-colors"
+      {/* Provider Logos */}
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <h2 className="font-heading text-lg font-bold text-brand-text text-center mb-8">
+          Spelleverantorer
+        </h2>
+        <div className="flex flex-wrap items-center justify-center gap-8">
+          {["NetEnt", "Evolution", "Pragmatic Play", "Play'n GO", "Microgaming", "Yggdrasil", "Red Tiger", "Big Time Gaming"].map(
+            (provider) => (
+              <div
+                key={provider}
+                className="px-5 py-3 rounded-xl border border-brand-border bg-white text-sm font-medium text-brand-text-muted"
               >
-                Contact
+                {provider}
+              </div>
+            )
+          )}
+        </div>
+      </section>
+
+      {/* Varfor Swedbet */}
+      <section className="bg-brand-surface-alt py-16">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="font-heading text-2xl font-bold text-brand-text text-center mb-10">
+            Varfor Swedbet?
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {/* Card 1 */}
+            <div className="bg-white rounded-2xl p-6 shadow-card text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-primary/10 flex items-center justify-center">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-brand-primary"
+                >
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+              </div>
+              <h3 className="font-heading text-lg font-bold text-brand-text mb-2">
+                Snabba uttag
+              </h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">
+                Fa dina vinster direkt med Swish och Trustly. Uttag bearbetas
+                inom minuter, inte dagar.
+              </p>
+            </div>
+            {/* Card 2 */}
+            <div className="bg-white rounded-2xl p-6 shadow-card text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-accent/10 flex items-center justify-center">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-brand-accent"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3 className="font-heading text-lg font-bold text-brand-text mb-2">
+                Svenskt spelbolag
+              </h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">
+                Licensierat av Spelinspektionen. Tryggt, sakert och fullt
+                lagligt for svenska spelare.
+              </p>
+            </div>
+            {/* Card 3 */}
+            <div className="bg-white rounded-2xl p-6 shadow-card text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-warning/10 flex items-center justify-center">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-brand-warning"
+                >
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+              <h3 className="font-heading text-lg font-bold text-brand-text mb-2">
+                Basta spelen
+              </h3>
+              <p className="text-sm text-brand-text-muted leading-relaxed">
+                Over 2000 spel fran varldens basta leverantorer. Slots, live
+                casino, bordsspel och jackpottar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Methods */}
+      <section className="max-w-7xl mx-auto px-4 py-10">
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          {["Swish", "Trustly", "Visa", "Mastercard", "Bankoverfor."].map(
+            (method) => (
+              <div
+                key={method}
+                className="px-5 py-2.5 rounded-pill border border-brand-border text-sm font-medium text-brand-text-muted"
+              >
+                {method}
+              </div>
+            )
+          )}
+        </div>
+      </section>
+
+      {/* Responsible Gambling */}
+      <ResponsibleGambling />
+
+      {/* Footer */}
+      <footer className="bg-brand-secondary text-white/60">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <div className="grid sm:grid-cols-4 gap-8 mb-8">
+            {/* Brand */}
+            <div>
+              <div className="flex items-center gap-1 mb-3">
+                <span className="font-heading font-black text-xl text-white">
+                  Swed
+                </span>
+                <span className="font-heading font-black text-xl text-brand-primary">
+                  bet
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed">
+                Det smarta spelbolaget for svenska spelare. Licensierat av
+                Spelinspektionen.
+              </p>
+            </div>
+            {/* Casino */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-3">Casino</h4>
+              <div className="space-y-2">
+                <Link href="/casino" className="block text-sm hover:text-white transition-colors">
+                  Alla spel
+                </Link>
+                <Link href="/casino?category=slots" className="block text-sm hover:text-white transition-colors">
+                  Slots
+                </Link>
+                <Link href="/casino?category=live" className="block text-sm hover:text-white transition-colors">
+                  Live Casino
+                </Link>
+                <Link href="/casino?category=table" className="block text-sm hover:text-white transition-colors">
+                  Bordsspel
+                </Link>
+              </div>
+            </div>
+            {/* Betting */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-3">
+                Betting
+              </h4>
+              <div className="space-y-2">
+                <Link href="/sports" className="block text-sm hover:text-white transition-colors">
+                  Alla sporter
+                </Link>
+                <Link href="/sports?sport=football" className="block text-sm hover:text-white transition-colors">
+                  Fotboll
+                </Link>
+                <Link href="/sports?sport=hockey" className="block text-sm hover:text-white transition-colors">
+                  Ishockey
+                </Link>
+                <Link href="/sports?sport=tennis" className="block text-sm hover:text-white transition-colors">
+                  Tennis
+                </Link>
+              </div>
+            </div>
+            {/* Support */}
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-3">
+                Support
+              </h4>
+              <div className="space-y-2">
+                <Link href="#" className="block text-sm hover:text-white transition-colors">
+                  Hjalpcenter
+                </Link>
+                <Link href="#" className="block text-sm hover:text-white transition-colors">
+                  Kontakta oss
+                </Link>
+                <Link href="#" className="block text-sm hover:text-white transition-colors">
+                  Villkor
+                </Link>
+                <Link href="#" className="block text-sm hover:text-white transition-colors">
+                  Integritetspolicy
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <p>
+              Swedbet drivs under svensk spellicens utfardad av
+              Spelinspektionen. 18+ | Spela ansvarsfullt.
+            </p>
+            <div className="flex gap-4">
+              <a
+                href="https://www.stodlinjen.se"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white"
+              >
+                stodlinjen.se
+              </a>
+              <a
+                href="https://www.spelpaus.se"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white"
+              >
+                spelpaus.se
+              </a>
+              <a
+                href="mailto:support@swedbet.com"
+                className="hover:text-white"
+              >
+                support@swedbet.com
               </a>
             </div>
           </div>

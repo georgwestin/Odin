@@ -76,11 +76,10 @@ export function LiveOdds({
       };
 
       ws.onerror = () => {
-        // WebSocket error, will attempt reconnect via onclose
+        // WebSocket error
       };
 
       ws.onclose = () => {
-        // Reconnect after delay
         setTimeout(() => {
           if (wsRef.current === ws) {
             const newWs = new WebSocket(wsUrl);
@@ -116,11 +115,11 @@ export function LiveOdds({
     <button
       onClick={handleClick}
       className={`
-        relative px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200
+        relative px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 border
         ${
           isSelected
-            ? "bg-brand-primary text-black ring-2 ring-brand-primary"
-            : "bg-brand-surface-alt/60 text-white hover:bg-brand-surface-alt"
+            ? "bg-brand-primary text-white border-brand-primary shadow-card"
+            : "bg-white text-brand-primary border-brand-border hover:bg-brand-primary/5 hover:border-brand-primary/30"
         }
         ${direction === "up" ? "animate-odds-up" : ""}
         ${direction === "down" ? "animate-odds-down" : ""}

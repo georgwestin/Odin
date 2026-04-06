@@ -15,6 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/odin-platform/odin/cmd/betting/repository"
+	"github.com/odin-platform/odin/internal/currency"
 	"github.com/odin-platform/odin/internal/kafka"
 	"github.com/odin-platform/odin/internal/models"
 )
@@ -31,8 +32,11 @@ const (
 // WalletTransferRequest is the payload sent to the Wallet Service.
 type WalletTransferRequest struct {
 	PlayerID       string `json:"player_id"`
+	BrandID        string `json:"brand_id"`
 	Amount         string `json:"amount"`
-	Currency       string `json:"currency"`
+	Currency       string `json:"currency"`         // Source currency of the amount.
+	BetCurrency    string `json:"bet_currency"`     // Currency the bet was placed in.
+	PlayerCurrency string `json:"player_currency"`  // Player's chosen currency.
 	Type           string `json:"type"`
 	ReferenceID    string `json:"reference_id"`
 	ReferenceType  string `json:"reference_type"`
@@ -48,10 +52,11 @@ type WalletTransferResponse struct {
 
 // PlaceBetRequest is the input for placing a bet.
 type PlaceBetRequest struct {
-	Stake      string             `json:"stake"`
-	Currency   string             `json:"currency"`
-	BetType    string             `json:"bet_type"`
-	Selections []SelectionRequest `json:"selections"`
+	Stake          string             `json:"stake"`
+	Currency       string             `json:"currency"`         // betCurrency: the currency the player is betting in.
+	PlayerCurrency string             `json:"player_currency"`  // Player's account currency.
+	BetType        string             `json:"bet_type"`
+	Selections     []SelectionRequest `json:"selections"`
 }
 
 // SelectionRequest represents a single selection in a bet request.
@@ -73,12 +78,16 @@ type CachedSelection struct {
 
 // BetPlacedEvent is published to Kafka on successful bet placement.
 type BetPlacedEvent struct {
-	BetID    string `json:"bet_id"`
-	PlayerID string `json:"player_id"`
-	BrandID  string `json:"brand_id"`
-	Stake    string `json:"stake"`
-	Currency string `json:"currency"`
-	BetType  string `json:"bet_type"`
+	BetID          string `json:"bet_id"`
+	PlayerID       string `json:"player_id"`
+	BrandID        string `json:"brand_id"`
+	Stake          string `json:"stake"`
+	Currency       string `json:"currency"`
+	BetCurrency    string `json:"bet_currency"`
+	PlayerCurrency string `json:"player_currency"`
+	BaseCurrency   string `json:"base_currency"`
+	StakeBase      string `json:"stake_base"`
+	BetType        string `json:"bet_type"`
 }
 
 // BetSettledEvent is published to Kafka after bet settlement.
@@ -103,12 +112,13 @@ type SelectionResult struct {
 }
 
 type Service struct {
-	repo       *repository.Repository
-	rdb        *redis.Client
-	producer   *kafka.Producer
-	walletURL  string
-	httpClient *http.Client
-	logger     *zap.Logger
+	repo              *repository.Repository
+	rdb               *redis.Client
+	producer          *kafka.Producer
+	walletURL         string
+	httpClient        *http.Client
+	currencyConverter *currency.Converter
+	logger            *zap.Logger
 }
 
 func New(
@@ -126,7 +136,8 @@ func New(
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
-		logger: logger,
+		currencyConverter: currency.NewConverter(),
+		logger:            logger,
 	}
 }
 
@@ -225,22 +236,46 @@ func (s *Service) PlaceBet(ctx context.Context, playerID, brandID uuid.UUID, req
 		return nil, fmt.Errorf("weekly stake limit exceeded")
 	}
 
-	// Create the bet object.
+	// Create the bet object with multi-currency amounts.
 	betID := uuid.New()
 	now := time.Now().UTC()
 	potentialPayout := stake * combinedOdds
 
+	// betCurrency is the currency the player chose to bet in.
+	betCurrency := req.Currency
+	playerCurrency := req.PlayerCurrency
+	if playerCurrency == "" {
+		playerCurrency = betCurrency
+	}
+
+	// Convert stake to all four currencies.
+	// TODO: In production, resolve brand base/reporting currencies from brand config in context.
+	baseCurrency := "EUR"  // Brand base currency (resolved per-brand).
+	reportCurrency := "EUR" // Brand reporting currency.
+
+	stakeBase, _ := s.currencyConverter.Convert(req.Stake, betCurrency, baseCurrency)
+	stakePlayer, _ := s.currencyConverter.Convert(req.Stake, betCurrency, playerCurrency)
+	stakeReport, _ := s.currencyConverter.Convert(req.Stake, betCurrency, reportCurrency)
+
 	bet := &models.Bet{
-		ID:        betID,
-		PlayerID:  playerID,
-		BrandID:   brandID,
-		Stake:     models.Decimal(req.Stake),
-		Currency:  req.Currency,
-		Payout:    models.Decimal(fmt.Sprintf("%.2f", potentialPayout)),
-		Status:    models.BetStatusPending,
-		BetType:   req.BetType,
-		CreatedAt: now,
-		UpdatedAt: now,
+		ID:             betID,
+		PlayerID:       playerID,
+		BrandID:        brandID,
+		Stake:          models.Decimal(req.Stake),
+		Currency:       betCurrency,
+		StakeBase:      models.Decimal(stakeBase),
+		BaseCurrency:   baseCurrency,
+		StakePlayer:    models.Decimal(stakePlayer),
+		PlayerCurrency: playerCurrency,
+		StakeReport:    models.Decimal(stakeReport),
+		ReportCurrency: reportCurrency,
+		StakeBet:       models.Decimal(req.Stake),
+		BetCurrency:    betCurrency,
+		Payout:         models.Decimal(fmt.Sprintf("%.2f", potentialPayout)),
+		Status:         models.BetStatusPending,
+		BetType:        req.BetType,
+		CreatedAt:      now,
+		UpdatedAt:      now,
 	}
 
 	for _, sel := range req.Selections {
@@ -257,11 +292,14 @@ func (s *Service) PlaceBet(ctx context.Context, playerID, brandID uuid.UUID, req
 		})
 	}
 
-	// Step 4: Debit wallet.
+	// Step 4: Debit wallet (pass multi-currency info).
 	walletResp, err := s.walletTransfer(ctx, WalletTransferRequest{
 		PlayerID:       playerID.String(),
+		BrandID:        brandID.String(),
 		Amount:         req.Stake,
-		Currency:       req.Currency,
+		Currency:       betCurrency,
+		BetCurrency:    betCurrency,
+		PlayerCurrency: playerCurrency,
 		Type:           "debit",
 		ReferenceID:    betID.String(),
 		ReferenceType:  "bet",
@@ -289,12 +327,16 @@ func (s *Service) PlaceBet(ctx context.Context, playerID, brandID uuid.UUID, req
 
 	// Step 6: Publish bet.placed event.
 	evt := BetPlacedEvent{
-		BetID:    betID.String(),
-		PlayerID: playerID.String(),
-		BrandID:  brandID.String(),
-		Stake:    req.Stake,
-		Currency: req.Currency,
-		BetType:  req.BetType,
+		BetID:          betID.String(),
+		PlayerID:       playerID.String(),
+		BrandID:        brandID.String(),
+		Stake:          req.Stake,
+		Currency:       betCurrency,
+		BetCurrency:    betCurrency,
+		PlayerCurrency: playerCurrency,
+		BaseCurrency:   baseCurrency,
+		StakeBase:      stakeBase,
+		BetType:        req.BetType,
 	}
 	if err := s.producer.Publish(ctx, "bet.placed", betID.String(), evt); err != nil {
 		s.logger.Error("failed to publish bet.placed event",
@@ -358,8 +400,11 @@ func (s *Service) Cashout(ctx context.Context, betID, playerID uuid.UUID) (*mode
 	idempotencyKey := fmt.Sprintf("cashout-%s", betID)
 	_, err = s.walletTransfer(ctx, WalletTransferRequest{
 		PlayerID:       playerID.String(),
+		BrandID:        bet.BrandID.String(),
 		Amount:         cashoutStr,
 		Currency:       bet.Currency,
+		BetCurrency:    string(bet.BetCurrency),
+		PlayerCurrency: string(bet.PlayerCurrency),
 		Type:           "credit",
 		ReferenceID:    betID.String(),
 		ReferenceType:  "cashout",
@@ -501,8 +546,11 @@ func (s *Service) settleBet(ctx context.Context, bet *models.Bet, eventID string
 		idempotencyKey := fmt.Sprintf("settle-%s", bet.ID)
 		_, err := s.walletTransfer(ctx, WalletTransferRequest{
 			PlayerID:       bet.PlayerID.String(),
+			BrandID:        bet.BrandID.String(),
 			Amount:         payoutStr,
 			Currency:       bet.Currency,
+			BetCurrency:    string(bet.BetCurrency),
+			PlayerCurrency: string(bet.PlayerCurrency),
 			Type:           "credit",
 			ReferenceID:    bet.ID.String(),
 			ReferenceType:  "win",
