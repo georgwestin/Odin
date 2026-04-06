@@ -375,24 +375,25 @@ function CmsHero() {
     if (fetched.current) return;
     fetched.current = true;
 
-    // Detect locale from URL
+    // Detect locale from cookie first, then URL, default to Swedish
+    const cookieMatch = document.cookie.match(/odin_locale=(\w+)/);
+    const cookieLang = cookieMatch ? cookieMatch[1] : null;
     const segment = window.location.pathname.split("/")[1];
-    const lang = ["sv", "en", "fi", "no"].includes(segment) ? segment : "en";
+    const lang = cookieLang || (["en", "fi", "no"].includes(segment) ? segment : "sv");
 
-    sanityClient
-      .fetch(
-        `*[_type == "banner" && brand->slug.current == "swedbet" && placement == "hero" && isActive == true][0]{
-          headline_sv, headline_en,
-          subheadline_sv, subheadline_en,
-          ctaText_sv, ctaText_en,
-          ctaUrl, gradientFrom, gradientTo
-        }`
-      )
-      .then((b: any) => {
+    // Use plain fetch to avoid any client library issues
+    fetch(
+      `https://mqk9lpso.apicdn.sanity.io/v2024-01-01/data/query/production?query=${encodeURIComponent(
+        '*[_type == "banner" && brand->slug.current == "swedbet" && placement == "hero" && isActive == true][0]{headline_sv, headline_en, subheadline_sv, subheadline_en, ctaText_sv, ctaText_en, ctaUrl, gradientFrom, gradientTo}'
+      )}`
+    )
+      .then((res) => res.json())
+      .then((data: any) => {
+        const b = data?.result;
         if (!b) return;
-        const h = (lang === "sv" ? b.headline_sv : b.headline_en) || b.headline_sv;
-        const s = (lang === "sv" ? b.subheadline_sv : b.subheadline_en) || b.subheadline_sv;
-        const c = (lang === "sv" ? b.ctaText_sv : b.ctaText_en) || b.ctaText_sv;
+        const h = (lang === "en" ? b.headline_en : b.headline_sv) || b.headline_sv;
+        const s = (lang === "en" ? b.subheadline_en : b.subheadline_sv) || b.subheadline_sv;
+        const c = (lang === "en" ? b.ctaText_en : b.ctaText_sv) || b.ctaText_sv;
         if (h) setHeadline(h);
         if (s) setSubheadline(s);
         if (c) setCtaText(c);
@@ -400,7 +401,9 @@ function CmsHero() {
         if (b.gradientFrom) setGradientFrom(b.gradientFrom);
         if (b.gradientTo) setGradientTo(b.gradientTo);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("CmsHero fetch error:", err);
+      });
   }, []);
 
   const bgStyle = gradientFrom

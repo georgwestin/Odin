@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useBrand } from "@/components/BrandProvider";
 import { localeNames, isValidLocale, type Locale } from "@/lib/i18n-config";
 
@@ -16,13 +16,18 @@ const FLAGS: Record<Locale, string> = {
 export function Footer() {
   const brand = useBrand();
   const pathname = usePathname();
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
 
   useEffect(() => {
-    const segment = pathname.split("/")[1];
-    setLocale(isValidLocale(segment) ? segment : "en");
+    const cookieMatch = document.cookie.match(/odin_locale=(\w+)/);
+    const cookieLang = cookieMatch ? cookieMatch[1] : null;
+    if (cookieLang && isValidLocale(cookieLang)) {
+      setLocale(cookieLang);
+    } else {
+      const segment = pathname.split("/")[1];
+      setLocale(isValidLocale(segment) ? segment : "sv");
+    }
     setMounted(true);
   }, [pathname]);
 
@@ -34,26 +39,15 @@ export function Footer() {
   // Use default locale for server render to avoid hydration mismatch
   const currentLocale = mounted ? locale : "en";
 
-  function buildLocalePath(targetLocale: Locale): string {
-    let cleanPath = pathname;
-    const firstSegment = pathname.split("/")[1];
-    if (firstSegment && isValidLocale(firstSegment)) {
-      cleanPath = pathname.replace(`/${firstSegment}`, "") || "/";
-    }
-    if (targetLocale === "en") return cleanPath;
-    return `/${targetLocale}${cleanPath === "/" ? "" : cleanPath}`;
-  }
-
   function switchLocale(targetLocale: Locale) {
     document.cookie = `odin_locale=${targetLocale};path=/;max-age=31536000`;
-    router.push(buildLocalePath(targetLocale));
+    setLocale(targetLocale);
+    // Reload to re-fetch all CMS content in the new language
+    window.location.reload();
   }
 
-  // Build locale-aware links
   function l(path: string): string {
-    if (currentLocale === "en") return path;
-    if (path === "/") return `/${currentLocale}`;
-    return `/${currentLocale}${path}`;
+    return path;
   }
 
   return (
