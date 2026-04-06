@@ -1,0 +1,27 @@
+service:
+  name: wallet
+  port: 8002
+  env: development
+
+database:
+  url: postgres://odin:odin_secret@localhost:5432/odin?sslmode=disable
+  max_open_conns: 50
+  max_idle_conns: 20
+  conn_max_lifetime: 5m
+
+redis:
+  url: redis://localhost:6379/1
+
+kafka:
+  brokers:
+    - localhost:9092
+
+auth:
+  public_key_path: ./keys/public.pem
+
+wallet:
+  default_currency: EUR
+  aml_review_threshold: 2000.00
+  default_deposit_daily_limit: 5000.00
+  default_deposit_weekly_limit: 20000.00
+  default_deposit_monthly_limit: 50000.00

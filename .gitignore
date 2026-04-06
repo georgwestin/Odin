@@ -1,0 +1,47 @@
+# Keys
+keys/
+
+# Binaries
+bin/
+auth
+wallet
+betting
+casino
+sportsfeed
+bonus
+reporting
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go
+vendor/
+*.test
+
+# Node
+node_modules/
+.next/
+out/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+pgdata/
+
+# Coverage
+coverage/
+*.out

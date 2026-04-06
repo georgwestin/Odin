@@ -1,0 +1,29 @@
+service:
+  name: casino
+  port: 8004
+  env: development
+
+database:
+  url: postgres://odin:odin_secret@localhost:5432/odin?sslmode=disable
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 5m
+
+redis:
+  url: redis://localhost:6379/3
+
+kafka:
+  brokers:
+    - localhost:9092
+
+auth:
+  public_key_path: ./keys/public.pem
+
+services:
+  wallet_url: http://localhost:8002
+
+providers:
+  - id: demo-provider
+    name: Demo Games
+    callback_secret: demo-hmac-secret-change-in-production
+    base_url: https://demo-rgs.example.com

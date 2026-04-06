@@ -1,0 +1,30 @@
+service:
+  name: betting
+  port: 8003
+  env: development
+
+database:
+  url: postgres://odin:odin_secret@localhost:5432/odin?sslmode=disable
+  max_open_conns: 50
+  max_idle_conns: 20
+  conn_max_lifetime: 5m
+
+redis:
+  url: redis://localhost:6379/2
+
+kafka:
+  brokers:
+    - localhost:9092
+
+auth:
+  public_key_path: ./keys/public.pem
+
+betting:
+  max_odds_drift_pct: 5.0
+  min_stake: 0.10
+  max_stake: 10000.00
+  max_potential_win: 500000.00
+
+services:
+  wallet_url: http://localhost:8002
+  sportsfeed_url: http://localhost:8005

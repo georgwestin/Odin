@@ -1,0 +1,20 @@
+service:
+  name: reporting
+  port: 8007
+  env: development
+
+database:
+  url: postgres://odin:odin_secret@localhost:5432/odin?sslmode=disable
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 5m
+
+redis:
+  url: redis://localhost:6379/6
+
+kafka:
+  brokers:
+    - localhost:9092
+
+auth:
+  public_key_path: ./keys/public.pem

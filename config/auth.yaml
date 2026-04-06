@@ -1,0 +1,28 @@
+service:
+  name: auth
+  port: 8001
+  env: development
+
+database:
+  url: postgres://odin:odin_secret@localhost:5432/odin?sslmode=disable
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 5m
+
+redis:
+  url: redis://localhost:6379/0
+
+kafka:
+  brokers:
+    - localhost:9092
+
+auth:
+  private_key_path: ./keys/private.pem
+  public_key_path: ./keys/public.pem
+  access_token_ttl: 15m
+  refresh_token_ttl: 720h  # 30 days
+  bcrypt_cost: 12
+
+rate_limit:
+  login_max_attempts: 10
+  login_window: 1m

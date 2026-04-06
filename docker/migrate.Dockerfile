@@ -1,0 +1,6 @@
+FROM migrate/migrate:v4.17.0
+
+COPY migrations /migrations
+
+ENTRYPOINT ["migrate", "-path", "/migrations", "-database"]
+CMD ["${DATABASE_URL}", "up"]

@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-primary: #d4a017;
+  --brand-primary-hover: #b8860b;
+  --brand-secondary: #1a1a2e;
+  --brand-accent: #e6c200;
+  --brand-surface: #16213e;
+  --brand-surface-alt: #0f3460;
+  --brand-background: #0a0a1a;
+  --brand-text: #e0e0e0;
+  --brand-text-muted: #8a8aa0;
+  --brand-success: #00c853;
+  --brand-danger: #ff1744;
+  --brand-warning: #ff9100;
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  background-color: var(--brand-background);
+  color: var(--brand-text);
+  font-family: var(--font-body);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-surface-alt) var(--brand-background);
+}

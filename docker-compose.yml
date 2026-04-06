@@ -1,0 +1,299 @@
+version: "3.9"
+
+services:
+  # Infrastructure
+  postgres:
+    image: postgres:16
+    container_name: odin-postgres
+    environment:
+      POSTGRES_USER: odin
+      POSTGRES_PASSWORD: odin_secret
+      POSTGRES_DB: odin
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odin"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: odin-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: odin-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: odin-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Microservices
+  auth:
+    build:
+      context: .
+      dockerfile: docker/auth.Dockerfile
+    container_name: odin-auth
+    ports:
+      - "8001:8001"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PRIVATE_KEY_PATH: /app/keys/private.pem
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      PORT: "8001"
+      ENV: development
+      SERVICE_NAME: auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  wallet:
+    build:
+      context: .
+      dockerfile: docker/wallet.Dockerfile
+    container_name: odin-wallet
+    ports:
+      - "8002:8002"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/1
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      PORT: "8002"
+      ENV: development
+      SERVICE_NAME: wallet
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  betting:
+    build:
+      context: .
+      dockerfile: docker/betting.Dockerfile
+    container_name: odin-betting
+    ports:
+      - "8003:8003"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/2
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      WALLET_SERVICE_URL: http://wallet:8002
+      SPORTSFEED_SERVICE_URL: http://sportsfeed:8005
+      PORT: "8003"
+      ENV: development
+      SERVICE_NAME: betting
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  casino:
+    build:
+      context: .
+      dockerfile: docker/casino.Dockerfile
+    container_name: odin-casino
+    ports:
+      - "8004:8004"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/3
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      WALLET_SERVICE_URL: http://wallet:8002
+      PORT: "8004"
+      ENV: development
+      SERVICE_NAME: casino
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  sportsfeed:
+    build:
+      context: .
+      dockerfile: docker/sportsfeed.Dockerfile
+    container_name: odin-sportsfeed
+    ports:
+      - "8005:8005"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/4
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      PORT: "8005"
+      ENV: development
+      SERVICE_NAME: sportsfeed
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  bonus:
+    build:
+      context: .
+      dockerfile: docker/bonus.Dockerfile
+    container_name: odin-bonus
+    ports:
+      - "8006:8006"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/5
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      PORT: "8006"
+      ENV: development
+      SERVICE_NAME: bonus
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  reporting:
+    build:
+      context: .
+      dockerfile: docker/reporting.Dockerfile
+    container_name: odin-reporting
+    ports:
+      - "8007:8007"
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+      REDIS_URL: redis://redis:6379/6
+      KAFKA_BROKERS: kafka:29092
+      AUTH_PUBLIC_KEY_PATH: /app/keys/public.pem
+      PORT: "8007"
+      ENV: development
+      SERVICE_NAME: reporting
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./keys:/app/keys:ro
+
+  # Frontends
+  player-frontend:
+    build:
+      context: ./frontend/player
+      dockerfile: Dockerfile
+    container_name: odin-player-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+      NEXT_PUBLIC_WALLET_API_URL: http://localhost:8002
+      NEXT_PUBLIC_BETTING_API_URL: http://localhost:8003
+      NEXT_PUBLIC_CASINO_API_URL: http://localhost:8004
+      NEXT_PUBLIC_SPORTSFEED_API_URL: http://localhost:8005
+      NEXT_PUBLIC_BONUS_API_URL: http://localhost:8006
+    depends_on:
+      - auth
+      - wallet
+      - betting
+      - casino
+      - sportsfeed
+      - bonus
+
+  admin-frontend:
+    build:
+      context: ./frontend/admin
+      dockerfile: Dockerfile
+    container_name: odin-admin-frontend
+    ports:
+      - "3001:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+      NEXT_PUBLIC_WALLET_API_URL: http://localhost:8002
+      NEXT_PUBLIC_BETTING_API_URL: http://localhost:8003
+      NEXT_PUBLIC_CASINO_API_URL: http://localhost:8004
+      NEXT_PUBLIC_SPORTSFEED_API_URL: http://localhost:8005
+      NEXT_PUBLIC_BONUS_API_URL: http://localhost:8006
+      NEXT_PUBLIC_REPORTING_API_URL: http://localhost:8007
+    depends_on:
+      - auth
+      - reporting
+
+  # Migration runner
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/migrate.Dockerfile
+    container_name: odin-migrate
+    environment:
+      DATABASE_URL: postgres://odin:odin_secret@postgres:5432/odin?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - migrate
+
+volumes:
+  pgdata:

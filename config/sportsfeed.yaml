@@ -1,0 +1,20 @@
+service:
+  name: sportsfeed
+  port: 8005
+  env: development
+
+redis:
+  url: redis://localhost:6379/4
+
+kafka:
+  brokers:
+    - localhost:9092
+
+auth:
+  public_key_path: ./keys/public.pem
+
+sportsfeed:
+  simulator_enabled: true
+  odds_ttl: 60s
+  events_ttl: 30s
+  update_interval: 5s
