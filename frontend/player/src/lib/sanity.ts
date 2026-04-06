@@ -147,14 +147,27 @@ export async function getBanners(
 
   const query = `*[
     _type == "banner"
-    && brand == $brand
+    && brand->slug.current == $brand
     && placement == $placement
-    && language == $language
-    && startDate <= ${NOW}
-    && endDate >= ${NOW}
-  ] | order(startDate desc)`;
+    && isActive == true
+  ] | order(priority desc) {
+    _id,
+    title,
+    headline,
+    subheadline,
+    ctaText,
+    ctaUrl,
+    image,
+    mobileImage,
+    gradientFrom,
+    gradientTo,
+    textColor,
+    placement,
+    "brand": brand->slug.current,
+    language
+  }`;
 
-  return sanityClient.fetch<SanityBanner[]>(query, { brand, placement, language });
+  return sanityClient.fetch<SanityBanner[]>(query, { brand, placement });
 }
 
 export async function getTranslations(
@@ -163,11 +176,15 @@ export async function getTranslations(
 ): Promise<Record<string, string>> {
   if (!isSanityConfigured()) return {};
 
+  // Translation docs store languages inside a translations[] array.
+  // Extract the value for the requested language from each doc.
   const query = `*[
     _type == "translation"
     && namespace == $namespace
-    && language == $language
-  ]{ key, value }`;
+  ]{
+    key,
+    "value": translations[language == $language][0].value
+  }[defined(value)]`;
 
   const results = await sanityClient.fetch<{ key: string; value: string }[]>(
     query,
@@ -176,7 +193,11 @@ export async function getTranslations(
 
   const map: Record<string, string> = {};
   for (const item of results) {
-    map[item.key] = item.value;
+    // Strip namespace prefix from key for lookup: "nav.casino" -> "casino"
+    const shortKey = item.key.includes(".")
+      ? item.key.split(".").slice(1).join(".")
+      : item.key;
+    map[shortKey] = item.value;
   }
   return map;
 }

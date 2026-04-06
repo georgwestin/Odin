@@ -7,7 +7,7 @@ const deskStructure = (S: any) =>
   S.list()
     .title('Odin CMS')
     .items([
-      // Content
+      // Content — all text, banners, and page content
       S.listItem()
         .title('Content')
         .child(
@@ -15,21 +15,21 @@ const deskStructure = (S: any) =>
             .title('Content')
             .items([
               S.listItem()
+                .title('Banners')
+                .schemaType('banner')
+                .child(S.documentTypeList('banner').title('Banners')),
+              S.listItem()
                 .title('Pages')
                 .schemaType('page')
                 .child(S.documentTypeList('page').title('Pages')),
               S.listItem()
                 .title('Info Pages')
                 .schemaType('infoPage')
-                .child(S.documentTypeList('infoPage').title('Info Pages')),
+                .child(S.documentTypeList('infoPage').title('Info & Legal Pages')),
               S.listItem()
-                .title('FAQ Items')
+                .title('FAQ')
                 .schemaType('faqItem')
                 .child(S.documentTypeList('faqItem').title('FAQ Items')),
-              S.listItem()
-                .title('Banners')
-                .schemaType('banner')
-                .child(S.documentTypeList('banner').title('Banners')),
             ]),
         ),
 
@@ -46,70 +46,6 @@ const deskStructure = (S: any) =>
                 .title('Game Content')
                 .schemaType('gameContent')
                 .child(S.documentTypeList('gameContent').title('Game Content')),
-            ]),
-        ),
-
-      // Promotions
-      S.listItem()
-        .title('Promotions')
-        .child(
-          S.list()
-            .title('Promotions')
-            .items([
-              S.listItem()
-                .title('All Promotions')
-                .schemaType('promotion')
-                .child(S.documentTypeList('promotion').title('Promotions')),
-              S.listItem()
-                .title('By Type')
-                .child(
-                  S.list()
-                    .title('Promotions by Type')
-                    .items([
-                      S.listItem()
-                        .title('Welcome Bonuses')
-                        .child(
-                          S.documentList()
-                            .title('Welcome Bonuses')
-                            .filter('_type == "promotion" && type == "welcome-bonus"'),
-                        ),
-                      S.listItem()
-                        .title('Deposit Bonuses')
-                        .child(
-                          S.documentList()
-                            .title('Deposit Bonuses')
-                            .filter('_type == "promotion" && type == "deposit-bonus"'),
-                        ),
-                      S.listItem()
-                        .title('Free Spins')
-                        .child(
-                          S.documentList()
-                            .title('Free Spins')
-                            .filter('_type == "promotion" && type == "free-spins"'),
-                        ),
-                      S.listItem()
-                        .title('Cashback')
-                        .child(
-                          S.documentList()
-                            .title('Cashback')
-                            .filter('_type == "promotion" && type == "cashback"'),
-                        ),
-                      S.listItem()
-                        .title('Tournaments')
-                        .child(
-                          S.documentList()
-                            .title('Tournaments')
-                            .filter('_type == "promotion" && type == "tournament"'),
-                        ),
-                      S.listItem()
-                        .title('Loyalty')
-                        .child(
-                          S.documentList()
-                            .title('Loyalty')
-                            .filter('_type == "promotion" && type == "loyalty"'),
-                        ),
-                    ]),
-                ),
             ]),
         ),
 
@@ -132,7 +68,7 @@ const deskStructure = (S: any) =>
                   S.list()
                     .title('Translations by Namespace')
                     .items(
-                      ['common', 'casino', 'sports', 'wallet', 'auth', 'footer', 'nav', 'bonuses', 'account'].map(
+                      ['common', 'casino', 'sports', 'wallet', 'auth', 'footer', 'nav', 'account'].map(
                         (ns) =>
                           S.listItem()
                             .title(ns.charAt(0).toUpperCase() + ns.slice(1))

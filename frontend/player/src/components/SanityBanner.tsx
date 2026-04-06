@@ -32,13 +32,11 @@ function BannerSkeleton({ className }: { className?: string }) {
 export function SanityBanner({ placement, className, fallback }: SanityBannerProps) {
   const brand = useBrand();
   const [banner, setBanner] = useState<SanityBannerType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (!isSanityConfigured()) {
-      setLoading(false);
-      setFailed(true);
+      setLoaded(true);
       return;
     }
 
@@ -46,25 +44,18 @@ export function SanityBanner({ placement, className, fallback }: SanityBannerPro
       .then((banners) => {
         if (banners.length > 0) {
           setBanner(banners[0]);
-        } else {
-          setFailed(true);
         }
       })
       .catch(() => {
-        setFailed(true);
+        // Keep fallback on error
       })
       .finally(() => {
-        setLoading(false);
+        setLoaded(true);
       });
   }, [brand.slug, placement]);
 
-  // Loading state
-  if (loading) {
-    return <BannerSkeleton className={className} />;
-  }
-
-  // No banner from Sanity -- show fallback or nothing
-  if (failed || !banner) {
+  // Before Sanity loads (and on server render), show fallback to avoid hydration mismatch
+  if (!loaded || !banner) {
     return <>{fallback ?? null}</>;
   }
 

@@ -2,7 +2,7 @@
 import brand from './documents/brand'
 import page from './documents/page'
 import banner from './documents/banner'
-import promotion from './documents/promotion'
+
 import translation from './documents/translation'
 import gameContent from './documents/gameContent'
 import faqItem from './documents/faqItem'
@@ -22,7 +22,7 @@ export const schemaTypes = [
   brand,
   page,
   banner,
-  promotion,
+
   translation,
   gameContent,
   faqItem,

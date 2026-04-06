@@ -5,6 +5,7 @@ import { TranslationProvider } from "@/lib/i18n";
 import { AuthLoader } from "@/components/AuthLoader";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BetSlip } from "@/components/BetSlip";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "SwedBet.com - Det smarta spelbolaget",
@@ -31,6 +32,7 @@ export default function RootLayout({
             <AuthLoader>
               <SiteHeader />
               <main>{children}</main>
+              <Footer />
               <BetSlip />
             </AuthLoader>
           </TranslationProvider>

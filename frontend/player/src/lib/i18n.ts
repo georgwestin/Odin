@@ -9,7 +9,9 @@ import {
   ReactNode,
   createElement,
 } from "react";
+import { usePathname } from "next/navigation";
 import { getTranslations, isSanityConfigured } from "@/lib/sanity";
+import { defaultLocale, isValidLocale, type Locale } from "@/lib/i18n-config";
 
 // --- Default Swedish Translations ---
 
@@ -98,23 +100,31 @@ interface TranslationContextValue {
 
 const TranslationContext = createContext<TranslationContextValue>({
   translations: DEFAULT_TRANSLATIONS,
-  language: "sv",
+  language: defaultLocale,
   loading: false,
 });
+
+/** Extract locale from URL pathname, e.g. /sv/casino -> "sv", /casino -> defaultLocale */
+function getLocaleFromPath(pathname: string): Locale {
+  const segment = pathname.split("/")[1];
+  if (segment && isValidLocale(segment)) return segment;
+  return defaultLocale;
+}
 
 // --- Provider ---
 
 interface TranslationProviderProps {
   children: ReactNode;
-  language?: string;
   brand?: string;
 }
 
 export function TranslationProvider({
   children,
-  language = "sv",
   brand = "swedbet",
 }: TranslationProviderProps) {
+  const pathname = usePathname();
+  const language = getLocaleFromPath(pathname);
+
   const [translations, setTranslations] =
     useState<Record<string, Record<string, string>>>(DEFAULT_TRANSLATIONS);
   const [loading, setLoading] = useState(false);
@@ -149,6 +159,11 @@ export function TranslationProvider({
         setLoading(false);
       });
   }, [language, brand]);
+
+  // Set locale cookie for middleware to remember preference
+  useEffect(() => {
+    document.cookie = `odin_locale=${language};path=/;max-age=31536000`;
+  }, [language]);
 
   return createElement(
     TranslationContext.Provider,
@@ -194,4 +209,19 @@ export function useTranslation(namespace?: string) {
   );
 
   return { t, language, loading };
+}
+
+/** Build a locale-aware link. English (default) has no prefix, others get /{locale}/path */
+export function useLocaleLink() {
+  const { language } = useTranslation();
+
+  return useCallback(
+    (path: string): string => {
+      if (language === defaultLocale) return path;
+      // Avoid double prefix
+      if (path.startsWith(`/${language}/`) || path === `/${language}`) return path;
+      return `/${language}${path === "/" ? "" : path}`;
+    },
+    [language]
+  );
 }
