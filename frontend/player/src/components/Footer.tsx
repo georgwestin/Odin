@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
-import { locales, defaultLocale, localeNames, isValidLocale, type Locale } from "@/lib/i18n-config";
+import { useBrand } from "@/components/BrandProvider";
+import { defaultLocale, localeNames, isValidLocale, type Locale } from "@/lib/i18n-config";
 
 const FLAGS: Record<Locale, string> = {
   en: "🇬🇧",
@@ -14,8 +15,14 @@ const FLAGS: Record<Locale, string> = {
 
 export function Footer() {
   const { language } = useTranslation();
+  const brand = useBrand();
   const pathname = usePathname();
   const router = useRouter();
+
+  // Only show languages configured for this brand in Sanity
+  const availableLocales = (brand.supportedLanguages || ["sv", "en"]).filter(
+    (l): l is Locale => isValidLocale(l)
+  );
 
   const currentLocale = language as Locale;
 
@@ -125,7 +132,7 @@ export function Footer() {
               {currentLocale === "sv" ? "Språk" : "Language"}
             </h4>
             <div className="space-y-1.5">
-              {locales.map((locale) => (
+              {availableLocales.map((locale) => (
                 <button
                   key={locale}
                   onClick={() => switchLocale(locale)}

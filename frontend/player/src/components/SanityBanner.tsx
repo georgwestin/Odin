@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { getBanners, urlFor, isSanityConfigured, SanityBanner as SanityBannerType } from "@/lib/sanity";
 import { useBrand } from "@/components/BrandProvider";
+import { useTranslation } from "@/lib/i18n";
 
 interface SanityBannerProps {
   placement: string;
@@ -31,6 +32,7 @@ function BannerSkeleton({ className }: { className?: string }) {
 
 export function SanityBanner({ placement, className, fallback }: SanityBannerProps) {
   const brand = useBrand();
+  const { language } = useTranslation();
   const [banner, setBanner] = useState<SanityBannerType | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -40,7 +42,7 @@ export function SanityBanner({ placement, className, fallback }: SanityBannerPro
       return;
     }
 
-    getBanners(brand.slug, placement, "sv")
+    getBanners(brand.slug, placement, language)
       .then((banners) => {
         if (banners.length > 0) {
           setBanner(banners[0]);
@@ -52,7 +54,7 @@ export function SanityBanner({ placement, className, fallback }: SanityBannerPro
       .finally(() => {
         setLoaded(true);
       });
-  }, [brand.slug, placement]);
+  }, [brand.slug, placement, language]);
 
   // Before Sanity loads (and on server render), show fallback to avoid hydration mismatch
   if (!loaded || !banner) {

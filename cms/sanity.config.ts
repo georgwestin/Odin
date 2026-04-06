@@ -20,12 +20,8 @@ const deskStructure = (S: any) =>
                 .child(S.documentTypeList('banner').title('Banners')),
               S.listItem()
                 .title('Pages')
-                .schemaType('page')
-                .child(S.documentTypeList('page').title('Pages')),
-              S.listItem()
-                .title('Info Pages')
                 .schemaType('infoPage')
-                .child(S.documentTypeList('infoPage').title('Info & Legal Pages')),
+                .child(S.documentTypeList('infoPage').title('Pages')),
               S.listItem()
                 .title('FAQ')
                 .schemaType('faqItem')

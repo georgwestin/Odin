@@ -1,6 +1,5 @@
 // Document schemas
 import brand from './documents/brand'
-import page from './documents/page'
 import banner from './documents/banner'
 
 import translation from './documents/translation'
@@ -20,7 +19,6 @@ import faqSection from './objects/faqSection'
 export const schemaTypes = [
   // Documents
   brand,
-  page,
   banner,
 
   translation,

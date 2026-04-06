@@ -34,6 +34,8 @@ export interface BrandConfig {
   };
   supportEmail: string;
   licenseText: string;
+  supportedLanguages: string[];
+  defaultLanguage: string;
 }
 
 const DEFAULT_BRAND: BrandConfig = {
@@ -71,6 +73,8 @@ const DEFAULT_BRAND: BrandConfig = {
   supportEmail: "support@swedbet.com",
   licenseText:
     "Swedbet drivs under svensk spellicens utfardad av Spelinspektionen. 18+ | Spela ansvarsfullt.",
+  supportedLanguages: ["sv", "en"],
+  defaultLanguage: "sv",
 };
 
 let currentBrand: BrandConfig = DEFAULT_BRAND;

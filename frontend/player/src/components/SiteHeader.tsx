@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useWallet } from "@/stores/wallet";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const casinoCategories = [
   { href: "/casino", label: "Utforska", isHighlight: true },
@@ -263,9 +262,6 @@ export function SiteHeader() {
               </Link>
             )}
           </div>
-
-          {/* Language Switcher */}
-          <LanguageSwitcher />
 
           {/* Mobile hamburger */}
           <button

@@ -1,21 +1,60 @@
 import {defineType, defineField} from 'sanity'
 
+const richTextBlock = {
+  type: 'block',
+  styles: [
+    {title: 'Normal', value: 'normal'},
+    {title: 'H2', value: 'h2'},
+    {title: 'H3', value: 'h3'},
+    {title: 'H4', value: 'h4'},
+    {title: 'Quote', value: 'blockquote'},
+  ],
+  marks: {
+    decorators: [
+      {title: 'Bold', value: 'strong'},
+      {title: 'Italic', value: 'em'},
+      {title: 'Underline', value: 'underline'},
+    ],
+    annotations: [
+      {
+        name: 'link',
+        type: 'object',
+        title: 'Link',
+        fields: [
+          {name: 'href', type: 'url', title: 'URL'},
+          {name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false},
+        ],
+      },
+    ],
+  },
+  lists: [
+    {title: 'Bullet', value: 'bullet'},
+    {title: 'Numbered', value: 'number'},
+  ],
+}
+
 export default defineType({
   name: 'infoPage',
-  title: 'Info Page',
+  title: 'Page',
   type: 'document',
-  description: 'Static informational and legal pages.',
+  description: 'CMS-managed pages with multi-language support.',
+  fieldsets: [
+    {name: 'swedish', title: '🇸🇪 Svenska', options: {collapsible: true}},
+    {name: 'english', title: '🇬🇧 English', options: {collapsible: true, collapsed: true}},
+  ],
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: 'Internal Title',
       type: 'string',
+      description: 'Internal name to identify this page (not shown to users).',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      description: 'URL path for this page, e.g. "about" → /about or /sv/about',
       options: {source: 'title', maxLength: 96},
       validation: (Rule) => Rule.required(),
     }),
@@ -24,66 +63,6 @@ export default defineType({
       title: 'Brand',
       type: 'reference',
       to: [{type: 'brand'}],
-    }),
-    defineField({
-      name: 'language',
-      title: 'Language',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'Swedish', value: 'sv'},
-          {title: 'English', value: 'en'},
-          {title: 'Finnish', value: 'fi'},
-          {title: 'Norwegian', value: 'no'},
-          {title: 'Danish', value: 'da'},
-          {title: 'German', value: 'de'},
-        ],
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            {title: 'Normal', value: 'normal'},
-            {title: 'H2', value: 'h2'},
-            {title: 'H3', value: 'h3'},
-            {title: 'H4', value: 'h4'},
-            {title: 'Quote', value: 'blockquote'},
-          ],
-          marks: {
-            decorators: [
-              {title: 'Bold', value: 'strong'},
-              {title: 'Italic', value: 'em'},
-              {title: 'Underline', value: 'underline'},
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  {name: 'href', type: 'url', title: 'URL'},
-                  {name: 'openInNewTab', type: 'boolean', title: 'Open in new tab', initialValue: false},
-                ],
-              },
-            ],
-          },
-          lists: [
-            {title: 'Bullet', value: 'bullet'},
-            {title: 'Numbered', value: 'number'},
-          ],
-        },
-        {
-          type: 'image',
-          options: {hotspot: true},
-        },
-      ],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'category',
@@ -99,6 +78,39 @@ export default defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+
+    // Swedish content
+    defineField({
+      name: 'title_sv',
+      title: 'Titel',
+      type: 'string',
+      fieldset: 'swedish',
+      description: 'Sidtitel på svenska.',
+    }),
+    defineField({
+      name: 'body_sv',
+      title: 'Innehåll',
+      type: 'array',
+      fieldset: 'swedish',
+      of: [richTextBlock, {type: 'image', options: {hotspot: true}}],
+    }),
+
+    // English content
+    defineField({
+      name: 'title_en',
+      title: 'Title',
+      type: 'string',
+      fieldset: 'english',
+      description: 'Page title in English.',
+    }),
+    defineField({
+      name: 'body_en',
+      title: 'Content',
+      type: 'array',
+      fieldset: 'english',
+      of: [richTextBlock, {type: 'image', options: {hotspot: true}}],
+    }),
+
     defineField({
       name: 'lastReviewed',
       title: 'Last Reviewed',
@@ -119,14 +131,14 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
+      titleSv: 'title_sv',
       category: 'category',
-      language: 'language',
       brandName: 'brand.name',
     },
-    prepare({title, category, language, brandName}) {
+    prepare({title, titleSv, category, brandName}) {
       return {
-        title: title || 'Untitled',
-        subtitle: [category, brandName, language?.toUpperCase()].filter(Boolean).join(' | '),
+        title: title || titleSv || 'Untitled',
+        subtitle: [category, brandName].filter(Boolean).join(' | '),
       }
     },
   },

@@ -5,7 +5,8 @@ export default defineType({
   title: 'Banner',
   type: 'document',
   fieldsets: [
-    {name: 'content', title: 'Content', options: {collapsible: true}},
+    {name: 'swedish', title: '🇸🇪 Svenska', options: {collapsible: true}},
+    {name: 'english', title: '🇬🇧 English', options: {collapsible: true, collapsed: true}},
     {name: 'appearance', title: 'Appearance', options: {collapsible: true, collapsed: true}},
     {name: 'scheduling', title: 'Scheduling & Targeting', options: {collapsible: true, collapsed: true}},
   ],
@@ -30,21 +31,6 @@ export default defineType({
       to: [{type: 'brand'}],
     }),
     defineField({
-      name: 'language',
-      title: 'Language',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'Swedish', value: 'sv'},
-          {title: 'English', value: 'en'},
-          {title: 'Finnish', value: 'fi'},
-          {title: 'Norwegian', value: 'no'},
-          {title: 'Danish', value: 'da'},
-          {title: 'German', value: 'de'},
-        ],
-      },
-    }),
-    defineField({
       name: 'placement',
       title: 'Placement',
       type: 'string',
@@ -60,12 +46,13 @@ export default defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+
+    // Images (shared across languages)
     defineField({
       name: 'image',
       title: 'Image',
       type: 'image',
       options: {hotspot: true},
-      fieldset: 'content',
     }),
     defineField({
       name: 'mobileImage',
@@ -73,32 +60,83 @@ export default defineType({
       type: 'image',
       options: {hotspot: true},
       description: 'Optional mobile-specific image.',
-      fieldset: 'content',
+    }),
+
+    // Swedish content
+    defineField({
+      name: 'headline_sv',
+      title: 'Rubrik',
+      type: 'string',
+      fieldset: 'swedish',
     }),
     defineField({
-      name: 'headline',
+      name: 'subheadline_sv',
+      title: 'Underrubrik',
+      type: 'string',
+      fieldset: 'swedish',
+    }),
+    defineField({
+      name: 'ctaText_sv',
+      title: 'Knapptext',
+      type: 'string',
+      fieldset: 'swedish',
+    }),
+
+    // English content
+    defineField({
+      name: 'headline_en',
       title: 'Headline',
       type: 'string',
-      fieldset: 'content',
+      fieldset: 'english',
     }),
     defineField({
-      name: 'subheadline',
+      name: 'subheadline_en',
       title: 'Subheadline',
       type: 'string',
-      fieldset: 'content',
+      fieldset: 'english',
     }),
     defineField({
-      name: 'ctaText',
-      title: 'CTA Text',
+      name: 'ctaText_en',
+      title: 'Button Text',
       type: 'string',
-      fieldset: 'content',
+      fieldset: 'english',
     }),
+
+    // Shared fields (not language-specific)
     defineField({
       name: 'ctaUrl',
       title: 'CTA URL',
       type: 'string',
-      fieldset: 'content',
+      description: 'Link destination for the button (same for all languages).',
     }),
+
+    // Keep old fields for backward compat during migration
+    defineField({
+      name: 'headline',
+      title: 'Headline (legacy)',
+      type: 'string',
+      hidden: true,
+    }),
+    defineField({
+      name: 'subheadline',
+      title: 'Subheadline (legacy)',
+      type: 'string',
+      hidden: true,
+    }),
+    defineField({
+      name: 'ctaText',
+      title: 'CTA Text (legacy)',
+      type: 'string',
+      hidden: true,
+    }),
+    defineField({
+      name: 'language',
+      title: 'Language (legacy)',
+      type: 'string',
+      hidden: true,
+    }),
+
+    // Appearance
     defineField({
       name: 'backgroundColor',
       title: 'Background Color',
@@ -110,14 +148,12 @@ export default defineType({
       name: 'gradientFrom',
       title: 'Gradient From',
       type: 'string',
-      description: 'Start color for gradient background.',
       fieldset: 'appearance',
     }),
     defineField({
       name: 'gradientTo',
       title: 'Gradient To',
       type: 'string',
-      description: 'End color for gradient background.',
       fieldset: 'appearance',
     }),
     defineField({
@@ -134,18 +170,18 @@ export default defineType({
       initialValue: 'light',
       fieldset: 'appearance',
     }),
+
+    // Scheduling
     defineField({
       name: 'startDate',
       title: 'Start Date',
       type: 'datetime',
-      description: 'When this banner becomes visible.',
       fieldset: 'scheduling',
     }),
     defineField({
       name: 'endDate',
       title: 'End Date',
       type: 'datetime',
-      description: 'When this banner stops being visible.',
       fieldset: 'scheduling',
     }),
     defineField({
@@ -161,7 +197,6 @@ export default defineType({
       name: 'isActive',
       title: 'Is Active',
       type: 'boolean',
-      description: 'Master toggle for this banner.',
       initialValue: true,
       fieldset: 'scheduling',
     }),
@@ -199,7 +234,7 @@ export default defineType({
     prepare({title, placement, isActive, media}) {
       return {
         title,
-        subtitle: `${placement || 'No placement'} ${isActive ? '(Active)' : '(Inactive)'}`,
+        subtitle: `${placement || 'No placement'} ${isActive ? '✅ Active' : '⏸ Inactive'}`,
         media,
       }
     },

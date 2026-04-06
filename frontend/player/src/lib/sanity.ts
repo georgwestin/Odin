@@ -145,6 +145,7 @@ export async function getBanners(
 ): Promise<SanityBanner[]> {
   if (!isSanityConfigured()) return [];
 
+  // Read locale-specific fields (headline_sv, headline_en) with fallback to legacy fields
   const query = `*[
     _type == "banner"
     && brand->slug.current == $brand
@@ -153,9 +154,15 @@ export async function getBanners(
   ] | order(priority desc) {
     _id,
     title,
-    headline,
-    subheadline,
-    ctaText,
+    "headline": coalesce(headline_sv, headline)[$language == "sv"]
+      ?? coalesce(headline_en, headline)[$language == "en"]
+      ?? coalesce(headline_sv, headline),
+    "subheadline": coalesce(subheadline_sv, subheadline)[$language == "sv"]
+      ?? coalesce(subheadline_en, subheadline)[$language == "en"]
+      ?? coalesce(subheadline_sv, subheadline),
+    "ctaText": coalesce(ctaText_sv, ctaText)[$language == "sv"]
+      ?? coalesce(ctaText_en, ctaText)[$language == "en"]
+      ?? coalesce(ctaText_sv, ctaText),
     ctaUrl,
     image,
     mobileImage,
@@ -163,11 +170,40 @@ export async function getBanners(
     gradientTo,
     textColor,
     placement,
-    "brand": brand->slug.current,
-    language
+    "brand": brand->slug.current
   }`;
 
-  return sanityClient.fetch<SanityBanner[]>(query, { brand, placement });
+  // Simpler approach: fetch all fields and pick client-side
+  const rawQuery = `*[
+    _type == "banner"
+    && brand->slug.current == $brand
+    && placement == $placement
+    && isActive == true
+  ] | order(priority desc) {
+    _id,
+    title,
+    headline, headline_sv, headline_en,
+    subheadline, subheadline_sv, subheadline_en,
+    ctaText, ctaText_sv, ctaText_en,
+    ctaUrl,
+    image,
+    mobileImage,
+    gradientFrom,
+    gradientTo,
+    textColor,
+    placement,
+    "brand": brand->slug.current
+  }`;
+
+  const results = await sanityClient.fetch<any[]>(rawQuery, { brand, placement });
+
+  // Map to locale-specific content
+  return results.map((b) => ({
+    ...b,
+    headline: (language === "en" ? b.headline_en : b.headline_sv) || b.headline || "",
+    subheadline: (language === "en" ? b.subheadline_en : b.subheadline_sv) || b.subheadline || "",
+    ctaText: (language === "en" ? b.ctaText_en : b.ctaText_sv) || b.ctaText || "",
+  }));
 }
 
 export async function getTranslations(
