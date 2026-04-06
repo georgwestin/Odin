@@ -151,23 +151,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Popular Games - Horizontal Scroll */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading text-2xl font-bold text-brand-text">
-            Populara spel
-          </h2>
-          <Link
-            href="/casino"
-            className="text-brand-primary hover:text-brand-primary-hover text-sm font-semibold"
-          >
-            Visa alla
-          </Link>
+      {/* Popular Games - Horizontal Scroll — dark section */}
+      <section style={{ backgroundColor: "#010D13" }}>
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-heading text-2xl font-bold text-white">
+              Populära spel
+            </h2>
+            <Link
+              href="/casino"
+              className="text-sm font-semibold"
+              style={{ color: "#00CC9F" }}
+            >
+              Visa alla →
+            </Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4">
+            {games.slice(0, 8).map((game) => (
+              <div key={game.id} className="shrink-0 w-40 sm:w-48">
+                <GameCard
+                  id={game.id}
+                  name={game.name}
+                  provider={game.provider}
+                  thumbnailUrl={game.thumbnailUrl}
+                  isNew={game.isNew}
+                  isPopular={game.isPopular}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4">
-          {games.slice(0, 8).map((game) => (
-            <div key={game.id} className="shrink-0 w-40 sm:w-48">
+      </section>
+
+      {/* Category Tabs + Game Grid — dark section */}
+      <section style={{ backgroundColor: "#010D13" }}>
+        <div className="max-w-7xl mx-auto px-4 pb-12">
+          {/* Category Tabs */}
+          <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className="shrink-0 px-5 py-2.5 rounded-pill text-sm font-medium transition-colors"
+                style={
+                  activeCategory === cat.id
+                    ? { backgroundColor: "#00CC9F", color: "#010D13", border: "1px solid #00CC9F" }
+                    : { backgroundColor: "transparent", color: "#6b7a8d", border: "1px solid #28323D" }
+                }
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Game Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-6">
+            {displayGames.map((game) => (
               <GameCard
+                key={game.id}
                 id={game.id}
                 name={game.name}
                 provider={game.provider}
@@ -175,43 +216,8 @@ export default function HomePage() {
                 isNew={game.isNew}
                 isPopular={game.isPopular}
               />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Category Tabs + Game Grid */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
-        {/* Category Tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`shrink-0 px-5 py-2.5 rounded-pill text-sm font-medium transition-colors border ${
-                activeCategory === cat.id
-                  ? "bg-brand-primary text-white border-brand-primary"
-                  : "bg-white text-brand-text-muted border-brand-border hover:text-brand-text hover:border-brand-text-muted"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Game Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
-          {displayGames.map((game) => (
-            <GameCard
-              key={game.id}
-              id={game.id}
-              name={game.name}
-              provider={game.provider}
-              thumbnailUrl={game.thumbnailUrl}
-              isNew={game.isNew}
-              isPopular={game.isPopular}
-            />
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 

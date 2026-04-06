@@ -323,51 +323,66 @@ export default function CasinoPage() {
         </div>
       </div>
 
-      {/* Game Grid */}
-      <div id="games" className="max-w-[1400px] mx-auto px-4 pt-6 pb-12">
-        {filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-400 text-lg font-body">Inga spel hittades.</p>
-            <p className="text-gray-400 text-sm mt-1 font-body">
-              Prova att ändra din sökning eller dina filter.
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Results count */}
-            <p className="text-xs text-gray-400 mb-4 font-body">
-              Visar {Math.min(visibleCount, filtered.length)} av {filtered.length} spel
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              {visibleGames.map((game) => (
-                <GameCard
-                  key={game.id}
-                  id={game.id}
-                  name={game.name}
-                  provider={game.provider}
-                  thumbnailUrl={game.thumbnailUrl}
-                  rtp={game.rtp}
-                  isNew={game.isNew}
-                  isPopular={game.isPopular}
-                  isExclusive={game.isExclusive}
-                />
-              ))}
+      {/* Game Grid — dark background like mint.io */}
+      <div id="games" style={{ backgroundColor: "#010D13" }}>
+        <div className="max-w-[1400px] mx-auto px-4 pt-6 pb-12">
+          {filtered.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg font-body">Inga spel hittades.</p>
+              <p className="text-gray-600 text-sm mt-1 font-body">
+                Prova att ändra din sökning eller dina filter.
+              </p>
             </div>
+          ) : (
+            <>
+              {/* Results count */}
+              <p className="text-xs mb-4 font-body" style={{ color: "#6b7a8d" }}>
+                Visar {Math.min(visibleCount, filtered.length)} av {filtered.length} spel
+              </p>
 
-            {/* Load More */}
-            {remaining > 0 && (
-              <div className="text-center mt-10">
-                <button
-                  onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-                  className="border border-gray-300 hover:border-[#272b33] text-[#272b33] font-semibold text-sm px-8 py-3 rounded-full transition-colors font-body"
-                >
-                  Visa fler ({remaining} kvar)
-                </button>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                {visibleGames.map((game) => (
+                  <GameCard
+                    key={game.id}
+                    id={game.id}
+                    name={game.name}
+                    provider={game.provider}
+                    thumbnailUrl={game.thumbnailUrl}
+                    rtp={game.rtp}
+                    isNew={game.isNew}
+                    isPopular={game.isPopular}
+                    isExclusive={game.isExclusive}
+                  />
+                ))}
               </div>
-            )}
-          </>
-        )}
+
+              {/* Load More */}
+              {remaining > 0 && (
+                <div className="text-center mt-10">
+                  <button
+                    onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                    className="font-semibold text-sm px-8 py-3 rounded-full transition-colors font-body"
+                    style={{
+                      border: "1px solid #28323D",
+                      color: "#6b7a8d",
+                      backgroundColor: "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "#00CC9F";
+                      e.currentTarget.style.color = "#00CC9F";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "#28323D";
+                      e.currentTarget.style.color = "#6b7a8d";
+                    }}
+                  >
+                    Visa fler ({remaining} kvar)
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
