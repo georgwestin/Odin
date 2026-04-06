@@ -9,6 +9,7 @@ interface GameForm {
   slug: string;
   provider: string;
   category: string;
+  categories: string[];
   description: string;
   imageUrl: string;
   launchUrl: string;
@@ -51,6 +52,22 @@ const volatilityOptions = [
 
 const allBrands = ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"];
 
+const availableCategories = [
+  { id: "popular", name: "Populära", icon: "🔥" },
+  { id: "new", name: "Nya spel", icon: "✨" },
+  { id: "slots", name: "Slots", icon: "🎰" },
+  { id: "table", name: "Bordsspel", icon: "🃏" },
+  { id: "live", name: "Live Casino", icon: "📺" },
+  { id: "jackpot", name: "Jackpottar", icon: "🏆" },
+  { id: "megaways", name: "Megaways", icon: "⚡" },
+  { id: "bonus-buy", name: "Bonusköp", icon: "💰" },
+  { id: "game-shows", name: "Spelshower", icon: "⭐" },
+  { id: "instant", name: "Snabbspel", icon: "🚀" },
+  { id: "exclusive", name: "Exklusiva", icon: "💎" },
+  { id: "classic", name: "Klassiker", icon: "👑" },
+  { id: "weekly-top", name: "Veckans topplista", icon: "🔥" },
+];
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -65,6 +82,7 @@ const emptyForm: GameForm = {
   slug: "",
   provider: "Pragmatic Play",
   category: "slots",
+  categories: ["slots"],
   description: "",
   imageUrl: "",
   launchUrl: "",
@@ -91,6 +109,15 @@ export default function NewGamePage() {
 
   const handleChange = (field: keyof GameForm, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCategoryToggle = (catId: string) => {
+    setForm((prev) => {
+      const categories = prev.categories.includes(catId)
+        ? prev.categories.filter((c) => c !== catId)
+        : [...prev.categories, catId];
+      return { ...prev, categories };
+    });
   };
 
   const handleBrandToggle = (brand: string) => {
@@ -197,7 +224,7 @@ export default function NewGamePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Primär kategori</label>
                 <select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
@@ -219,6 +246,42 @@ export default function NewGamePage() {
                 rows={3}
                 placeholder="Beskriv spelet, dess funktioner och tema..."
               />
+            </div>
+          </div>
+
+          {/* Categories (many-to-many) */}
+          <div className="card space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-slate-900">Kategorier</h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Ett spel kan tillhöra flera kategorier. Välj alla som passar.
+                </p>
+              </div>
+              <span className="text-xs text-slate-400">{form.categories.length} valda</span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {availableCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryToggle(cat.id)}
+                  className={clsx(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors",
+                    form.categories.includes(cat.id)
+                      ? "bg-blue-50 border-blue-300 text-blue-700"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
+                  )}
+                >
+                  <span>{cat.icon}</span>
+                  <span>{cat.name}</span>
+                  {form.categories.includes(cat.id) && (
+                    <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -428,10 +491,25 @@ export default function NewGamePage() {
                 <span className="font-medium text-slate-700">{form.provider}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Kategori</span>
+                <span className="text-slate-500">Primär kat.</span>
                 <span className="font-medium text-slate-700">
                   {allCategories.find((c) => c.value === form.category)?.label || form.category}
                 </span>
+              </div>
+              <div className="text-sm">
+                <span className="text-slate-500">Kategorier</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {form.categories.length > 0 ? form.categories.map((catId) => {
+                    const cat = availableCategories.find((c) => c.id === catId);
+                    return (
+                      <span key={catId} className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                        {cat?.icon} {cat?.name || catId}
+                      </span>
+                    );
+                  }) : (
+                    <span className="text-xs text-slate-400">Inga kategorier</span>
+                  )}
+                </div>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">RTP</span>

@@ -10,6 +10,7 @@ interface GameData {
   slug: string;
   provider: string;
   category: string;
+  categories: string[];
   description: string;
   imageUrl: string;
   launchUrl: string;
@@ -54,19 +55,35 @@ const volatilityOptions = [
 
 const allBrands = ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"];
 
+const availableCategories = [
+  { id: "popular", name: "Populära", icon: "🔥" },
+  { id: "new", name: "Nya spel", icon: "✨" },
+  { id: "slots", name: "Slots", icon: "🎰" },
+  { id: "table", name: "Bordsspel", icon: "🃏" },
+  { id: "live", name: "Live Casino", icon: "📺" },
+  { id: "jackpot", name: "Jackpottar", icon: "🏆" },
+  { id: "megaways", name: "Megaways", icon: "⚡" },
+  { id: "bonus-buy", name: "Bonusköp", icon: "💰" },
+  { id: "game-shows", name: "Spelshower", icon: "⭐" },
+  { id: "instant", name: "Snabbspel", icon: "🚀" },
+  { id: "exclusive", name: "Exklusiva", icon: "💎" },
+  { id: "classic", name: "Klassiker", icon: "👑" },
+  { id: "weekly-top", name: "Veckans topplista", icon: "🔥" },
+];
+
 // Mock game data for edit mode
 const mockGames: Record<string, GameData> = {
-  g1: { id: "g1", name: "Sweet Bonanza", slug: "sweet-bonanza", provider: "Pragmatic Play", category: "slots", description: "Populär godisslot med tumble-funktion och multiplikatorer. Upp till 21,175x vinst.", imageUrl: "https://cdn.mint.io/production/games/images/sweet-bonanza.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20fruitsw", rtp: 96.48, volatility: "medium-high", minBet: 1, maxBet: 1250, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots"], tags: "tumble, free-spins, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-15 14:30" },
-  g2: { id: "g2", name: "Gates of Olympus", slug: "gates-of-olympus", provider: "Pragmatic Play", category: "slots", description: "Zeus-tema med multiplikatorer som ackumuleras under fria spins. Max vinst 5,000x.", imageUrl: "https://cdn.mint.io/production/games/images/gates-of-olympus.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20olympgate", rtp: 96.50, volatility: "high", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming"], tags: "tumble, multiplier, bonus-buy", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-20 09:15" },
-  g3: { id: "g3", name: "Book of Dead", slug: "book-of-dead", provider: "Play'n GO", category: "slots", description: "Klassisk egyptisk äventyrslot med expanderande symboler under fria spins.", imageUrl: "https://cdn.mint.io/production/games/images/book-of-dead.jpg", launchUrl: "https://asccw.playngonetwork.com/casino/ContainerLauncher?pid=2&gid=bookofdeaddesktop", rtp: 96.21, volatility: "high", minBet: 1, maxBet: 500, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "free-spins, expanding-symbols", createdAt: "2025-05-15 08:00", updatedAt: "2026-02-10 11:45" },
-  g13: { id: "g13", name: "Crazy Time", slug: "crazy-time", provider: "Evolution", category: "game-shows", description: "Live spelshow med fyra bonusrundor: Coin Flip, Cash Hunt, Pachinko och Crazy Time.", imageUrl: "https://cdn.mint.io/production/games/images/crazy-time.jpg", launchUrl: "https://games.evolution.com/entry?game=crazytime", rtp: 95.50, volatility: "high", minBet: 5, maxBet: 5000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "live, game-show, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-10 16:20" },
-  g14: { id: "g14", name: "Lightning Roulette", slug: "lightning-roulette", provider: "Evolution", category: "live", description: "Live roulette med slumpmässiga multiplikatorer upp till 500x på straight-up-bets.", imageUrl: "https://cdn.mint.io/production/games/images/lightning-roulette.jpg", launchUrl: "https://games.evolution.com/entry?game=lightningroulette", rtp: 97.30, volatility: "medium", minBet: 5, maxBet: 10000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet", "Thor Gaming"], tags: "live, roulette, multiplier", createdAt: "2025-05-01 10:00", updatedAt: "2026-02-28 13:10" },
-  g23: { id: "g23", name: "Aviator", slug: "aviator", provider: "Spribe", category: "instant", description: "Crash-spel med social aspekt. Cash ut innan planet flyger iväg.", imageUrl: "https://cdn.mint.io/production/games/images/aviator.jpg", launchUrl: "https://spribe.co/games/aviator", rtp: 97.00, volatility: "medium", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"], tags: "instant, crash, social", createdAt: "2025-06-10 10:00", updatedAt: "2026-03-18 15:00" },
+  g1: { id: "g1", name: "Sweet Bonanza", slug: "sweet-bonanza", provider: "Pragmatic Play", category: "slots", categories: ["slots", "popular", "bonus-buy", "weekly-top"], description: "Populär godisslot med tumble-funktion och multiplikatorer. Upp till 21,175x vinst.", imageUrl: "https://cdn.mint.io/production/games/images/sweet-bonanza.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20fruitsw", rtp: 96.48, volatility: "medium-high", minBet: 1, maxBet: 1250, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots"], tags: "tumble, free-spins, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-15 14:30" },
+  g2: { id: "g2", name: "Gates of Olympus", slug: "gates-of-olympus", provider: "Pragmatic Play", category: "slots", categories: ["slots", "popular", "bonus-buy", "classic"], description: "Zeus-tema med multiplikatorer som ackumuleras under fria spins. Max vinst 5,000x.", imageUrl: "https://cdn.mint.io/production/games/images/gates-of-olympus.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20olympgate", rtp: 96.50, volatility: "high", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming"], tags: "tumble, multiplier, bonus-buy", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-20 09:15" },
+  g3: { id: "g3", name: "Book of Dead", slug: "book-of-dead", provider: "Play'n GO", category: "slots", categories: ["slots", "popular", "classic"], description: "Klassisk egyptisk äventyrslot med expanderande symboler under fria spins.", imageUrl: "https://cdn.mint.io/production/games/images/book-of-dead.jpg", launchUrl: "https://asccw.playngonetwork.com/casino/ContainerLauncher?pid=2&gid=bookofdeaddesktop", rtp: 96.21, volatility: "high", minBet: 1, maxBet: 500, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "free-spins, expanding-symbols", createdAt: "2025-05-15 08:00", updatedAt: "2026-02-10 11:45" },
+  g13: { id: "g13", name: "Crazy Time", slug: "crazy-time", provider: "Evolution", category: "game-shows", categories: ["game-shows", "live", "popular"], description: "Live spelshow med fyra bonusrundor: Coin Flip, Cash Hunt, Pachinko och Crazy Time.", imageUrl: "https://cdn.mint.io/production/games/images/crazy-time.jpg", launchUrl: "https://games.evolution.com/entry?game=crazytime", rtp: 95.50, volatility: "high", minBet: 5, maxBet: 5000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "live, game-show, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-10 16:20" },
+  g14: { id: "g14", name: "Lightning Roulette", slug: "lightning-roulette", provider: "Evolution", category: "live", categories: ["live", "popular", "table"], description: "Live roulette med slumpmässiga multiplikatorer upp till 500x på straight-up-bets.", imageUrl: "https://cdn.mint.io/production/games/images/lightning-roulette.jpg", launchUrl: "https://games.evolution.com/entry?game=lightningroulette", rtp: 97.30, volatility: "medium", minBet: 5, maxBet: 10000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet", "Thor Gaming"], tags: "live, roulette, multiplier", createdAt: "2025-05-01 10:00", updatedAt: "2026-02-28 13:10" },
+  g23: { id: "g23", name: "Aviator", slug: "aviator", provider: "Spribe", category: "instant", categories: ["instant", "popular", "new"], description: "Crash-spel med social aspekt. Cash ut innan planet flyger iväg.", imageUrl: "https://cdn.mint.io/production/games/images/aviator.jpg", launchUrl: "https://spribe.co/games/aviator", rtp: 97.00, volatility: "medium", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"], tags: "instant, crash, social", createdAt: "2025-06-10 10:00", updatedAt: "2026-03-18 15:00" },
 };
 
 // Generate default for unknown IDs
 const defaultGame: GameData = {
-  id: "g5", name: "Wanted Dead or a Wild", slug: "wanted-dead-or-a-wild", provider: "Hacksaw Gaming", category: "slots", description: "Vilda Västern-tema med duellfunktion och extrema multiplikatorer. Max vinst 12,500x.", imageUrl: "https://cdn.mint.io/production/games/images/wanted-dead-or-a-wild.jpg", launchUrl: "https://static-live.hacksawgaming.com/load/?game=wanted-dead-or-a-wild", rtp: 96.38, volatility: "extreme", minBet: 2, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Thor Gaming"], tags: "bonus-buy, multiplier, duel", createdAt: "2025-07-10 10:00", updatedAt: "2026-03-25 12:00",
+  id: "g5", name: "Wanted Dead or a Wild", slug: "wanted-dead-or-a-wild", provider: "Hacksaw Gaming", category: "slots", categories: ["slots", "popular", "bonus-buy"], description: "Vilda Västern-tema med duellfunktion och extrema multiplikatorer. Max vinst 12,500x.", imageUrl: "https://cdn.mint.io/production/games/images/wanted-dead-or-a-wild.jpg", launchUrl: "https://static-live.hacksawgaming.com/load/?game=wanted-dead-or-a-wild", rtp: 96.38, volatility: "extreme", minBet: 2, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Thor Gaming"], tags: "bonus-buy, multiplier, duel", createdAt: "2025-07-10 10:00", updatedAt: "2026-03-25 12:00",
 };
 
 function slugify(text: string): string {
@@ -96,6 +113,15 @@ export default function GameEditPage() {
 
   const handleChange = (field: keyof GameData, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCategoryToggle = (catId: string) => {
+    setForm((prev) => {
+      const categories = prev.categories.includes(catId)
+        ? prev.categories.filter((c) => c !== catId)
+        : [...prev.categories, catId];
+      return { ...prev, categories };
+    });
   };
 
   const handleBrandToggle = (brand: string) => {
@@ -193,7 +219,7 @@ export default function GameEditPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Primär kategori</label>
                 <select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
@@ -215,6 +241,42 @@ export default function GameEditPage() {
                 rows={3}
                 placeholder="Beskriv spelet, dess funktioner och tema..."
               />
+            </div>
+          </div>
+
+          {/* Categories (many-to-many) */}
+          <div className="card space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-slate-900">Kategorier</h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Ett spel kan tillhöra flera kategorier. Välj alla som passar.
+                </p>
+              </div>
+              <span className="text-xs text-slate-400">{form.categories.length} valda</span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {availableCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryToggle(cat.id)}
+                  className={clsx(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors",
+                    form.categories.includes(cat.id)
+                      ? "bg-blue-50 border-blue-300 text-blue-700"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
+                  )}
+                >
+                  <span>{cat.icon}</span>
+                  <span>{cat.name}</span>
+                  {form.categories.includes(cat.id) && (
+                    <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -438,10 +500,25 @@ export default function GameEditPage() {
                 <span className="font-medium text-slate-700">{form.provider}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Kategori</span>
+                <span className="text-slate-500">Primär kat.</span>
                 <span className="font-medium text-slate-700">
                   {allCategories.find((c) => c.value === form.category)?.label || form.category}
                 </span>
+              </div>
+              <div className="text-sm">
+                <span className="text-slate-500">Kategorier</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {form.categories.length > 0 ? form.categories.map((catId) => {
+                    const cat = availableCategories.find((c) => c.id === catId);
+                    return (
+                      <span key={catId} className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                        {cat?.icon} {cat?.name || catId}
+                      </span>
+                    );
+                  }) : (
+                    <span className="text-xs text-slate-400">Inga kategorier</span>
+                  )}
+                </div>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">RTP</span>
