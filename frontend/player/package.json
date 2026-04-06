@@ -9,14 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@portabletext/react": "^3.2.4",
+    "@sanity/client": "^6.29.1",
+    "@sanity/image-url": "^1.2.0",
     "next": "14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^4.5.5",
     "socket.io-client": "^4.7.5",
-    "@sanity/client": "^6.15.0",
-    "@sanity/image-url": "^1.0.2",
-    "@portabletext/react": "^3.0.0"
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

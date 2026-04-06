@@ -173,7 +173,7 @@ export default defineConfig({
   name: 'odin-cms',
   title: 'Odin iGaming CMS',
 
-  projectId: 'your-project-id',
+  projectId: 'mqk9lpso',
   dataset: 'production',
 
   plugins: [
