@@ -36,54 +36,54 @@ const allProviders = [
 
 const allCategories = [
   { value: "slots", label: "Slots" },
-  { value: "table", label: "Bord" },
+  { value: "table", label: "Table" },
   { value: "live", label: "Live Casino" },
   { value: "jackpot", label: "Jackpot" },
   { value: "megaways", label: "Megaways" },
   { value: "instant", label: "Instant" },
-  { value: "bonus-buy", label: "Bonusköp" },
-  { value: "game-shows", label: "Spelshower" },
+  { value: "bonus-buy", label: "Bonus Buy" },
+  { value: "game-shows", label: "Game Shows" },
 ];
 
 const volatilityOptions = [
-  { value: "low", label: "Låg" },
+  { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },
-  { value: "medium-high", label: "Medium-Hög" },
-  { value: "high", label: "Hög" },
-  { value: "extreme", label: "Extrem" },
+  { value: "medium-high", label: "Medium-High" },
+  { value: "high", label: "High" },
+  { value: "extreme", label: "Extreme" },
 ];
 
 const allBrands = ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"];
 
 const availableCategories = [
-  { id: "popular", name: "Populära", icon: "🔥" },
-  { id: "new", name: "Nya spel", icon: "✨" },
+  { id: "popular", name: "Popular", icon: "🔥" },
+  { id: "new", name: "New Games", icon: "✨" },
   { id: "slots", name: "Slots", icon: "🎰" },
-  { id: "table", name: "Bordsspel", icon: "🃏" },
+  { id: "table", name: "Table Games", icon: "🃏" },
   { id: "live", name: "Live Casino", icon: "📺" },
-  { id: "jackpot", name: "Jackpottar", icon: "🏆" },
+  { id: "jackpot", name: "Jackpots", icon: "🏆" },
   { id: "megaways", name: "Megaways", icon: "⚡" },
-  { id: "bonus-buy", name: "Bonusköp", icon: "💰" },
-  { id: "game-shows", name: "Spelshower", icon: "⭐" },
-  { id: "instant", name: "Snabbspel", icon: "🚀" },
-  { id: "exclusive", name: "Exklusiva", icon: "💎" },
-  { id: "classic", name: "Klassiker", icon: "👑" },
-  { id: "weekly-top", name: "Veckans topplista", icon: "🔥" },
+  { id: "bonus-buy", name: "Bonus Buy", icon: "💰" },
+  { id: "game-shows", name: "Game Shows", icon: "⭐" },
+  { id: "instant", name: "Instant Games", icon: "🚀" },
+  { id: "exclusive", name: "Exclusive", icon: "💎" },
+  { id: "classic", name: "Classics", icon: "👑" },
+  { id: "weekly-top", name: "Weekly Top List", icon: "🔥" },
 ];
 
 // Mock game data for edit mode
 const mockGames: Record<string, GameData> = {
-  g1: { id: "g1", name: "Sweet Bonanza", slug: "sweet-bonanza", provider: "Pragmatic Play", category: "slots", categories: ["slots", "popular", "bonus-buy", "weekly-top"], description: "Populär godisslot med tumble-funktion och multiplikatorer. Upp till 21,175x vinst.", imageUrl: "https://cdn.mint.io/production/games/images/sweet-bonanza.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20fruitsw", rtp: 96.48, volatility: "medium-high", minBet: 1, maxBet: 1250, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots"], tags: "tumble, free-spins, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-15 14:30" },
-  g2: { id: "g2", name: "Gates of Olympus", slug: "gates-of-olympus", provider: "Pragmatic Play", category: "slots", categories: ["slots", "popular", "bonus-buy", "classic"], description: "Zeus-tema med multiplikatorer som ackumuleras under fria spins. Max vinst 5,000x.", imageUrl: "https://cdn.mint.io/production/games/images/gates-of-olympus.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20olympgate", rtp: 96.50, volatility: "high", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming"], tags: "tumble, multiplier, bonus-buy", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-20 09:15" },
-  g3: { id: "g3", name: "Book of Dead", slug: "book-of-dead", provider: "Play'n GO", category: "slots", categories: ["slots", "popular", "classic"], description: "Klassisk egyptisk äventyrslot med expanderande symboler under fria spins.", imageUrl: "https://cdn.mint.io/production/games/images/book-of-dead.jpg", launchUrl: "https://asccw.playngonetwork.com/casino/ContainerLauncher?pid=2&gid=bookofdeaddesktop", rtp: 96.21, volatility: "high", minBet: 1, maxBet: 500, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "free-spins, expanding-symbols", createdAt: "2025-05-15 08:00", updatedAt: "2026-02-10 11:45" },
-  g13: { id: "g13", name: "Crazy Time", slug: "crazy-time", provider: "Evolution", category: "game-shows", categories: ["game-shows", "live", "popular"], description: "Live spelshow med fyra bonusrundor: Coin Flip, Cash Hunt, Pachinko och Crazy Time.", imageUrl: "https://cdn.mint.io/production/games/images/crazy-time.jpg", launchUrl: "https://games.evolution.com/entry?game=crazytime", rtp: 95.50, volatility: "high", minBet: 5, maxBet: 5000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "live, game-show, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-10 16:20" },
-  g14: { id: "g14", name: "Lightning Roulette", slug: "lightning-roulette", provider: "Evolution", category: "live", categories: ["live", "popular", "table"], description: "Live roulette med slumpmässiga multiplikatorer upp till 500x på straight-up-bets.", imageUrl: "https://cdn.mint.io/production/games/images/lightning-roulette.jpg", launchUrl: "https://games.evolution.com/entry?game=lightningroulette", rtp: 97.30, volatility: "medium", minBet: 5, maxBet: 10000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet", "Thor Gaming"], tags: "live, roulette, multiplier", createdAt: "2025-05-01 10:00", updatedAt: "2026-02-28 13:10" },
-  g23: { id: "g23", name: "Aviator", slug: "aviator", provider: "Spribe", category: "instant", categories: ["instant", "popular", "new"], description: "Crash-spel med social aspekt. Cash ut innan planet flyger iväg.", imageUrl: "https://cdn.mint.io/production/games/images/aviator.jpg", launchUrl: "https://spribe.co/games/aviator", rtp: 97.00, volatility: "medium", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"], tags: "instant, crash, social", createdAt: "2025-06-10 10:00", updatedAt: "2026-03-18 15:00" },
+  g1: { id: "g1", name: "Sweet Bonanza", slug: "sweet-bonanza", provider: "Pragmatic Play", category: "slots", categories: ["slots", "popular", "bonus-buy", "weekly-top"], description: "Popular candy slot with tumble feature and multipliers. Up to 21,175x win.", imageUrl: "https://cdn.mint.io/production/games/images/sweet-bonanza.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20fruitsw", rtp: 96.48, volatility: "medium-high", minBet: 1, maxBet: 1250, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots"], tags: "tumble, free-spins, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-15 14:30" },
+  g2: { id: "g2", name: "Gates of Olympus", slug: "gates-of-olympus", provider: "Pragmatic Play", category: "slots", categories: ["slots", "popular", "bonus-buy", "classic"], description: "Zeus theme with multipliers that accumulate during free spins. Max win 5,000x.", imageUrl: "https://cdn.mint.io/production/games/images/gates-of-olympus.jpg", launchUrl: "https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=vs20olympgate", rtp: 96.50, volatility: "high", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming"], tags: "tumble, multiplier, bonus-buy", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-20 09:15" },
+  g3: { id: "g3", name: "Book of Dead", slug: "book-of-dead", provider: "Play'n GO", category: "slots", categories: ["slots", "popular", "classic"], description: "Classic Egyptian adventure slot with expanding symbols during free spins.", imageUrl: "https://cdn.mint.io/production/games/images/book-of-dead.jpg", launchUrl: "https://asccw.playngonetwork.com/casino/ContainerLauncher?pid=2&gid=bookofdeaddesktop", rtp: 96.21, volatility: "high", minBet: 1, maxBet: 500, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "free-spins, expanding-symbols", createdAt: "2025-05-15 08:00", updatedAt: "2026-02-10 11:45" },
+  g13: { id: "g13", name: "Crazy Time", slug: "crazy-time", provider: "Evolution", category: "game-shows", categories: ["game-shows", "live", "popular"], description: "Live game show with four bonus rounds: Coin Flip, Cash Hunt, Pachinko and Crazy Time.", imageUrl: "https://cdn.mint.io/production/games/images/crazy-time.jpg", launchUrl: "https://games.evolution.com/entry?game=crazytime", rtp: 95.50, volatility: "high", minBet: 5, maxBet: 5000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet"], tags: "live, game-show, multiplier", createdAt: "2025-06-01 10:00", updatedAt: "2026-03-10 16:20" },
+  g14: { id: "g14", name: "Lightning Roulette", slug: "lightning-roulette", provider: "Evolution", category: "live", categories: ["live", "popular", "table"], description: "Live roulette with random multipliers up to 500x on straight-up bets.", imageUrl: "https://cdn.mint.io/production/games/images/lightning-roulette.jpg", launchUrl: "https://games.evolution.com/entry?game=lightningroulette", rtp: 97.30, volatility: "medium", minBet: 5, maxBet: 10000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Valhalla Bet", "Thor Gaming"], tags: "live, roulette, multiplier", createdAt: "2025-05-01 10:00", updatedAt: "2026-02-28 13:10" },
+  g23: { id: "g23", name: "Aviator", slug: "aviator", provider: "Spribe", category: "instant", categories: ["instant", "popular", "new"], description: "Crash game with social aspect. Cash out before the plane flies away.", imageUrl: "https://cdn.mint.io/production/games/images/aviator.jpg", launchUrl: "https://spribe.co/games/aviator", rtp: 97.00, volatility: "medium", minBet: 1, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"], tags: "instant, crash, social", createdAt: "2025-06-10 10:00", updatedAt: "2026-03-18 15:00" },
 };
 
 // Generate default for unknown IDs
 const defaultGame: GameData = {
-  id: "g5", name: "Wanted Dead or a Wild", slug: "wanted-dead-or-a-wild", provider: "Hacksaw Gaming", category: "slots", categories: ["slots", "popular", "bonus-buy"], description: "Vilda Västern-tema med duellfunktion och extrema multiplikatorer. Max vinst 12,500x.", imageUrl: "https://cdn.mint.io/production/games/images/wanted-dead-or-a-wild.jpg", launchUrl: "https://static-live.hacksawgaming.com/load/?game=wanted-dead-or-a-wild", rtp: 96.38, volatility: "extreme", minBet: 2, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Thor Gaming"], tags: "bonus-buy, multiplier, duel", createdAt: "2025-07-10 10:00", updatedAt: "2026-03-25 12:00",
+  id: "g5", name: "Wanted Dead or a Wild", slug: "wanted-dead-or-a-wild", provider: "Hacksaw Gaming", category: "slots", categories: ["slots", "popular", "bonus-buy"], description: "Wild West theme with duel feature and extreme multipliers. Max win 12,500x.", imageUrl: "https://cdn.mint.io/production/games/images/wanted-dead-or-a-wild.jpg", launchUrl: "https://static-live.hacksawgaming.com/load/?game=wanted-dead-or-a-wild", rtp: 96.38, volatility: "extreme", minBet: 2, maxBet: 1000, active: true, isNew: false, isPopular: true, isExclusive: false, brands: ["Odin Casino", "Thor Gaming"], tags: "bonus-buy, multiplier, duel", createdAt: "2025-07-10 10:00", updatedAt: "2026-03-25 12:00",
 };
 
 function slugify(text: string): string {
@@ -151,25 +151,25 @@ export default function GameEditPage() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Tillbaka
+          Back
         </button>
         <div className="flex-1">
-          <h2 className="text-xl font-bold text-slate-900">Redigera spel</h2>
+          <h2 className="text-xl font-bold text-slate-900">Edit Game</h2>
           <p className="text-sm text-slate-500">{form.name} &middot; {form.provider}</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => router.push("/games")} className="btn-secondary">Avbryt</button>
-          <button onClick={() => setShowDeleteModal(true)} className="btn-danger">Ta bort</button>
+          <button onClick={() => router.push("/games")} className="btn-secondary">Cancel</button>
+          <button onClick={() => setShowDeleteModal(true)} className="btn-danger">Delete</button>
           <button onClick={handleSave} className="btn-primary">
             {saved ? (
               <>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Sparat!
+                Saved!
               </>
             ) : (
-              "Spara ändringar"
+              "Save Changes"
             )}
           </button>
         </div>
@@ -181,11 +181,11 @@ export default function GameEditPage() {
         <div className="col-span-2 space-y-6">
           {/* Basic info */}
           <div className="card space-y-4">
-            <h3 className="font-semibold text-slate-900">Grundläggande information</h3>
+            <h3 className="font-semibold text-slate-900">Basic Information</h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Spelnamn *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Game Name *</label>
                 <input
                   type="text"
                   value={form.name}
@@ -207,7 +207,7 @@ export default function GameEditPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Leverantör</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Provider</label>
                 <select
                   value={form.provider}
                   onChange={(e) => handleChange("provider", e.target.value)}
@@ -219,7 +219,7 @@ export default function GameEditPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Primär kategori</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Primary Category</label>
                 <select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
@@ -233,13 +233,13 @@ export default function GameEditPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Beskrivning</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
               <textarea
                 value={form.description}
                 onChange={(e) => handleChange("description", e.target.value)}
                 className="input"
                 rows={3}
-                placeholder="Beskriv spelet, dess funktioner och tema..."
+                placeholder="Describe the game, its features and theme..."
               />
             </div>
           </div>
@@ -248,12 +248,12 @@ export default function GameEditPage() {
           <div className="card space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-slate-900">Kategorier</h3>
+                <h3 className="font-semibold text-slate-900">Categories</h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Ett spel kan tillhöra flera kategorier. Välj alla som passar.
+                  A game can belong to multiple categories. Select all that apply.
                 </p>
               </div>
-              <span className="text-xs text-slate-400">{form.categories.length} valda</span>
+              <span className="text-xs text-slate-400">{form.categories.length} selected</span>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -285,7 +285,7 @@ export default function GameEditPage() {
             <h3 className="font-semibold text-slate-900">URLs</h3>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Spelbild-URL</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Game Image URL</label>
               <input
                 type="url"
                 value={form.imageUrl}
@@ -296,7 +296,7 @@ export default function GameEditPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Spelstart-URL (iframe)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Game Launch URL (iframe)</label>
               <input
                 type="url"
                 value={form.launchUrl}
@@ -309,7 +309,7 @@ export default function GameEditPage() {
 
           {/* Game settings */}
           <div className="card space-y-4">
-            <h3 className="font-semibold text-slate-900">Spelinställningar</h3>
+            <h3 className="font-semibold text-slate-900">Game Settings</h3>
 
             <div className="grid grid-cols-3 gap-4">
               <div>
@@ -326,7 +326,7 @@ export default function GameEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Volatilitet</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Volatility</label>
                 <select
                   value={form.volatility}
                   onChange={(e) => handleChange("volatility", e.target.value)}
@@ -348,14 +348,14 @@ export default function GameEditPage() {
                       : "bg-red-50 border-red-300 text-red-700"
                   )}
                 >
-                  {form.active ? "Aktiv" : "Inaktiv"}
+                  {form.active ? "Active" : "Inactive"}
                 </button>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Min insats (SEK)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Min Bet (SEK)</label>
                 <input
                   type="number"
                   value={form.minBet}
@@ -366,7 +366,7 @@ export default function GameEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Max insats (SEK)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Max Bet (SEK)</label>
                 <input
                   type="number"
                   value={form.maxBet}
@@ -381,7 +381,7 @@ export default function GameEditPage() {
 
           {/* Flags and tags */}
           <div className="card space-y-4">
-            <h3 className="font-semibold text-slate-900">Flaggor och taggar</h3>
+            <h3 className="font-semibold text-slate-900">Flags & Tags</h3>
 
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -391,7 +391,7 @@ export default function GameEditPage() {
                   onChange={(e) => handleChange("isNew", e.target.checked)}
                   className="rounded border-slate-300 text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-slate-700">Nytt spel</span>
+                <span className="text-sm text-slate-700">New Game</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -400,7 +400,7 @@ export default function GameEditPage() {
                   onChange={(e) => handleChange("isPopular", e.target.checked)}
                   className="rounded border-slate-300 text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-slate-700">Populärt</span>
+                <span className="text-sm text-slate-700">Popular</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -409,12 +409,12 @@ export default function GameEditPage() {
                   onChange={(e) => handleChange("isExclusive", e.target.checked)}
                   className="rounded border-slate-300 text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-slate-700">Exklusivt</span>
+                <span className="text-sm text-slate-700">Exclusive</span>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Varumärken</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Brands</label>
               <div className="flex flex-wrap gap-2">
                 {allBrands.map((brand) => (
                   <button
@@ -434,7 +434,7 @@ export default function GameEditPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Taggar (kommaseparerade)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tags (comma-separated)</label>
               <input
                 type="text"
                 value={form.tags}
@@ -450,15 +450,15 @@ export default function GameEditPage() {
             <h3 className="font-semibold text-slate-900 mb-3">Metadata</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex justify-between py-2 border-b border-slate-100">
-                <span className="text-slate-500">Skapad</span>
+                <span className="text-slate-500">Created</span>
                 <span className="font-medium text-slate-700">{form.createdAt}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-slate-100">
-                <span className="text-slate-500">Senast uppdaterad</span>
+                <span className="text-slate-500">Last Updated</span>
                 <span className="font-medium text-slate-700">{form.updatedAt}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-slate-100">
-                <span className="text-slate-500">Spel-ID</span>
+                <span className="text-slate-500">Game ID</span>
                 <span className="font-mono text-slate-700">{form.id}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-slate-100">
@@ -472,7 +472,7 @@ export default function GameEditPage() {
         {/* Right: Image preview (1/3) */}
         <div className="space-y-6">
           <div className="card">
-            <h3 className="font-semibold text-slate-900 mb-3">Förhandsvisning</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Preview</h3>
             <div className="aspect-square rounded-lg bg-slate-100 overflow-hidden">
               <img
                 src={form.imageUrl}
@@ -487,26 +487,26 @@ export default function GameEditPage() {
           </div>
 
           <div className="card">
-            <h3 className="font-semibold text-slate-900 mb-3">Snabbinfo</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Quick Info</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Status</span>
                 <span className={form.active ? "badge-green" : "badge-red"}>
-                  {form.active ? "Aktiv" : "Inaktiv"}
+                  {form.active ? "Active" : "Inactive"}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Leverantör</span>
+                <span className="text-slate-500">Provider</span>
                 <span className="font-medium text-slate-700">{form.provider}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Primär kat.</span>
+                <span className="text-slate-500">Primary Cat.</span>
                 <span className="font-medium text-slate-700">
                   {allCategories.find((c) => c.value === form.category)?.label || form.category}
                 </span>
               </div>
               <div className="text-sm">
-                <span className="text-slate-500">Kategorier</span>
+                <span className="text-slate-500">Categories</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {form.categories.length > 0 ? form.categories.map((catId) => {
                     const cat = availableCategories.find((c) => c.id === catId);
@@ -516,7 +516,7 @@ export default function GameEditPage() {
                       </span>
                     );
                   }) : (
-                    <span className="text-xs text-slate-400">Inga kategorier</span>
+                    <span className="text-xs text-slate-400">No categories</span>
                   )}
                 </div>
               </div>
@@ -525,30 +525,30 @@ export default function GameEditPage() {
                 <span className="font-mono font-medium text-slate-700">{form.rtp.toFixed(2)}%</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Volatilitet</span>
+                <span className="text-slate-500">Volatility</span>
                 <span className="font-medium text-slate-700">
                   {volatilityOptions.find((v) => v.value === form.volatility)?.label || form.volatility}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Insats</span>
+                <span className="text-slate-500">Bet</span>
                 <span className="font-mono text-slate-700">{form.minBet} - {form.maxBet.toLocaleString()} kr</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Varumärken</span>
-                <span className="font-medium text-slate-700">{form.brands.length} st</span>
+                <span className="text-slate-500">Brands</span>
+                <span className="font-medium text-slate-700">{form.brands.length}</span>
               </div>
             </div>
           </div>
 
           <div className="card">
-            <h3 className="font-semibold text-slate-900 mb-3">Flaggor</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Flags</h3>
             <div className="flex flex-wrap gap-2">
-              {form.isNew && <span className="badge-blue">Nytt</span>}
-              {form.isPopular && <span className="badge-yellow">Populärt</span>}
-              {form.isExclusive && <span className="badge bg-purple-100 text-purple-700">Exklusivt</span>}
+              {form.isNew && <span className="badge-blue">New</span>}
+              {form.isPopular && <span className="badge-yellow">Popular</span>}
+              {form.isExclusive && <span className="badge bg-purple-100 text-purple-700">Exclusive</span>}
               {!form.isNew && !form.isPopular && !form.isExclusive && (
-                <span className="text-sm text-slate-400">Inga flaggor satta</span>
+                <span className="text-sm text-slate-400">No flags set</span>
               )}
             </div>
           </div>
@@ -559,13 +559,13 @@ export default function GameEditPage() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Ta bort spel</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Delete Game</h3>
             <p className="text-sm text-slate-600 mb-6">
-              Är du säker på att du vill ta bort <strong>{form.name}</strong>? Denna åtgärd kan inte ångras.
+              Are you sure you want to delete <strong>{form.name}</strong>? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
-              <button onClick={() => setShowDeleteModal(false)} className="btn-secondary">Avbryt</button>
-              <button onClick={handleDelete} className="btn-danger">Ta bort spel</button>
+              <button onClick={() => setShowDeleteModal(false)} className="btn-secondary">Cancel</button>
+              <button onClick={handleDelete} className="btn-danger">Delete Game</button>
             </div>
           </div>
         </div>

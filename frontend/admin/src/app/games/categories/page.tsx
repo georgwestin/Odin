@@ -17,21 +17,21 @@ interface Category {
 }
 
 const ICONS = [
-  { value: "star", label: "⭐ Stjärna" },
-  { value: "fire", label: "🔥 Eld" },
-  { value: "diamond", label: "💎 Diamant" },
-  { value: "crown", label: "👑 Krona" },
-  { value: "rocket", label: "🚀 Raket" },
-  { value: "dice", label: "🎲 Tärning" },
-  { value: "cards", label: "🃏 Kort" },
+  { value: "star", label: "⭐ Star" },
+  { value: "fire", label: "🔥 Fire" },
+  { value: "diamond", label: "💎 Diamond" },
+  { value: "crown", label: "👑 Crown" },
+  { value: "rocket", label: "🚀 Rocket" },
+  { value: "dice", label: "🎲 Dice" },
+  { value: "cards", label: "🃏 Cards" },
   { value: "slot", label: "🎰 Slot" },
   { value: "tv", label: "📺 TV" },
-  { value: "lightning", label: "⚡ Blixt" },
-  { value: "trophy", label: "🏆 Trofé" },
-  { value: "gift", label: "🎁 Gåva" },
-  { value: "heart", label: "❤️ Hjärta" },
-  { value: "sparkle", label: "✨ Glitter" },
-  { value: "money", label: "💰 Pengar" },
+  { value: "lightning", label: "⚡ Lightning" },
+  { value: "trophy", label: "🏆 Trophy" },
+  { value: "gift", label: "🎁 Gift" },
+  { value: "heart", label: "❤️ Heart" },
+  { value: "sparkle", label: "✨ Sparkle" },
+  { value: "money", label: "💰 Money" },
 ];
 
 const iconMap: Record<string, string> = {
@@ -41,20 +41,20 @@ const iconMap: Record<string, string> = {
 };
 
 const initialCategories: Category[] = [
-  { id: "cat-1", name: "Populära", slug: "popular", description: "De mest spelade spelen just nu", icon: "fire", sortOrder: 1, active: true, gameCount: 24, createdAt: "2025-06-01", updatedAt: "2026-04-01" },
-  { id: "cat-2", name: "Nya spel", slug: "new", description: "Senast tillagda spel", icon: "sparkle", sortOrder: 2, active: true, gameCount: 12, createdAt: "2025-06-01", updatedAt: "2026-04-01" },
-  { id: "cat-3", name: "Slots", slug: "slots", description: "Alla video- och klassiska slots", icon: "slot", sortOrder: 3, active: true, gameCount: 156, createdAt: "2025-06-01", updatedAt: "2026-03-20" },
-  { id: "cat-4", name: "Bordsspel", slug: "table", description: "Roulette, blackjack, baccarat och mer", icon: "cards", sortOrder: 4, active: true, gameCount: 28, createdAt: "2025-06-01", updatedAt: "2026-03-15" },
-  { id: "cat-5", name: "Live Casino", slug: "live", description: "Spela med riktiga dealers i realtid", icon: "tv", sortOrder: 5, active: true, gameCount: 42, createdAt: "2025-06-01", updatedAt: "2026-03-18" },
-  { id: "cat-6", name: "Jackpottar", slug: "jackpot", description: "Progressiva och fasta jackpotspel", icon: "trophy", sortOrder: 6, active: true, gameCount: 8, createdAt: "2025-06-01", updatedAt: "2026-02-10" },
-  { id: "cat-7", name: "Megaways", slug: "megaways", description: "Spel med Megaways-mekaniken", icon: "lightning", sortOrder: 7, active: true, gameCount: 18, createdAt: "2025-07-01", updatedAt: "2026-03-22" },
-  { id: "cat-8", name: "Bonusköp", slug: "bonus-buy", description: "Spel där du kan köpa bonusrundan direkt", icon: "money", sortOrder: 8, active: true, gameCount: 34, createdAt: "2025-07-15", updatedAt: "2026-03-28" },
-  { id: "cat-9", name: "Spelshower", slug: "game-shows", description: "Live game shows som Crazy Time, Monopoly", icon: "star", sortOrder: 9, active: true, gameCount: 6, createdAt: "2025-08-01", updatedAt: "2026-03-10" },
-  { id: "cat-10", name: "Snabbspel", slug: "instant", description: "Crash, Plinko, Mines och andra snabbspel", icon: "rocket", sortOrder: 10, active: true, gameCount: 10, createdAt: "2025-09-01", updatedAt: "2026-03-05" },
-  { id: "cat-11", name: "Exklusiva", slug: "exclusive", description: "Spel som bara finns på SwedBet", icon: "diamond", sortOrder: 11, active: true, gameCount: 5, createdAt: "2025-10-01", updatedAt: "2026-04-01" },
-  { id: "cat-12", name: "Klassiker", slug: "classic", description: "Tidlösa favoritspel", icon: "crown", sortOrder: 12, active: true, gameCount: 20, createdAt: "2025-06-01", updatedAt: "2026-01-15" },
-  { id: "cat-13", name: "Veckans topplista", slug: "weekly-top", description: "Veckans mest spelade och vinnande spel", icon: "fire", sortOrder: 13, active: true, gameCount: 10, createdAt: "2026-01-01", updatedAt: "2026-04-06" },
-  { id: "cat-14", name: "High Roller", slug: "high-roller", description: "Spel för spelare med högre insatser", icon: "money", sortOrder: 14, active: false, gameCount: 0, createdAt: "2026-02-01", updatedAt: "2026-02-01" },
+  { id: "cat-1", name: "Popular", slug: "popular", description: "The most played games right now", icon: "fire", sortOrder: 1, active: true, gameCount: 24, createdAt: "2025-06-01", updatedAt: "2026-04-01" },
+  { id: "cat-2", name: "New Games", slug: "new", description: "Recently added games", icon: "sparkle", sortOrder: 2, active: true, gameCount: 12, createdAt: "2025-06-01", updatedAt: "2026-04-01" },
+  { id: "cat-3", name: "Slots", slug: "slots", description: "All video and classic slots", icon: "slot", sortOrder: 3, active: true, gameCount: 156, createdAt: "2025-06-01", updatedAt: "2026-03-20" },
+  { id: "cat-4", name: "Table Games", slug: "table", description: "Roulette, blackjack, baccarat and more", icon: "cards", sortOrder: 4, active: true, gameCount: 28, createdAt: "2025-06-01", updatedAt: "2026-03-15" },
+  { id: "cat-5", name: "Live Casino", slug: "live", description: "Play with real dealers in real time", icon: "tv", sortOrder: 5, active: true, gameCount: 42, createdAt: "2025-06-01", updatedAt: "2026-03-18" },
+  { id: "cat-6", name: "Jackpots", slug: "jackpot", description: "Progressive and fixed jackpot games", icon: "trophy", sortOrder: 6, active: true, gameCount: 8, createdAt: "2025-06-01", updatedAt: "2026-02-10" },
+  { id: "cat-7", name: "Megaways", slug: "megaways", description: "Games with the Megaways mechanic", icon: "lightning", sortOrder: 7, active: true, gameCount: 18, createdAt: "2025-07-01", updatedAt: "2026-03-22" },
+  { id: "cat-8", name: "Bonus Buy", slug: "bonus-buy", description: "Games where you can buy the bonus round directly", icon: "money", sortOrder: 8, active: true, gameCount: 34, createdAt: "2025-07-15", updatedAt: "2026-03-28" },
+  { id: "cat-9", name: "Game Shows", slug: "game-shows", description: "Live game shows like Crazy Time, Monopoly", icon: "star", sortOrder: 9, active: true, gameCount: 6, createdAt: "2025-08-01", updatedAt: "2026-03-10" },
+  { id: "cat-10", name: "Instant Games", slug: "instant", description: "Crash, Plinko, Mines and other instant games", icon: "rocket", sortOrder: 10, active: true, gameCount: 10, createdAt: "2025-09-01", updatedAt: "2026-03-05" },
+  { id: "cat-11", name: "Exclusive", slug: "exclusive", description: "Games only available on SwedBet", icon: "diamond", sortOrder: 11, active: true, gameCount: 5, createdAt: "2025-10-01", updatedAt: "2026-04-01" },
+  { id: "cat-12", name: "Classics", slug: "classic", description: "Timeless favorite games", icon: "crown", sortOrder: 12, active: true, gameCount: 20, createdAt: "2025-06-01", updatedAt: "2026-01-15" },
+  { id: "cat-13", name: "Weekly Top List", slug: "weekly-top", description: "This week's most played and winning games", icon: "fire", sortOrder: 13, active: true, gameCount: 10, createdAt: "2026-01-01", updatedAt: "2026-04-06" },
+  { id: "cat-14", name: "High Roller", slug: "high-roller", description: "Games for players with higher stakes", icon: "money", sortOrder: 14, active: false, gameCount: 0, createdAt: "2026-02-01", updatedAt: "2026-02-01" },
 ];
 
 function slugify(text: string): string {
@@ -173,16 +173,16 @@ export default function CategoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Casinokategorier</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Casino Categories</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Hantera kategorier som spel kan tilldelas till. Ett spel kan tillhöra flera kategorier.
+            Manage categories that games can be assigned to. A game can belong to multiple categories.
           </p>
         </div>
         <button onClick={openCreate} className="btn-primary">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Ny kategori
+          New Category
         </button>
       </div>
 
@@ -190,19 +190,19 @@ export default function CategoriesPage() {
       <div className="grid grid-cols-4 gap-4">
         <div className="card text-center py-4">
           <p className="text-2xl font-bold text-slate-900">{categories.length}</p>
-          <p className="text-xs text-slate-500 mt-1">Totalt kategorier</p>
+          <p className="text-xs text-slate-500 mt-1">Total Categories</p>
         </div>
         <div className="card text-center py-4">
           <p className="text-2xl font-bold text-emerald-600">{activeCount}</p>
-          <p className="text-xs text-slate-500 mt-1">Aktiva</p>
+          <p className="text-xs text-slate-500 mt-1">Active</p>
         </div>
         <div className="card text-center py-4">
           <p className="text-2xl font-bold text-red-500">{categories.length - activeCount}</p>
-          <p className="text-xs text-slate-500 mt-1">Inaktiva</p>
+          <p className="text-xs text-slate-500 mt-1">Inactive</p>
         </div>
         <div className="card text-center py-4">
           <p className="text-2xl font-bold text-blue-600">{totalGames}</p>
-          <p className="text-xs text-slate-500 mt-1">Speltilldelningar</p>
+          <p className="text-xs text-slate-500 mt-1">Game Assignments</p>
         </div>
       </div>
 
@@ -211,14 +211,14 @@ export default function CategoriesPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-4 py-3 font-medium text-slate-600 w-12">Ord.</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600 w-10">Ikon</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Namn</th>
+              <th className="text-left px-4 py-3 font-medium text-slate-600 w-12">Order</th>
+              <th className="text-left px-4 py-3 font-medium text-slate-600 w-10">Icon</th>
+              <th className="text-left px-4 py-3 font-medium text-slate-600">Name</th>
               <th className="text-left px-4 py-3 font-medium text-slate-600">Slug</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Beskrivning</th>
-              <th className="text-center px-4 py-3 font-medium text-slate-600">Spel</th>
+              <th className="text-left px-4 py-3 font-medium text-slate-600">Description</th>
+              <th className="text-center px-4 py-3 font-medium text-slate-600">Games</th>
               <th className="text-center px-4 py-3 font-medium text-slate-600">Status</th>
-              <th className="text-right px-4 py-3 font-medium text-slate-600">Åtgärder</th>
+              <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -280,7 +280,7 @@ export default function CategoriesPage() {
                 <td className="px-4 py-3 text-center">
                   <button onClick={() => toggleActive(cat.id)}>
                     <span className={cat.active ? "badge-green" : "badge-red"}>
-                      {cat.active ? "Aktiv" : "Inaktiv"}
+                      {cat.active ? "Active" : "Inactive"}
                     </span>
                   </button>
                 </td>
@@ -291,7 +291,7 @@ export default function CategoriesPage() {
                     <button
                       onClick={() => openEdit(cat)}
                       className="p-1.5 rounded-md hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
-                      title="Redigera"
+                      title="Edit"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -300,7 +300,7 @@ export default function CategoriesPage() {
                     <button
                       onClick={() => setDeleteConfirm(cat.id)}
                       className="p-1.5 rounded-md hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
-                      title="Ta bort"
+                      title="Delete"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -319,13 +319,13 @@ export default function CategoriesPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">
-              {editingId ? "Redigera kategori" : "Skapa ny kategori"}
+              {editingId ? "Edit Category" : "Create New Category"}
             </h3>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Namn *</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Name *</label>
                   <input
                     type="text"
                     value={formName}
@@ -334,7 +334,7 @@ export default function CategoriesPage() {
                       if (!editingId) setFormSlug(slugify(e.target.value));
                     }}
                     className="input"
-                    placeholder="T.ex. Populära"
+                    placeholder="E.g. Popular"
                   />
                 </div>
                 <div>
@@ -350,19 +350,19 @@ export default function CategoriesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Beskrivning</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
                 <textarea
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   className="input"
                   rows={2}
-                  placeholder="Kort beskrivning av kategorin..."
+                  placeholder="Short description of the category..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Ikon</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Icon</label>
                   <select
                     value={formIcon}
                     onChange={(e) => setFormIcon(e.target.value)}
@@ -374,7 +374,7 @@ export default function CategoriesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Sorteringsordning</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Sort Order</label>
                   <input
                     type="number"
                     value={formSortOrder}
@@ -393,16 +393,16 @@ export default function CategoriesPage() {
                     onChange={(e) => setFormActive(e.target.checked)}
                     className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-slate-700">Aktiv (synlig på sidan)</span>
+                  <span className="text-sm text-slate-700">Active (visible on site)</span>
                 </label>
               </div>
 
               {/* Preview */}
               <div className="bg-slate-50 rounded-lg p-3">
-                <p className="text-xs text-slate-500 mb-2">Förhandsvisning:</p>
+                <p className="text-xs text-slate-500 mb-2">Preview:</p>
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{iconMap[formIcon] || "📁"}</span>
-                  <span className="font-medium text-slate-900">{formName || "Kategorinamn"}</span>
+                  <span className="font-medium text-slate-900">{formName || "Category name"}</span>
                   <code className="text-xs bg-slate-200 px-1.5 py-0.5 rounded text-slate-500 ml-auto">
                     {formSlug || "slug"}
                   </code>
@@ -415,14 +415,14 @@ export default function CategoriesPage() {
                 onClick={() => { setShowCreateModal(false); setEditingId(null); }}
                 className="btn-secondary"
               >
-                Avbryt
+                Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={!formName.trim()}
                 className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {editingId ? "Spara ändringar" : "Skapa kategori"}
+                {editingId ? "Save Changes" : "Create Category"}
               </button>
             </div>
           </div>
@@ -433,16 +433,16 @@ export default function CategoriesPage() {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Ta bort kategori</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Delete Category</h3>
             <p className="text-sm text-slate-600 mb-1">
-              Är du säker på att du vill ta bort <strong>{categories.find((c) => c.id === deleteConfirm)?.name}</strong>?
+              Are you sure you want to delete <strong>{categories.find((c) => c.id === deleteConfirm)?.name}</strong>?
             </p>
             <p className="text-sm text-slate-500 mb-6">
-              Spel som tillhör denna kategori kommer inte att tas bort, men tappa sin kategoritilldelning.
+              Games in this category will not be deleted, but will lose their category assignment.
             </p>
             <div className="flex justify-end gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="btn-secondary">Avbryt</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="btn-danger">Ta bort</button>
+              <button onClick={() => setDeleteConfirm(null)} className="btn-secondary">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm)} className="btn-danger">Delete</button>
             </div>
           </div>
         </div>

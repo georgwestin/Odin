@@ -104,11 +104,11 @@ function formatCurrency(amount: number, currency: string) {
 // --- Table columns for the full player list ---
 
 const columns: Column<Player>[] = [
-  { key: "username", header: "Användarnamn", sortable: true },
+  { key: "username", header: "Username", sortable: true },
   { key: "email", header: "E-post", sortable: true },
   {
     key: "balance",
-    header: "Saldo",
+    header: "Balance",
     sortable: true,
     render: (row) => (
       <span className="font-mono font-medium">{formatCurrency(row.balance, row.playerCurrency)}</span>
@@ -124,7 +124,7 @@ const columns: Column<Player>[] = [
       </span>
     ),
   },
-  { key: "playerCurrency", header: "Valuta", sortable: true },
+  { key: "playerCurrency", header: "Currency", sortable: true },
   {
     key: "kycStatus",
     header: "KYC",
@@ -132,8 +132,8 @@ const columns: Column<Player>[] = [
     render: (row) => <span className={kycBadge[row.kycStatus] || "badge-gray"}>{row.kycStatus}</span>,
   },
   { key: "country", header: "Land", sortable: true },
-  { key: "registrationDate", header: "Registrerad", sortable: true },
-  { key: "lastLogin", header: "Senast inloggad", sortable: true },
+  { key: "registrationDate", header: "Registered", sortable: true },
+  { key: "lastLogin", header: "Last Login", sortable: true },
 ];
 
 // --- Page ---
@@ -155,8 +155,8 @@ export default function PlayersPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Spelarhantering</h1>
-        <p className="text-sm text-slate-500 mt-1">Översikt över spelaraktivitet och kontohantering</p>
+        <h1 className="text-2xl font-bold text-slate-900">Player Management</h1>
+        <p className="text-sm text-slate-500 mt-1">Overview of player activity and account management</p>
       </div>
 
       {/* Three dashboard sections */}
@@ -169,9 +169,9 @@ export default function PlayersPage() {
               <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
-              Senaste registreringar
+              Latest Registrations
             </h3>
-            <span className="text-xs text-slate-400">Senaste 10</span>
+            <span className="text-xs text-slate-400">Latest 10</span>
           </div>
           <div className="space-y-0 -mx-4">
             {newestPlayers.map((p, i) => (
@@ -203,9 +203,9 @@ export default function PlayersPage() {
               <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
-              Senaste inloggningar
+              Latest Logins
             </h3>
-            <span className="text-xs text-slate-400">Senaste 10</span>
+            <span className="text-xs text-slate-400">Latest 10</span>
           </div>
           <div className="space-y-0 -mx-4">
             {latestLogins.map((l, i) => (
@@ -245,9 +245,9 @@ export default function PlayersPage() {
               <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              Mest aktiva idag
+              Most Active Today
             </h3>
-            <span className="text-xs text-slate-400">Flest spel idag</span>
+            <span className="text-xs text-slate-400">Most bets today</span>
           </div>
           <div className="space-y-0 -mx-4">
             {topBettors.map((b, i) => (
@@ -275,7 +275,7 @@ export default function PlayersPage() {
                   </div>
                 </div>
                 <div className="text-right shrink-0 ml-3">
-                  <p className="text-sm font-bold text-slate-900">{b.betsToday} <span className="text-xs font-normal text-slate-400">spel</span></p>
+                  <p className="text-sm font-bold text-slate-900">{b.betsToday} <span className="text-xs font-normal text-slate-400">bets</span></p>
                   <p className="text-xs text-slate-400 font-mono">{formatCurrency(b.stakeToday, b.currency)}</p>
                 </div>
               </Link>
@@ -287,18 +287,18 @@ export default function PlayersPage() {
       {/* Full player list */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-slate-900">Alla spelare</h3>
+          <h3 className="text-lg font-semibold text-slate-900">All Players</h3>
           <div className="flex items-center gap-3">
             <select
               value={kycFilter}
               onChange={(e) => setKycFilter(e.target.value)}
               className="input w-auto text-sm"
             >
-              <option value="all">Alla KYC-statusar</option>
-              <option value="verified">Verifierad</option>
-              <option value="pending">Väntande</option>
-              <option value="rejected">Avvisad</option>
-              <option value="unverified">Overifierad</option>
+              <option value="all">All KYC Statuses</option>
+              <option value="verified">Verified</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+              <option value="unverified">Unverified</option>
             </select>
           </div>
         </div>

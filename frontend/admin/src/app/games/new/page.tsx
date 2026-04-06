@@ -33,39 +33,39 @@ const allProviders = [
 
 const allCategories = [
   { value: "slots", label: "Slots" },
-  { value: "table", label: "Bord" },
+  { value: "table", label: "Table" },
   { value: "live", label: "Live Casino" },
   { value: "jackpot", label: "Jackpot" },
   { value: "megaways", label: "Megaways" },
   { value: "instant", label: "Instant" },
-  { value: "bonus-buy", label: "Bonusköp" },
-  { value: "game-shows", label: "Spelshower" },
+  { value: "bonus-buy", label: "Bonus Buy" },
+  { value: "game-shows", label: "Game Shows" },
 ];
 
 const volatilityOptions = [
-  { value: "low", label: "Låg" },
+  { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },
-  { value: "medium-high", label: "Medium-Hög" },
-  { value: "high", label: "Hög" },
-  { value: "extreme", label: "Extrem" },
+  { value: "medium-high", label: "Medium-High" },
+  { value: "high", label: "High" },
+  { value: "extreme", label: "Extreme" },
 ];
 
 const allBrands = ["Odin Casino", "Freya Slots", "Thor Gaming", "Valhalla Bet"];
 
 const availableCategories = [
-  { id: "popular", name: "Populära", icon: "🔥" },
-  { id: "new", name: "Nya spel", icon: "✨" },
+  { id: "popular", name: "Popular", icon: "🔥" },
+  { id: "new", name: "New Games", icon: "✨" },
   { id: "slots", name: "Slots", icon: "🎰" },
-  { id: "table", name: "Bordsspel", icon: "🃏" },
+  { id: "table", name: "Table Games", icon: "🃏" },
   { id: "live", name: "Live Casino", icon: "📺" },
-  { id: "jackpot", name: "Jackpottar", icon: "🏆" },
+  { id: "jackpot", name: "Jackpots", icon: "🏆" },
   { id: "megaways", name: "Megaways", icon: "⚡" },
-  { id: "bonus-buy", name: "Bonusköp", icon: "💰" },
-  { id: "game-shows", name: "Spelshower", icon: "⭐" },
-  { id: "instant", name: "Snabbspel", icon: "🚀" },
-  { id: "exclusive", name: "Exklusiva", icon: "💎" },
-  { id: "classic", name: "Klassiker", icon: "👑" },
-  { id: "weekly-top", name: "Veckans topplista", icon: "🔥" },
+  { id: "bonus-buy", name: "Bonus Buy", icon: "💰" },
+  { id: "game-shows", name: "Game Shows", icon: "⭐" },
+  { id: "instant", name: "Instant Games", icon: "🚀" },
+  { id: "exclusive", name: "Exclusive", icon: "💎" },
+  { id: "classic", name: "Classics", icon: "👑" },
+  { id: "weekly-top", name: "Weekly Top List", icon: "🔥" },
 ];
 
 function slugify(text: string): string {
@@ -131,7 +131,7 @@ export default function NewGamePage() {
 
   const handleCreate = () => {
     if (!form.name.trim()) {
-      alert("Spelnamn krävs");
+      alert("Game name is required");
       return;
     }
     setCreating(true);
@@ -149,14 +149,14 @@ export default function NewGamePage() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Tillbaka
+          Back
         </button>
         <div className="flex-1">
-          <h2 className="text-xl font-bold text-slate-900">Nytt spel</h2>
-          <p className="text-sm text-slate-500">Fyll i uppgifterna nedan för att lägga till ett nytt spel</p>
+          <h2 className="text-xl font-bold text-slate-900">New Game</h2>
+          <p className="text-sm text-slate-500">Fill in the details below to add a new game</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => router.push("/games")} className="btn-secondary">Avbryt</button>
+          <button onClick={() => router.push("/games")} className="btn-secondary">Cancel</button>
           <button onClick={handleCreate} disabled={creating} className="btn-primary">
             {creating ? (
               <>
@@ -164,14 +164,14 @@ export default function NewGamePage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Skapar...
+                Creating...
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Skapa spel
+                Create Game
               </>
             )}
           </button>
@@ -184,17 +184,17 @@ export default function NewGamePage() {
         <div className="col-span-2 space-y-6">
           {/* Basic info */}
           <div className="card space-y-4">
-            <h3 className="font-semibold text-slate-900">Grundläggande information</h3>
+            <h3 className="font-semibold text-slate-900">Basic Information</h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Spelnamn *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Game Name *</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   className="input"
-                  placeholder="T.ex. Sweet Bonanza"
+                  placeholder="E.g. Sweet Bonanza"
                   required
                 />
               </div>
@@ -205,14 +205,14 @@ export default function NewGamePage() {
                   value={form.slug}
                   onChange={(e) => handleChange("slug", e.target.value)}
                   className="input font-mono text-slate-500"
-                  placeholder="auto-genereras-fran-namn"
+                  placeholder="auto-generated-from-name"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Leverantör</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Provider</label>
                 <select
                   value={form.provider}
                   onChange={(e) => handleChange("provider", e.target.value)}
@@ -224,7 +224,7 @@ export default function NewGamePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Primär kategori</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Primary Category</label>
                 <select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
@@ -238,13 +238,13 @@ export default function NewGamePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Beskrivning</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
               <textarea
                 value={form.description}
                 onChange={(e) => handleChange("description", e.target.value)}
                 className="input"
                 rows={3}
-                placeholder="Beskriv spelet, dess funktioner och tema..."
+                placeholder="Describe the game, its features and theme..."
               />
             </div>
           </div>
@@ -253,12 +253,12 @@ export default function NewGamePage() {
           <div className="card space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-slate-900">Kategorier</h3>
+                <h3 className="font-semibold text-slate-900">Categories</h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Ett spel kan tillhöra flera kategorier. Välj alla som passar.
+                  A game can belong to multiple categories. Select all that apply.
                 </p>
               </div>
-              <span className="text-xs text-slate-400">{form.categories.length} valda</span>
+              <span className="text-xs text-slate-400">{form.categories.length} selected</span>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -290,7 +290,7 @@ export default function NewGamePage() {
             <h3 className="font-semibold text-slate-900">URLs</h3>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Spelbild-URL</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Game Image URL</label>
               <input
                 type="url"
                 value={form.imageUrl}
@@ -301,7 +301,7 @@ export default function NewGamePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Spelstart-URL (iframe)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Game Launch URL (iframe)</label>
               <input
                 type="url"
                 value={form.launchUrl}
@@ -314,7 +314,7 @@ export default function NewGamePage() {
 
           {/* Game settings */}
           <div className="card space-y-4">
-            <h3 className="font-semibold text-slate-900">Spelinställningar</h3>
+            <h3 className="font-semibold text-slate-900">Game Settings</h3>
 
             <div className="grid grid-cols-3 gap-4">
               <div>
@@ -331,7 +331,7 @@ export default function NewGamePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Volatilitet</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Volatility</label>
                 <select
                   value={form.volatility}
                   onChange={(e) => handleChange("volatility", e.target.value)}
@@ -353,14 +353,14 @@ export default function NewGamePage() {
                       : "bg-red-50 border-red-300 text-red-700"
                   )}
                 >
-                  {form.active ? "Aktiv" : "Inaktiv"}
+                  {form.active ? "Active" : "Inactive"}
                 </button>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Min insats (SEK)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Min Bet (SEK)</label>
                 <input
                   type="number"
                   value={form.minBet}
@@ -371,7 +371,7 @@ export default function NewGamePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Max insats (SEK)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Max Bet (SEK)</label>
                 <input
                   type="number"
                   value={form.maxBet}
@@ -386,7 +386,7 @@ export default function NewGamePage() {
 
           {/* Flags and tags */}
           <div className="card space-y-4">
-            <h3 className="font-semibold text-slate-900">Flaggor och taggar</h3>
+            <h3 className="font-semibold text-slate-900">Flags & Tags</h3>
 
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -396,7 +396,7 @@ export default function NewGamePage() {
                   onChange={(e) => handleChange("isNew", e.target.checked)}
                   className="rounded border-slate-300 text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-slate-700">Nytt spel</span>
+                <span className="text-sm text-slate-700">New Game</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -405,7 +405,7 @@ export default function NewGamePage() {
                   onChange={(e) => handleChange("isPopular", e.target.checked)}
                   className="rounded border-slate-300 text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-slate-700">Populärt</span>
+                <span className="text-sm text-slate-700">Popular</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -414,12 +414,12 @@ export default function NewGamePage() {
                   onChange={(e) => handleChange("isExclusive", e.target.checked)}
                   className="rounded border-slate-300 text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-slate-700">Exklusivt</span>
+                <span className="text-sm text-slate-700">Exclusive</span>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Varumärken</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Brands</label>
               <div className="flex flex-wrap gap-2">
                 {allBrands.map((brand) => (
                   <button
@@ -439,7 +439,7 @@ export default function NewGamePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Taggar (kommaseparerade)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tags (comma-separated)</label>
               <input
                 type="text"
                 value={form.tags}
@@ -454,12 +454,12 @@ export default function NewGamePage() {
         {/* Right: Image preview (1/3) */}
         <div className="space-y-6">
           <div className="card">
-            <h3 className="font-semibold text-slate-900 mb-3">Förhandsvisning</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Preview</h3>
             <div className="aspect-square rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
               {form.imageUrl ? (
                 <img
                   src={form.imageUrl}
-                  alt={form.name || "Spelbild"}
+                  alt={form.name || "Game image"}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' fill='%23cbd5e1' viewBox='0 0 24 24'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
@@ -470,7 +470,7 @@ export default function NewGamePage() {
                   <svg className="w-16 h-16 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <p className="text-sm">Ange en bild-URL för att se förhandsgranskning</p>
+                  <p className="text-sm">Enter an image URL to see a preview</p>
                 </div>
               )}
             </div>
@@ -480,24 +480,24 @@ export default function NewGamePage() {
           </div>
 
           <div className="card">
-            <h3 className="font-semibold text-slate-900 mb-3">Sammanfattning</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Summary</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Namn</span>
+                <span className="text-slate-500">Name</span>
                 <span className="font-medium text-slate-700">{form.name || "-"}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Leverantör</span>
+                <span className="text-slate-500">Provider</span>
                 <span className="font-medium text-slate-700">{form.provider}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Primär kat.</span>
+                <span className="text-slate-500">Primary Cat.</span>
                 <span className="font-medium text-slate-700">
                   {allCategories.find((c) => c.value === form.category)?.label || form.category}
                 </span>
               </div>
               <div className="text-sm">
-                <span className="text-slate-500">Kategorier</span>
+                <span className="text-slate-500">Categories</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {form.categories.length > 0 ? form.categories.map((catId) => {
                     const cat = availableCategories.find((c) => c.id === catId);
@@ -507,7 +507,7 @@ export default function NewGamePage() {
                       </span>
                     );
                   }) : (
-                    <span className="text-xs text-slate-400">Inga kategorier</span>
+                    <span className="text-xs text-slate-400">No categories</span>
                   )}
                 </div>
               </div>
@@ -518,28 +518,28 @@ export default function NewGamePage() {
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Status</span>
                 <span className={form.active ? "badge-green" : "badge-red"}>
-                  {form.active ? "Aktiv" : "Inaktiv"}
+                  {form.active ? "Active" : "Inactive"}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Insats</span>
+                <span className="text-slate-500">Bet</span>
                 <span className="font-mono text-slate-700">{form.minBet} - {form.maxBet.toLocaleString()} kr</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">Varumärken</span>
-                <span className="font-medium text-slate-700">{form.brands.length} st</span>
+                <span className="text-slate-500">Brands</span>
+                <span className="font-medium text-slate-700">{form.brands.length}</span>
               </div>
             </div>
           </div>
 
           <div className="card">
-            <h3 className="font-semibold text-slate-900 mb-3">Flaggor</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Flags</h3>
             <div className="flex flex-wrap gap-2">
-              {form.isNew && <span className="badge-blue">Nytt</span>}
-              {form.isPopular && <span className="badge-yellow">Populärt</span>}
-              {form.isExclusive && <span className="badge bg-purple-100 text-purple-700">Exklusivt</span>}
+              {form.isNew && <span className="badge-blue">New</span>}
+              {form.isPopular && <span className="badge-yellow">Popular</span>}
+              {form.isExclusive && <span className="badge bg-purple-100 text-purple-700">Exclusive</span>}
               {!form.isNew && !form.isPopular && !form.isExclusive && (
-                <span className="text-sm text-slate-400">Inga flaggor satta</span>
+                <span className="text-sm text-slate-400">No flags set</span>
               )}
             </div>
           </div>
