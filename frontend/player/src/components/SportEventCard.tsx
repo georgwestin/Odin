@@ -24,7 +24,9 @@ interface SportEventCardProps {
   score?: { home: number; away: number };
   startTime: string;
   isLive: boolean;
+  elapsed?: string;
   markets: Market[];
+  compact?: boolean;
 }
 
 export function SportEventCard({
@@ -36,9 +38,13 @@ export function SportEventCard({
   score,
   startTime,
   isLive,
+  elapsed,
   markets,
+  compact = false,
 }: SportEventCardProps) {
-  const { addSelection } = useBetSlip();
+  const { addSelection, selections } = useBetSlip();
+
+  const isSelected = (selId: string) => selections.some((s) => s.id === selId);
 
   const handleOddsClick = (sel: Selection, marketName: string) => {
     addSelection({
@@ -51,97 +57,167 @@ export function SportEventCard({
     });
   };
 
-  return (
-    <div className="bg-white rounded-2xl p-4 shadow-card hover:shadow-card-hover transition-shadow border border-brand-border">
-      {/* Event Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-brand-text-muted font-medium">
-            {sportName}
-          </span>
-          <span className="text-xs text-brand-text-muted">-</span>
-          <span className="text-xs text-brand-text-muted">
+  const timeStr = new Date(startTime).toLocaleTimeString("sv-SE", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  /* ---- Compact live card variant ---- */
+  if (compact) {
+    return (
+      <Link
+        href={`/sports/${id}`}
+        className="block bg-white rounded-xl border border-brand-border p-3 hover:shadow-card-hover transition-shadow min-w-[220px] flex-shrink-0"
+      >
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[11px] text-brand-text-muted truncate">
             {competitionName}
           </span>
-        </div>
-        <div className="flex items-center gap-3">
-          {isLive ? (
-            <span className="flex items-center gap-1.5 text-xs font-bold text-brand-danger">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-danger animate-pulse" />
+          {isLive && (
+            <span className="flex items-center gap-1 text-[11px] font-bold text-brand-danger">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-danger opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-danger" />
+              </span>
               LIVE
             </span>
-          ) : (
-            <span className="text-xs text-brand-text-muted">
-              {new Date(startTime).toLocaleTimeString("sv-SE", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
           )}
-          <Link
-            href={`/sports/${id}`}
-            className="text-xs text-brand-primary hover:text-brand-primary-hover font-medium"
-          >
-            Alla marknader
-          </Link>
         </div>
-      </div>
-
-      {/* Teams and Score */}
-      <div className="flex items-center gap-4">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-sm font-semibold text-brand-text truncate">
-              {homeTeam}
-            </p>
-            {score && (
-              <span className="text-sm font-bold text-brand-primary ml-2">
-                {score.home}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-brand-text truncate">
-              {awayTeam}
-            </p>
-            {score && (
-              <span className="text-sm font-bold text-brand-primary ml-2">
-                {score.away}
-              </span>
-            )}
-          </div>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <span className="text-sm font-semibold text-brand-text truncate">
+            {homeTeam}
+          </span>
+          {score && (
+            <span className="text-sm font-bold text-brand-text">{score.home}</span>
+          )}
         </div>
-
-        {/* Odds */}
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <span className="text-sm font-semibold text-brand-text truncate">
+            {awayTeam}
+          </span>
+          {score && (
+            <span className="text-sm font-bold text-brand-text">{score.away}</span>
+          )}
+        </div>
+        {elapsed && (
+          <span className="text-xs text-brand-primary font-semibold">{elapsed}</span>
+        )}
         {markets[0] && (
-          <div className="flex gap-2 shrink-0">
+          <div className="flex gap-1.5 mt-2">
             {markets[0].selections.map((sel) => (
-              <div key={sel.id} className="text-center min-w-[56px]">
-                <p className="text-[10px] text-brand-text-muted mb-1 truncate">
+              <button
+                key={sel.id}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleOddsClick(sel, markets[0].name);
+                }}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                  isSelected(sel.id)
+                    ? "bg-brand-primary text-white border-brand-primary"
+                    : "bg-white text-brand-primary border-brand-border hover:bg-brand-primary hover:text-white hover:border-brand-primary"
+                }`}
+              >
+                <span className="block text-[10px] font-normal text-brand-text-muted mb-0.5">
                   {sel.name}
-                </p>
-                {isLive ? (
-                  <LiveOdds
-                    eventId={id}
-                    selectionId={sel.id}
-                    initialOdds={sel.odds}
-                    selectionName={sel.name}
-                    eventName={`${homeTeam} vs ${awayTeam}`}
-                    marketName={markets[0].name}
-                  />
-                ) : (
-                  <button
-                    onClick={() => handleOddsClick(sel, markets[0].name)}
-                    className="w-full px-3 py-2 rounded-xl text-sm font-bold bg-white border border-brand-border text-brand-primary hover:bg-brand-primary/5 hover:border-brand-primary/30 transition-colors"
-                  >
-                    {sel.odds.toFixed(2)}
-                  </button>
-                )}
-              </div>
+                </span>
+                {sel.odds.toFixed(2)}
+              </button>
             ))}
           </div>
         )}
+      </Link>
+    );
+  }
+
+  /* ---- Standard row card ---- */
+  return (
+    <div className="bg-white flex items-center gap-3 px-4 py-3 border-b border-brand-border last:border-b-0 hover:bg-brand-surface-alt/50 transition-colors group">
+      {/* Time / Live badge */}
+      <div className="w-14 shrink-0 text-center">
+        {isLive ? (
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="flex items-center gap-1 text-[11px] font-bold text-brand-danger">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-danger opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-danger" />
+              </span>
+              LIVE
+            </span>
+            {elapsed && (
+              <span className="text-[11px] text-brand-primary font-semibold">
+                {elapsed}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="text-sm text-brand-text-muted font-medium">
+            {timeStr}
+          </span>
+        )}
       </div>
+
+      {/* Team names */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-brand-text truncate leading-tight">
+          {homeTeam}
+        </p>
+        <p className="text-sm font-semibold text-brand-text truncate leading-tight">
+          {awayTeam}
+        </p>
+      </div>
+
+      {/* Score (live only) */}
+      {isLive && score && (
+        <div className="w-8 shrink-0 text-center">
+          <p className="text-sm font-bold text-brand-text leading-tight">
+            {score.home}
+          </p>
+          <p className="text-sm font-bold text-brand-text leading-tight">
+            {score.away}
+          </p>
+        </div>
+      )}
+
+      {/* Odds buttons */}
+      {markets[0] && (
+        <div className="flex gap-1.5 shrink-0">
+          {markets[0].selections.map((sel) => (
+            <div key={sel.id} className="text-center">
+              {isLive ? (
+                <LiveOdds
+                  eventId={id}
+                  selectionId={sel.id}
+                  initialOdds={sel.odds}
+                  selectionName={sel.name}
+                  eventName={`${homeTeam} vs ${awayTeam}`}
+                  marketName={markets[0].name}
+                />
+              ) : (
+                <button
+                  onClick={() => handleOddsClick(sel, markets[0].name)}
+                  className={`min-w-[54px] px-3 py-2 rounded-lg text-sm font-bold transition-all border ${
+                    isSelected(sel.id)
+                      ? "bg-brand-primary text-white border-brand-primary"
+                      : "bg-white text-brand-primary border-brand-border hover:bg-brand-primary hover:text-white hover:border-brand-primary"
+                  }`}
+                >
+                  {sel.odds.toFixed(2)}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* More markets */}
+      <Link
+        href={`/sports/${id}`}
+        className="w-8 h-8 rounded-lg border border-brand-border flex items-center justify-center text-brand-text-muted hover:border-brand-primary hover:text-brand-primary transition-colors shrink-0"
+        title="Fler marknader"
+      >
+        <span className="text-sm font-bold">+</span>
+      </Link>
     </div>
   );
 }

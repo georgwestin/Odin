@@ -24,6 +24,9 @@ const config: Config = {
           success: "var(--brand-success, #34C759)",
           danger: "var(--brand-danger, #FF3B30)",
           warning: "var(--brand-warning, #FF9500)",
+          "blue-bar": "var(--brand-blue-bar, #5b8fd4)",
+          "blue-bar-light": "var(--brand-blue-bar-light, #7ba8e0)",
+          "rg-badge": "var(--brand-rg-badge, #3bb78f)",
         },
       },
       fontFamily: {

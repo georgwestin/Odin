@@ -6,19 +6,22 @@
   --brand-primary: #0066FF;
   --brand-primary-hover: #0052CC;
   --brand-secondary: #1A1A2E;
-  --brand-accent: #00C853;
-  --brand-accent-hover: #00A844;
+  --brand-accent: #44c868;
+  --brand-accent-hover: #3ab85c;
   --brand-surface: #FFFFFF;
   --brand-surface-alt: #F5F5F7;
   --brand-background: #FFFFFF;
-  --brand-text: #1A1A2E;
-  --brand-text-muted: #4A4A68;
+  --brand-text: #272b33;
+  --brand-text-muted: #6b7280;
   --brand-border: #E8E8ED;
   --brand-success: #34C759;
   --brand-danger: #FF3B30;
   --brand-warning: #FF9500;
-  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --brand-blue-bar: #5b8fd4;
+  --brand-blue-bar-light: #7ba8e0;
+  --brand-rg-badge: #3bb78f;
+  --font-heading: 'Asap', system-ui, -apple-system, sans-serif;
+  --font-body: 'Asap', system-ui, -apple-system, sans-serif;
 }
 
 body {

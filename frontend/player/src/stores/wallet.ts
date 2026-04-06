@@ -32,7 +32,7 @@ interface WalletState {
 export const useWallet = create<WalletState>((set) => ({
   balance: 0,
   bonusBalance: 0,
-  currency: "EUR",
+  currency: "SEK",
   transactions: [],
   totalTransactions: 0,
   isLoading: false,
@@ -51,7 +51,7 @@ export const useWallet = create<WalletState>((set) => ({
         currency: data.currency,
       });
     } catch {
-      set({ error: "Failed to fetch balance" });
+      set({ error: "Kunde inte hamta saldo" });
     }
   },
 
@@ -68,7 +68,7 @@ export const useWallet = create<WalletState>((set) => ({
         isLoading: false,
       });
     } catch {
-      set({ error: "Failed to fetch transactions", isLoading: false });
+      set({ error: "Kunde inte hamta transaktioner", isLoading: false });
     }
   },
 
@@ -87,8 +87,8 @@ export const useWallet = create<WalletState>((set) => ({
         isLoading: false,
       });
     } catch {
-      set({ error: "Deposit failed", isLoading: false });
-      throw new Error("Deposit failed");
+      set({ error: "Insattningen misslyckades", isLoading: false });
+      throw new Error("Insattningen misslyckades");
     }
   },
 
@@ -107,8 +107,8 @@ export const useWallet = create<WalletState>((set) => ({
         isLoading: false,
       });
     } catch {
-      set({ error: "Withdrawal failed", isLoading: false });
-      throw new Error("Withdrawal failed");
+      set({ error: "Uttaget misslyckades", isLoading: false });
+      throw new Error("Uttaget misslyckades");
     }
   },
 

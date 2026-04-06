@@ -24,7 +24,7 @@ export function Navbar() {
   const navLinks = [
     ...(brand.features.casino ? [{ href: "/casino", label: "Casino" }] : []),
     ...(brand.features.liveCasino
-      ? [{ href: "/casino?category=live", label: "Live Casino" }]
+      ? [{ href: "/live-casino", label: "Live Casino" }]
       : []),
     ...(brand.features.sports ? [{ href: "/sports", label: "Betting" }] : []),
     { href: "/casino?category=virtual", label: "Virtuellt" },
