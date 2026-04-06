@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { GameCard } from "@/components/GameCard";
 import { SportEventCard } from "@/components/SportEventCard";
 import { QuickDeposit } from "@/components/QuickDeposit";
 import { ResponsibleGambling } from "@/components/ResponsibleGambling";
-import { SanityBanner } from "@/components/SanityBanner";
+import { sanityClient } from "@/lib/sanity";
 
 interface FeaturedGame {
   id: string;
@@ -132,30 +132,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section — CMS-driven with static fallback */}
-      <SanityBanner
-        placement="hero"
-        fallback={
-          <section className="relative overflow-hidden bg-gradient-to-br from-brand-secondary via-[#1e2a4a] to-brand-primary/90">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(0,102,255,0.3)_0%,_transparent_60%)]" />
-            <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
-              <div className="max-w-xl">
-                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
-                  Valkommen till{" "}
-                  <span className="text-brand-accent">Swedbet</span>
-                </h1>
-                <p className="mt-4 text-lg sm:text-xl text-white/70 max-w-md">
-                  Det smarta spelbolaget. Casino, betting och live casino med snabba
-                  uttag.
-                </p>
-                <div className="mt-8">
-                  <QuickDeposit />
-                </div>
-              </div>
-            </div>
-          </section>
-        }
-      />
+      {/* Hero Section — content from Sanity CMS */}
+      <CmsHero />
 
       {/* Popular Games - Horizontal Scroll — dark section */}
       <section style={{ backgroundColor: "#010D13" }}>
@@ -378,5 +356,76 @@ export default function HomePage() {
       {/* Responsible Gambling */}
       <ResponsibleGambling />
     </div>
+  );
+}
+
+/** Self-contained hero that fetches content from Sanity CMS client-side. */
+function CmsHero() {
+  const [headline, setHeadline] = useState("Välkommen till SwedBet");
+  const [subheadline, setSubheadline] = useState(
+    "Det smarta spelbolaget. Casino, betting och live casino med snabba uttag."
+  );
+  const [ctaText, setCtaText] = useState("Sätt in & Spela");
+  const [ctaUrl, setCtaUrl] = useState("/register");
+  const [gradientFrom, setGradientFrom] = useState("");
+  const [gradientTo, setGradientTo] = useState("");
+  const fetched = useRef(false);
+
+  useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+
+    // Detect locale from URL
+    const segment = window.location.pathname.split("/")[1];
+    const lang = ["sv", "en", "fi", "no"].includes(segment) ? segment : "en";
+
+    sanityClient
+      .fetch(
+        `*[_type == "banner" && brand->slug.current == "swedbet" && placement == "hero" && isActive == true][0]{
+          headline_sv, headline_en,
+          subheadline_sv, subheadline_en,
+          ctaText_sv, ctaText_en,
+          ctaUrl, gradientFrom, gradientTo
+        }`
+      )
+      .then((b: any) => {
+        if (!b) return;
+        const h = (lang === "sv" ? b.headline_sv : b.headline_en) || b.headline_sv;
+        const s = (lang === "sv" ? b.subheadline_sv : b.subheadline_en) || b.subheadline_sv;
+        const c = (lang === "sv" ? b.ctaText_sv : b.ctaText_en) || b.ctaText_sv;
+        if (h) setHeadline(h);
+        if (s) setSubheadline(s);
+        if (c) setCtaText(c);
+        if (b.ctaUrl) setCtaUrl(b.ctaUrl);
+        if (b.gradientFrom) setGradientFrom(b.gradientFrom);
+        if (b.gradientTo) setGradientTo(b.gradientTo);
+      })
+      .catch(() => {});
+  }, []);
+
+  const bgStyle = gradientFrom
+    ? { background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo || "#0066FF"})` }
+    : {};
+
+  return (
+    <section
+      className="relative overflow-hidden bg-gradient-to-br from-brand-secondary via-[#1e2a4a] to-brand-primary/90"
+      style={bgStyle}
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(0,102,255,0.3)_0%,_transparent_60%)]" />
+      <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-xl">
+          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+            {headline}
+          </h1>
+          <p className="mt-4 text-lg sm:text-xl text-white/70 max-w-md">
+            {subheadline}
+          </p>
+          <div className="mt-8">
+            <QuickDeposit />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

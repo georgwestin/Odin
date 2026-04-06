@@ -9,7 +9,6 @@ import {
   ReactNode,
   createElement,
 } from "react";
-import { usePathname } from "next/navigation";
 import { getTranslations, isSanityConfigured } from "@/lib/sanity";
 import { defaultLocale, isValidLocale, type Locale } from "@/lib/i18n-config";
 
@@ -122,13 +121,19 @@ export function TranslationProvider({
   children,
   brand = "swedbet",
 }: TranslationProviderProps) {
-  const pathname = usePathname();
-  const language = getLocaleFromPath(pathname);
-
+  // Detect language client-side only to avoid hydration mismatch
+  const [language, setLanguage] = useState<Locale>(defaultLocale);
   const [translations, setTranslations] =
     useState<Record<string, Record<string, string>>>(DEFAULT_TRANSLATIONS);
   const [loading, setLoading] = useState(false);
 
+  // Detect locale from URL on client mount
+  useEffect(() => {
+    const detected = getLocaleFromPath(window.location.pathname);
+    setLanguage(detected);
+  }, []);
+
+  // Fetch translations from Sanity when language changes
   useEffect(() => {
     if (!isSanityConfigured()) return;
 

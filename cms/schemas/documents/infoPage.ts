@@ -65,9 +65,10 @@ export default defineType({
       to: [{type: 'brand'}],
     }),
     defineField({
-      name: 'category',
-      title: 'Category',
+      name: 'section',
+      title: 'Section',
       type: 'string',
+      description: 'Which section of the site this page belongs to.',
       options: {
         list: [
           {title: 'Legal', value: 'legal'},
@@ -77,6 +78,13 @@ export default defineType({
         ],
       },
       validation: (Rule) => Rule.required(),
+    }),
+    // Keep old field hidden for migration
+    defineField({
+      name: 'category',
+      title: 'Category (legacy)',
+      type: 'string',
+      hidden: true,
     }),
 
     // Swedish content
@@ -120,10 +128,10 @@ export default defineType({
   ],
   orderings: [
     {
-      title: 'Category',
-      name: 'categoryAsc',
+      title: 'Section',
+      name: 'sectionAsc',
       by: [
-        {field: 'category', direction: 'asc'},
+        {field: 'section', direction: 'asc'},
         {field: 'title', direction: 'asc'},
       ],
     },
@@ -132,13 +140,13 @@ export default defineType({
     select: {
       title: 'title',
       titleSv: 'title_sv',
-      category: 'category',
+      section: 'section',
       brandName: 'brand.name',
     },
-    prepare({title, titleSv, category, brandName}) {
+    prepare({title, titleSv, section, brandName}) {
       return {
         title: title || titleSv || 'Untitled',
-        subtitle: [category, brandName].filter(Boolean).join(' | '),
+        subtitle: [section, brandName].filter(Boolean).join(' | '),
       }
     },
   },

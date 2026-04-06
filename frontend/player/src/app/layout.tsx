@@ -28,14 +28,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-brand-background text-brand-text font-body antialiased">
         <BrandProvider>
-          <TranslationProvider>
-            <AuthLoader>
-              <SiteHeader />
-              <main>{children}</main>
-              <Footer />
-              <BetSlip />
-            </AuthLoader>
-          </TranslationProvider>
+          <AuthLoader>
+            <SiteHeader />
+            <main>{children}</main>
+            <Footer />
+            <BetSlip />
+          </AuthLoader>
         </BrandProvider>
       </body>
     </html>

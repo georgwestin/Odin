@@ -1,10 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslation } from "@/lib/i18n";
 import { useBrand } from "@/components/BrandProvider";
-import { defaultLocale, localeNames, isValidLocale, type Locale } from "@/lib/i18n-config";
+import { localeNames, isValidLocale, type Locale } from "@/lib/i18n-config";
 
 const FLAGS: Record<Locale, string> = {
   en: "🇬🇧",
@@ -14,36 +14,44 @@ const FLAGS: Record<Locale, string> = {
 };
 
 export function Footer() {
-  const { language } = useTranslation();
   const brand = useBrand();
   const pathname = usePathname();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [locale, setLocale] = useState<Locale>("en");
+
+  useEffect(() => {
+    const segment = pathname.split("/")[1];
+    setLocale(isValidLocale(segment) ? segment : "en");
+    setMounted(true);
+  }, [pathname]);
 
   // Only show languages configured for this brand in Sanity
   const availableLocales = (brand.supportedLanguages || ["sv", "en"]).filter(
     (l): l is Locale => isValidLocale(l)
   );
 
-  const currentLocale = language as Locale;
+  // Use default locale for server render to avoid hydration mismatch
+  const currentLocale = mounted ? locale : "en";
 
-  function buildLocalePath(locale: Locale): string {
+  function buildLocalePath(targetLocale: Locale): string {
     let cleanPath = pathname;
     const firstSegment = pathname.split("/")[1];
     if (firstSegment && isValidLocale(firstSegment)) {
       cleanPath = pathname.replace(`/${firstSegment}`, "") || "/";
     }
-    if (locale === defaultLocale) return cleanPath;
-    return `/${locale}${cleanPath === "/" ? "" : cleanPath}`;
+    if (targetLocale === "en") return cleanPath;
+    return `/${targetLocale}${cleanPath === "/" ? "" : cleanPath}`;
   }
 
-  function switchLocale(locale: Locale) {
-    document.cookie = `odin_locale=${locale};path=/;max-age=31536000`;
-    router.push(buildLocalePath(locale));
+  function switchLocale(targetLocale: Locale) {
+    document.cookie = `odin_locale=${targetLocale};path=/;max-age=31536000`;
+    router.push(buildLocalePath(targetLocale));
   }
 
   // Build locale-aware links
   function l(path: string): string {
-    if (currentLocale === defaultLocale) return path;
+    if (currentLocale === "en") return path;
     if (path === "/") return `/${currentLocale}`;
     return `/${currentLocale}${path}`;
   }

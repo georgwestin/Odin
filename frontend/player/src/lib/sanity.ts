@@ -18,10 +18,8 @@ export function urlFor(source: any) {
 
 /** Returns true when Sanity credentials have been configured. */
 export function isSanityConfigured(): boolean {
-  return (
-    !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID &&
-    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== 'your-project-id'
-  );
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'mqk9lpso';
+  return !!projectId && projectId !== 'your-project-id';
 }
 
 // --- TypeScript Interfaces ---

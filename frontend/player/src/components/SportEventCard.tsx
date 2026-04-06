@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { LiveOdds } from "@/components/LiveOdds";
 import { useBetSlip } from "@/stores/betslip";
@@ -57,10 +58,16 @@ export function SportEventCard({
     });
   };
 
-  const timeStr = new Date(startTime).toLocaleTimeString("sv-SE", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const [timeStr, setTimeStr] = useState("");
+
+  useEffect(() => {
+    setTimeStr(
+      new Date(startTime).toLocaleTimeString("sv-SE", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    );
+  }, [startTime]);
 
   /* ---- Compact live card variant ---- */
   if (compact) {
