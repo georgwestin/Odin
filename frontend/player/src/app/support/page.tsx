@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 
 /* ------------------------------------------------------------------ */
 /*  FAQ data                                                           */
@@ -86,10 +85,10 @@ const FAQ_RIGHT: FaqItem[] = [
 
 function AccordionItem({ item, isOpen, onToggle }: { item: FaqItem; isOpen: boolean; onToggle: () => void }) {
   return (
-    <div className="border-b border-gray-200 overflow-hidden">
+    <div className="border-b border-white/10 overflow-hidden">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-brand-text md:py-5 md:text-base hover:text-brand-primary transition-colors"
+        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-white md:py-5 md:text-base hover:text-[#fdf04d] transition-colors"
       >
         <span>{item.question}</span>
         <svg
@@ -112,7 +111,7 @@ function AccordionItem({ item, isOpen, onToggle }: { item: FaqItem; isOpen: bool
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <p className="pb-5 text-sm text-brand-text-muted leading-relaxed md:pb-6">
+            <p className="pb-5 text-sm text-white/60 leading-relaxed md:pb-6">
               {item.answer}
             </p>
           </motion.div>
@@ -128,6 +127,7 @@ function AccordionItem({ item, isOpen, onToggle }: { item: FaqItem; isOpen: bool
 
 export default function SupportPage() {
   const [openItems, setOpenItems] = useState<Set<string>>(new Set());
+  const [email, setEmail] = useState("");
 
   const toggleItem = (id: string) => {
     setOpenItems((prev) => {
@@ -142,26 +142,29 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-body">
-      {/* ===================== HEADER (Relume Faq10 style) ===================== */}
-      <section className="px-[5%] py-16 md:py-24 lg:py-28">
-        <div className="container mx-auto">
-          {/* Centered title */}
+    <div className="min-h-screen font-body">
+      {/* ===================== HEADER SECTION ===================== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#2c5aa0" }}>
+        <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mx-auto mb-12 w-full max-w-lg text-center md:mb-16 lg:mb-20"
+            className="max-w-xl"
           >
-            <h1 className="mb-5 text-4xl font-bold text-brand-text md:mb-6 md:text-6xl lg:text-7xl">
-              Support &amp; Hj&auml;lp
+            <h1 className="mb-4 text-4xl font-bold text-white md:text-6xl lg:text-7xl">
+              Support &amp; Help
             </h1>
-            <p className="text-brand-text-muted md:text-lg">
-              Hitta svar p&aring; de vanligaste fr&aring;gorna om v&aring;r plattform, spel och konto.
+            <p className="text-white/70 md:text-lg">
+              Find answers to the most common questions about our platform, games, and account management.
             </p>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Two-column FAQ grid (Relume Faq10 style) */}
+      {/* ===================== FAQ GRID ===================== */}
+      <section className="px-[5%] py-12 md:py-16" style={{ backgroundColor: "#1a2634" }}>
+        <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -181,7 +184,7 @@ export default function SupportPage() {
             </div>
 
             {/* Right column */}
-            <div className="w-full border-t border-gray-200 md:border-t-0">
+            <div className="w-full border-t border-white/10 md:border-t-0">
               {FAQ_RIGHT.map((item) => (
                 <AccordionItem
                   key={item.id}
@@ -192,79 +195,86 @@ export default function SupportPage() {
               ))}
             </div>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Still have questions? -- Relume Faq10 footer */}
+      {/* ===================== STILL HAVE QUESTIONS? ===================== */}
+      <section className="px-[5%] py-16 md:py-20" style={{ backgroundColor: "#1a2634" }}>
+        <div className="container mx-auto max-w-lg">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mx-auto mt-12 max-w-md text-center md:mt-16 lg:mt-20"
+            className="text-center"
           >
-            <h4 className="mb-3 text-xl font-bold text-brand-text md:mb-4 md:text-2xl lg:text-3xl">
-              Har du fortfarande fr&aring;gor?
-            </h4>
-            <p className="text-brand-text-muted md:text-lg">
-              Kontakta v&aring;rt supportteam n&auml;r som helst.
+            <h2 className="mb-3 text-xl font-bold text-white md:text-2xl lg:text-3xl">
+              Still have questions?
+            </h2>
+            <p className="text-white/60 mb-8 md:text-lg">
+              Contact our support team anytime.
             </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:mt-8">
-              <a
-                href="mailto:support@swedbet.se"
-                className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-brand-primary text-white font-bold text-sm hover:bg-brand-primary/90 transition-colors"
+
+            {/* Email input + submit */}
+            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 text-sm focus:outline-none focus:border-[#fdf04d] transition-colors"
+              />
+              <button
+                className="px-8 py-3 rounded-lg font-bold text-sm text-white transition-colors"
+                style={{ backgroundColor: "#2c5aa0" }}
               >
-                Kontakta oss
-              </a>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center px-7 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
-              >
-                Tillbaka till startsidan
-              </Link>
+                Submit
+              </button>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ===================== CONTACT INFO SECTION ===================== */}
-      <section className="px-[5%] py-16 md:py-24 bg-gray-50">
-        <div className="container mx-auto">
+      <section className="px-[5%] py-16 md:py-24" style={{ backgroundColor: "#fdf04d" }}>
+        <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
             {/* Live Chat */}
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/10">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-brand-primary">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(44,90,160,0.1)" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#2c5aa0" }}>
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                 </svg>
               </div>
-              <h3 className="mb-2 font-bold text-brand-text text-lg">Livechatt</h3>
-              <p className="text-sm text-brand-text-muted">
+              <h3 className="mb-2 font-bold text-[#1a2634] text-lg">Livechatt</h3>
+              <p className="text-sm text-[#1a2634]/70">
                 Tillg&auml;nglig dygnet runt. Genomsnittlig v&auml;ntetid under 2 minuter.
               </p>
             </div>
 
             {/* Email */}
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/10">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-brand-primary">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(44,90,160,0.1)" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#2c5aa0" }}>
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
               </div>
-              <h3 className="mb-2 font-bold text-brand-text text-lg">E-post</h3>
-              <p className="text-sm text-brand-text-muted">
+              <h3 className="mb-2 font-bold text-[#1a2634] text-lg">E-post</h3>
+              <p className="text-sm text-[#1a2634]/70">
                 support@swedbet.se &mdash; Vi svarar inom 24 timmar.
               </p>
             </div>
 
             {/* Phone */}
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/10">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-brand-primary">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(44,90,160,0.1)" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#2c5aa0" }}>
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                 </svg>
               </div>
-              <h3 className="mb-2 font-bold text-brand-text text-lg">Telefon</h3>
-              <p className="text-sm text-brand-text-muted">
+              <h3 className="mb-2 font-bold text-[#1a2634] text-lg">Telefon</h3>
+              <p className="text-sm text-[#1a2634]/70">
                 08-123 456 78 &mdash; M&aring;n-fre 09:00-21:00, Helger 10:00-18:00.
               </p>
             </div>

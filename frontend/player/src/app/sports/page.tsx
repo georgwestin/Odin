@@ -370,15 +370,15 @@ export default function SportsPage() {
   }, [events, selectedSport]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ===================== HERO BANNER (Relume Header65 style) ===================== */}
-      <section className="relative px-[5%] py-16 md:py-24 lg:py-28 overflow-hidden">
-        <div className="container relative z-10 max-w-lg text-center mx-auto">
+    <div className="min-h-screen">
+      {/* ===================== HERO BANNER (Figma: yellow bg) ===================== */}
+      <section className="relative px-[5%] py-16 md:py-24 lg:py-28 overflow-hidden" style={{ backgroundColor: "#fdf04d" }}>
+        <div className="container relative z-10 max-w-xl mx-auto text-center">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-3 font-semibold text-white/80 md:mb-4"
+            className="mb-3 font-semibold text-[#1a2634]/60 md:mb-4"
           >
             Wager
           </motion.p>
@@ -386,17 +386,17 @@ export default function SportsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5 text-4xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl"
+            className="mb-5 text-4xl font-bold text-[#1a2634] md:mb-6 md:text-6xl lg:text-7xl"
           >
-            Sportsbetting
+            Sport iFrame Goes here
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-white/70 md:text-lg"
+            className="text-[#1a2634]/70 md:text-lg"
           >
-            De b&auml;sta oddsen p&aring; alla matcher. Spela live eller p&aring; kommande evenemang.
+            Swedish colors guide your way to the best odds on every match. Play live or on upcoming events.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -406,26 +406,24 @@ export default function SportsPage() {
           >
             <a
               href="#live-events"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-[#1a1040] font-bold text-sm hover:bg-white/90 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-sm text-white transition-colors"
+              style={{ backgroundColor: "#2c5aa0" }}
             >
-              Se live
+              Bet
             </a>
             <a
               href="#upcoming"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-white/30 text-white font-bold text-sm hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-sm transition-colors border-2"
+              style={{ borderColor: "#1a2634", color: "#1a2634" }}
             >
-              Kommande matcher
+              Learn
             </a>
           </motion.div>
-        </div>
-        <div className="absolute inset-0 z-0">
-          <div className="size-full bg-gradient-to-br from-[#0f1629] via-[#1a1040] to-[#2d1b69]" />
-          <div className="absolute inset-0 bg-black/20" />
         </div>
       </section>
 
       {/* ===================== MAIN CONTENT ===================== */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 bg-white">
         <div className="flex gap-6">
           {/* ===================== LEFT SIDEBAR (desktop) ===================== */}
           <aside className="hidden lg:block w-56 shrink-0">
@@ -437,7 +435,7 @@ export default function SportsPage() {
                 onClick={() => setSelectedSport("all")}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   selectedSport === "all"
-                    ? "bg-brand-primary text-white"
+                    ? "bg-[#2c5aa0] text-white"
                     : "text-brand-text hover:bg-brand-surface-alt"
                 }`}
               >
@@ -462,7 +460,7 @@ export default function SportsPage() {
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     selectedSport === sport.id
-                      ? "bg-brand-primary text-white"
+                      ? "bg-[#2c5aa0] text-white"
                       : "text-brand-text hover:bg-brand-surface-alt"
                   }`}
                 >
@@ -503,7 +501,7 @@ export default function SportsPage() {
                 }}
                 className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                   selectedSport === "all"
-                    ? "bg-brand-primary text-white border-brand-primary"
+                    ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
                     : "bg-white text-brand-text border-brand-border"
                 }`}
               >
@@ -518,7 +516,7 @@ export default function SportsPage() {
                   }}
                   className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                     selectedSport === sport.id
-                      ? "bg-brand-primary text-white border-brand-primary"
+                      ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
                       : "bg-white text-brand-text border-brand-border"
                   }`}
                 >
@@ -532,7 +530,7 @@ export default function SportsPage() {
             {liveEvents.length > 0 && (
               <section id="live-events" className="mb-8">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-danger text-white text-xs font-bold">
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-bold">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
@@ -575,7 +573,7 @@ export default function SportsPage() {
                   onClick={() => setActiveLeague(null)}
                   className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                     activeLeague === null
-                      ? "bg-brand-primary text-white border-brand-primary"
+                      ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
                       : "bg-white text-brand-text border-brand-border hover:border-brand-text-muted"
                   }`}
                 >
@@ -589,7 +587,7 @@ export default function SportsPage() {
                     }
                     className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                       activeLeague === league
-                        ? "bg-brand-primary text-white border-brand-primary"
+                        ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
                         : "bg-white text-brand-text border-brand-border hover:border-brand-text-muted"
                     }`}
                   >

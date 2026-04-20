@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { LiveGameCard, LiveGameCardProps } from "@/components/LiveGameCard";
+import { LiveGameCardProps } from "@/components/LiveGameCard";
 
 /* ------------------------------------------------------------------ */
 /*  Categories                                                         */
@@ -50,10 +50,22 @@ const LIVE_GAMES: LiveGameCardProps[] = [
   { id: "lg24", name: "Free Bet Blackjack",         provider: "Evolution",        category: "blackjack", thumbnailUrl: "", isLive: true, playerCount: 27, dealerName: "Simon",   minBet: 10,  maxBet: 25000,  tableId: "evo_fbb1" },
 ];
 
-/* Top 3 featured tables -- sorted by player count */
-const FEATURED_GAMES = [...LIVE_GAMES]
-  .sort((a, b) => b.playerCount - a.playerCount)
-  .slice(0, 3);
+/* ------------------------------------------------------------------ */
+/*  Provider color mapping for card backgrounds                        */
+/* ------------------------------------------------------------------ */
+
+const PROVIDER_BG: Record<string, string> = {
+  Evolution: "#6b2132",
+  "Pragmatic Play": "#1a3a6b",
+};
+
+function getProviderBg(provider: string): string {
+  return PROVIDER_BG[provider] || "#2c3e50";
+}
+
+function formatBet(amount: number): string {
+  return new Intl.NumberFormat("sv-SE").format(amount);
+}
 
 /* ------------------------------------------------------------------ */
 /*  Page Component                                                     */
@@ -67,35 +79,25 @@ export default function LiveCasinoPage() {
     return LIVE_GAMES.filter((g) => g.category === category);
   }, [category]);
 
-  function formatBet(amount: number): string {
-    return new Intl.NumberFormat("sv-SE").format(amount);
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* ============================================================ */}
-      {/*  Hero Section (Relume Product10 style header)                  */}
-      {/* ============================================================ */}
-      <section className="relative bg-gradient-to-br from-[#0f1629] via-[#1a1040] to-[#2d1b69] overflow-hidden">
-        {/* Decorative glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative max-w-7xl mx-auto px-4 pt-12 pb-10 sm:pt-16 sm:pb-14">
-          {/* Header text -- Relume Product10 centered style */}
-          <div className="text-center mb-10">
+    <div className="min-h-screen font-body">
+      {/* ===================== HEADER SECTION ===================== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28 bg-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="max-w-xl">
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="font-semibold text-white/60 mb-3"
+              className="mb-3 font-semibold text-[#6b7a8d] md:mb-4"
             >
-              Utforska
+              Browse
             </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4"
+              className="mb-4 text-4xl font-bold text-[#1a2634] md:text-6xl lg:text-7xl"
             >
               Live Casino
             </motion.h1>
@@ -103,144 +105,211 @@ export default function LiveCasinoPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="text-white/60 text-base sm:text-lg max-w-md mx-auto"
+              className="text-[#6b7a8d] md:text-lg"
             >
-              Spela med riktiga dealers i realtid
+              Find your next favorite game in our collection.
             </motion.p>
           </div>
 
-          {/* Featured tables -- horizontal scroll on mobile, 3-col on desktop */}
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none sm:grid sm:grid-cols-3 sm:overflow-visible">
-            {FEATURED_GAMES.map((game) => {
-              const bgGradient =
-                game.provider === "Evolution"
-                  ? "from-red-700 to-red-900"
-                  : game.provider === "Pragmatic Play"
-                  ? "from-blue-600 to-blue-900"
-                  : "from-gray-700 to-gray-900";
-
-              return (
-                <a
-                  key={game.id}
-                  href={`/live-casino/${game.id}`}
-                  className={`group relative shrink-0 w-[85vw] sm:w-auto rounded-2xl overflow-hidden bg-gradient-to-br ${bgGradient} p-5 sm:p-6 flex flex-col justify-between min-h-[180px] hover:scale-[1.02] transition-transform duration-200`}
-                >
-                  {/* LIVE badge */}
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-pill">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
-                      </span>
-                      Live
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-white/80 text-xs font-medium">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M22 21v-2a4 4 0 00-3-3.87" />
-                        <path d="M16 3.13a4 4 0 010 7.75" />
-                      </svg>
-                      {game.playerCount} spelare
-                    </span>
-                  </div>
-
-                  {/* Game name */}
-                  <div className="mt-auto">
-                    <h3 className="text-white font-bold text-xl sm:text-2xl leading-tight drop-shadow-lg">
-                      {game.name}
-                    </h3>
-                    <p className="text-white/50 text-xs mt-1">
-                      {game.provider} &middot; Dealer: {game.dealerName}
-                    </p>
-                    <p className="text-white/40 text-[11px] mt-0.5">
-                      Min {formatBet(game.minBet)} kr &ndash; Max{" "}
-                      {formatBet(game.maxBet)} kr
-                    </p>
-                  </div>
-
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-2xl">
-                    <span className="bg-brand-accent text-white font-bold text-sm px-8 py-2.5 rounded-pill transform scale-90 group-hover:scale-100 transition-transform duration-200">
-                      G&aring; med
-                    </span>
-                  </div>
-                </a>
-              );
-            })}
+          {/* Category filter pills */}
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none mt-10">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategory(cat.id)}
+                className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${
+                  category === cat.id
+                    ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
+                    : "bg-white text-[#6b7a8d] border-gray-300 hover:border-[#2c5aa0] hover:text-[#2c5aa0]"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/*  Main content (Relume Product10 grid style)                    */}
-      {/* ============================================================ */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Category filter pills */}
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setCategory(cat.id)}
-              className={`shrink-0 px-5 py-2.5 rounded-pill text-sm font-medium transition-colors border ${
-                category === cat.id
-                  ? "bg-brand-primary text-white border-brand-primary"
-                  : "bg-white text-brand-text-muted border-brand-border hover:text-brand-text hover:border-brand-text-muted"
-              }`}
+      {/* ===================== GAME CARD GRID ===================== */}
+      <section className="px-[5%] py-12 md:py-16" style={{ backgroundColor: "#1a2634" }}>
+        <div className="container mx-auto max-w-6xl">
+          {filtered.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-white/60 text-lg">
+                Inga bord tillg&auml;ngliga just nu.
+              </p>
+              <p className="text-white/40 text-sm mt-1">
+                Prova att v&auml;lja en annan kategori.
+              </p>
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+              {filtered.slice(0, 6).map((game, idx) => (
+                <Link
+                  key={game.id}
+                  href={`/live-casino/${game.id}`}
+                  className="group block rounded-xl overflow-hidden transition-transform duration-200 hover:-translate-y-1"
+                  style={{ backgroundColor: "#0f1923" }}
+                >
+                  {/* Image/placeholder area */}
+                  <div
+                    className="aspect-[4/3] relative overflow-hidden flex items-center justify-center"
+                    style={{ backgroundColor: getProviderBg(game.provider) }}
+                  >
+                    {/* LIVE badge */}
+                    {game.isLive && (
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="inline-flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+                          </span>
+                          Live
+                        </span>
+                      </div>
+                    )}
 
-        {/* Game grid -- 3-col like Relume Product10 */}
-        {filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-brand-text-muted text-lg">
-              Inga bord tillg&auml;ngliga just nu.
-            </p>
-            <p className="text-brand-text-muted text-sm mt-1">
-              Prova att v&auml;lja en annan kategori.
-            </p>
+                    {/* Player count */}
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-md">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-80">
+                          <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M22 21v-2a4 4 0 00-3-3.87" />
+                          <path d="M16 3.13a4 4 0 010 7.75" />
+                        </svg>
+                        {game.playerCount}
+                      </span>
+                    </div>
+
+                    {/* Game name overlay */}
+                    <div className="relative z-10 text-center px-4">
+                      <h3 className="text-white font-bold text-lg leading-tight drop-shadow-lg">
+                        {game.name}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Card info */}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="text-white font-semibold text-sm truncate">
+                          {game.name}
+                        </h3>
+                        <p className="text-[#6b7a8d] text-xs mt-0.5">
+                          {game.provider} &middot; Dealer: {game.dealerName}
+                        </p>
+                      </div>
+                      <span className="text-white font-bold text-sm shrink-0">
+                        ${formatBet(game.minBet)}
+                      </span>
+                    </div>
+
+                    {/* Play now / View all button */}
+                    <button
+                      className="mt-3 w-full py-2.5 rounded-lg text-sm font-bold transition-colors"
+                      style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+                    >
+                      {idx < 3 ? "View all" : "Play now"}
+                    </button>
+                  </div>
+                </Link>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Second row of cards */}
+          {filtered.length > 6 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6"
+            >
+              {filtered.slice(6, 12).map((game) => (
+                <Link
+                  key={game.id}
+                  href={`/live-casino/${game.id}`}
+                  className="group block rounded-xl overflow-hidden transition-transform duration-200 hover:-translate-y-1"
+                  style={{ backgroundColor: "#0f1923" }}
+                >
+                  <div
+                    className="aspect-[4/3] relative overflow-hidden flex items-center justify-center"
+                    style={{ backgroundColor: getProviderBg(game.provider) }}
+                  >
+                    {game.isLive && (
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="inline-flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+                          </span>
+                          Live
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="inline-flex items-center gap-1 bg-black/40 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-md">
+                        {game.playerCount}
+                      </span>
+                    </div>
+                    <div className="relative z-10 text-center px-4">
+                      <h3 className="text-white font-bold text-lg leading-tight drop-shadow-lg">
+                        {game.name}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="text-white font-semibold text-sm truncate">{game.name}</h3>
+                        <p className="text-[#6b7a8d] text-xs mt-0.5">
+                          {game.provider} &middot; Dealer: {game.dealerName}
+                        </p>
+                      </div>
+                      <span className="text-white font-bold text-sm shrink-0">
+                        ${formatBet(game.minBet)}
+                      </span>
+                    </div>
+                    <button
+                      className="mt-3 w-full py-2.5 rounded-lg text-sm font-bold transition-colors"
+                      style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+                    >
+                      Play now
+                    </button>
+                  </div>
+                </Link>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Bottom Play now button */}
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/live-casino"
+              className="inline-flex items-center justify-center px-10 py-3.5 rounded-lg font-bold text-sm transition-colors"
+              style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+            >
+              Play now
+            </Link>
           </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-          >
-            {filtered.map((game) => (
-              <LiveGameCard key={game.id} {...game} />
-            ))}
-          </motion.div>
-        )}
-
-        {/* View more button -- Relume Product10 style centered */}
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/live-casino"
-            className="inline-flex items-center justify-center px-8 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
-          >
-            Visa alla bord
-          </Link>
         </div>
+      </section>
 
-        {/* ============================================================ */}
-        {/*  Om Live Casino                                               */}
-        {/* ============================================================ */}
-        <section className="mt-16 mb-8 border-t border-brand-border pt-10">
-          <h2 className="font-heading text-2xl font-bold text-brand-text mb-4">
+      {/* ===================== INFO SECTION ===================== */}
+      <section className="px-[5%] py-16 md:py-24 bg-white">
+        <div className="container mx-auto max-w-3xl">
+          <h2 className="text-2xl font-bold text-[#1a2634] mb-4 md:text-3xl">
             Om Live Casino
           </h2>
-          <div className="max-w-3xl text-brand-text-muted text-sm leading-relaxed space-y-3">
+          <div className="text-[#6b7a8d] text-sm leading-relaxed space-y-3">
             <p>
               Live Casino ger dig den autentiska casinoupplevelsen direkt
               hemifr&aring;n. Professionella dealers leder spelen i realtid via
@@ -259,12 +328,12 @@ export default function LiveCasinoPage() {
               Borden &auml;r &ouml;ppna dygnet runt, s&aring; du kan spela
               n&auml;r det passar dig.
             </p>
-            <p className="text-xs text-brand-text-muted/60">
+            <p className="text-xs text-[#6b7a8d]/60">
               18+ | Spela ansvarsfullt | Stodlinjen.se
             </p>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
