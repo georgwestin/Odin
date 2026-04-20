@@ -48,17 +48,17 @@ interface BetLeader {
 // --- Mock Data ---
 
 const mockPlayers: Player[] = [
-  { id: "p1", username: "emma_sthlm", email: "emma@mail.se", brand: "SwedBet", balance: 4250.00, bonusBalance: 500, playerCurrency: "SEK", kycStatus: "verified", country: "SE", registrationDate: "2026-04-07 09:12", lastLogin: "2026-04-07 09:15", totalDeposits: 15000, totalBets: 342 },
-  { id: "p2", username: "andreas_gbg", email: "andreas.g@mail.se", brand: "SwedBet", balance: 1890.50, bonusBalance: 0, playerCurrency: "SEK", kycStatus: "verified", country: "SE", registrationDate: "2026-04-07 08:45", lastLogin: "2026-04-07 08:50", totalDeposits: 8000, totalBets: 156 },
+  { id: "p1", username: "emma_sthlm", email: "emma@mail.se", brand: "SwedBet", balance: 4250.00, bonusBalance: 500, playerCurrency: "EUR", kycStatus: "verified", country: "SE", registrationDate: "2026-04-07 09:12", lastLogin: "2026-04-07 09:15", totalDeposits: 15000, totalBets: 342 },
+  { id: "p2", username: "andreas_gbg", email: "andreas.g@mail.se", brand: "SwedBet", balance: 1890.50, bonusBalance: 0, playerCurrency: "EUR", kycStatus: "verified", country: "SE", registrationDate: "2026-04-07 08:45", lastLogin: "2026-04-07 08:50", totalDeposits: 8000, totalBets: 156 },
   { id: "p3", username: "mikael_fin", email: "mikael@mail.fi", brand: "SwedBet", balance: 12400.00, bonusBalance: 1000, playerCurrency: "EUR", kycStatus: "verified", country: "FI", registrationDate: "2026-04-07 07:30", lastLogin: "2026-04-07 10:20", totalDeposits: 45000, totalBets: 890 },
-  { id: "p4", username: "lisa_malmo", email: "lisa.m@mail.se", brand: "SwedBet", balance: 320.00, bonusBalance: 200, playerCurrency: "SEK", kycStatus: "pending", country: "SE", registrationDate: "2026-04-07 06:55", lastLogin: "2026-04-07 07:00", totalDeposits: 1000, totalBets: 28 },
+  { id: "p4", username: "lisa_malmo", email: "lisa.m@mail.se", brand: "SwedBet", balance: 320.00, bonusBalance: 200, playerCurrency: "EUR", kycStatus: "pending", country: "SE", registrationDate: "2026-04-07 06:55", lastLogin: "2026-04-07 07:00", totalDeposits: 1000, totalBets: 28 },
   { id: "p5", username: "olof_oslo", email: "olof@mail.no", brand: "SwedBet", balance: 7800.75, bonusBalance: 0, playerCurrency: "NOK", kycStatus: "verified", country: "NO", registrationDate: "2026-04-06 22:10", lastLogin: "2026-04-07 11:30", totalDeposits: 25000, totalBets: 512 },
-  { id: "p6", username: "sara_uppsala", email: "sara.u@mail.se", brand: "SwedBet", balance: 0, bonusBalance: 0, playerCurrency: "SEK", kycStatus: "unverified", country: "SE", registrationDate: "2026-04-06 20:30", lastLogin: "2026-04-06 20:35", totalDeposits: 0, totalBets: 0 },
+  { id: "p6", username: "sara_uppsala", email: "sara.u@mail.se", brand: "SwedBet", balance: 0, bonusBalance: 0, playerCurrency: "EUR", kycStatus: "unverified", country: "SE", registrationDate: "2026-04-06 20:30", lastLogin: "2026-04-06 20:35", totalDeposits: 0, totalBets: 0 },
   { id: "p7", username: "karl_berlin", email: "karl.b@mail.de", brand: "SwedBet", balance: 2100.00, bonusBalance: 350, playerCurrency: "EUR", kycStatus: "verified", country: "DE", registrationDate: "2026-04-06 18:45", lastLogin: "2026-04-07 08:15", totalDeposits: 6000, totalBets: 210 },
-  { id: "p8", username: "jenny_sthlm", email: "jenny@mail.se", brand: "SwedBet", balance: 15600.00, bonusBalance: 0, playerCurrency: "SEK", kycStatus: "verified", country: "SE", registrationDate: "2026-04-06 15:20", lastLogin: "2026-04-07 12:00", totalDeposits: 52000, totalBets: 1245 },
+  { id: "p8", username: "jenny_sthlm", email: "jenny@mail.se", brand: "SwedBet", balance: 15600.00, bonusBalance: 0, playerCurrency: "EUR", kycStatus: "verified", country: "SE", registrationDate: "2026-04-06 15:20", lastLogin: "2026-04-07 12:00", totalDeposits: 52000, totalBets: 1245 },
   { id: "p9", username: "tomas_cph", email: "tomas@mail.dk", brand: "SwedBet", balance: 450.00, bonusBalance: 100, playerCurrency: "DKK", kycStatus: "pending", country: "DK", registrationDate: "2026-04-06 12:00", lastLogin: "2026-04-06 14:30", totalDeposits: 2000, totalBets: 67 },
   { id: "p10", username: "maria_helsingfors", email: "maria@mail.fi", brand: "SwedBet", balance: 8900.00, bonusBalance: 750, playerCurrency: "EUR", kycStatus: "verified", country: "FI", registrationDate: "2026-04-06 10:00", lastLogin: "2026-04-07 09:45", totalDeposits: 30000, totalBets: 678 },
-  { id: "p11", username: "erik_lulea", email: "erik.l@mail.se", brand: "SwedBet", balance: 125.00, bonusBalance: 0, playerCurrency: "SEK", kycStatus: "verified", country: "SE", registrationDate: "2026-04-05 14:30", lastLogin: "2026-04-07 07:55", totalDeposits: 3500, totalBets: 95 },
+  { id: "p11", username: "erik_lulea", email: "erik.l@mail.se", brand: "SwedBet", balance: 125.00, bonusBalance: 0, playerCurrency: "EUR", kycStatus: "verified", country: "SE", registrationDate: "2026-04-05 14:30", lastLogin: "2026-04-07 07:55", totalDeposits: 3500, totalBets: 95 },
   { id: "p12", username: "ingrid_bergen", email: "ingrid@mail.no", brand: "SwedBet", balance: 3200.00, bonusBalance: 0, playerCurrency: "NOK", kycStatus: "verified", country: "NO", registrationDate: "2026-04-04 09:00", lastLogin: "2026-04-07 10:10", totalDeposits: 18000, totalBets: 430 },
 ];
 
@@ -76,15 +76,15 @@ const mockLogins: LoginEntry[] = [
 ];
 
 const mockBetLeaders: BetLeader[] = [
-  { playerId: "p8", username: "jenny_sthlm", email: "jenny@mail.se", betsToday: 87, stakeToday: 14500, currency: "SEK" },
+  { playerId: "p8", username: "jenny_sthlm", email: "jenny@mail.se", betsToday: 87, stakeToday: 14500, currency: "EUR" },
   { playerId: "p3", username: "mikael_fin", email: "mikael@mail.fi", betsToday: 64, stakeToday: 3200, currency: "EUR" },
   { playerId: "p10", username: "maria_helsingfors", email: "maria@mail.fi", betsToday: 52, stakeToday: 2100, currency: "EUR" },
   { playerId: "p5", username: "olof_oslo", email: "olof@mail.no", betsToday: 41, stakeToday: 8900, currency: "NOK" },
   { playerId: "p12", username: "ingrid_bergen", email: "ingrid@mail.no", betsToday: 38, stakeToday: 6200, currency: "NOK" },
-  { playerId: "p1", username: "emma_sthlm", email: "emma@mail.se", betsToday: 33, stakeToday: 5500, currency: "SEK" },
+  { playerId: "p1", username: "emma_sthlm", email: "emma@mail.se", betsToday: 33, stakeToday: 5500, currency: "EUR" },
   { playerId: "p7", username: "karl_berlin", email: "karl.b@mail.de", betsToday: 27, stakeToday: 1350, currency: "EUR" },
-  { playerId: "p2", username: "andreas_gbg", email: "andreas.g@mail.se", betsToday: 22, stakeToday: 3800, currency: "SEK" },
-  { playerId: "p11", username: "erik_lulea", email: "erik.l@mail.se", betsToday: 15, stakeToday: 2200, currency: "SEK" },
+  { playerId: "p2", username: "andreas_gbg", email: "andreas.g@mail.se", betsToday: 22, stakeToday: 3800, currency: "EUR" },
+  { playerId: "p11", username: "erik_lulea", email: "erik.l@mail.se", betsToday: 15, stakeToday: 2200, currency: "EUR" },
   { playerId: "p9", username: "tomas_cph", email: "tomas@mail.dk", betsToday: 8, stakeToday: 900, currency: "DKK" },
 ];
 

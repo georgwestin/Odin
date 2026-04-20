@@ -152,7 +152,7 @@ INSERT INTO brands (id, name, domain, base_currency, reporting_currency, config)
         },
         "logo_url": "https://cdn.swedbet.com/logos/swedbet.svg",
         "support_email": "support@swedbet.com",
-        "default_currency": "SEK",
+        "default_currency": "EUR",
         "base_currency": "EUR",
         "reporting_currency": "EUR",
         "allowed_currencies": ["EUR", "SEK", "USD", "GBP", "NOK", "DKK"],

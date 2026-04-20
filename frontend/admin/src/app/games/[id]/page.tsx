@@ -355,7 +355,7 @@ export default function GameEditPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Min Bet (SEK)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Min Bet (EUR)</label>
                 <input
                   type="number"
                   value={form.minBet}
@@ -366,7 +366,7 @@ export default function GameEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Max Bet (SEK)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Max Bet (EUR)</label>
                 <input
                   type="number"
                   value={form.maxBet}

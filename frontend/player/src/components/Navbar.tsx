@@ -38,7 +38,7 @@ export function Navbar() {
   const formatBalance = (amount: number) => {
     return new Intl.NumberFormat("sv-SE", {
       style: "currency",
-      currency: currency || "SEK",
+      currency: currency || "EUR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);

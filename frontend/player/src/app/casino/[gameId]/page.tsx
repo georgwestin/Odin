@@ -47,7 +47,7 @@ export default function GamePage() {
   const formatBalance = (amount: number) =>
     new Intl.NumberFormat("sv-SE", {
       style: "currency",
-      currency: currency || "SEK",
+      currency: currency || "EUR",
       minimumFractionDigits: 0,
     }).format(amount);
 

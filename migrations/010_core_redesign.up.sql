@@ -9,7 +9,7 @@ BEGIN;
 
 -- Add player_currency column to existing players table
 ALTER TABLE players
-    ADD COLUMN IF NOT EXISTS player_currency CHAR(3) NOT NULL DEFAULT 'SEK',
+    ADD COLUMN IF NOT EXISTS player_currency CHAR(3) NOT NULL DEFAULT 'EUR',
     ADD COLUMN IF NOT EXISTS first_name TEXT,
     ADD COLUMN IF NOT EXISTS last_name TEXT,
     ADD COLUMN IF NOT EXISTS phone TEXT,
@@ -33,7 +33,7 @@ ALTER TABLE wallets
 UPDATE wallets w SET player_currency = p.player_currency
 FROM players p WHERE w.player_id = p.id AND w.player_currency IS NULL;
 
-ALTER TABLE wallets ALTER COLUMN player_currency SET DEFAULT 'SEK';
+ALTER TABLE wallets ALTER COLUMN player_currency SET DEFAULT 'EUR';
 
 -- ============================================================
 -- 2b. LOGIN SESSIONS — track every login/logout with IP
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS bonus_wallets (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     player_id           UUID NOT NULL REFERENCES players(id) ON DELETE RESTRICT,
     brand_id            UUID NOT NULL,
-    currency            CHAR(3) NOT NULL DEFAULT 'SEK',
+    currency            CHAR(3) NOT NULL DEFAULT 'EUR',
     balance             NUMERIC(18, 4) NOT NULL DEFAULT 0
                         CHECK (balance >= 0),
     wagering_required   NUMERIC(18, 4) NOT NULL DEFAULT 0

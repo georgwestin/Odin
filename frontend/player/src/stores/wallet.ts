@@ -32,7 +32,7 @@ interface WalletState {
 export const useWallet = create<WalletState>((set) => ({
   balance: 0,
   bonusBalance: 0,
-  currency: "SEK",
+  currency: "EUR",
   transactions: [],
   totalTransactions: 0,
   isLoading: false,

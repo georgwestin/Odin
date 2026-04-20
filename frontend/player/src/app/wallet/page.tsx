@@ -47,7 +47,7 @@ export default function WalletPage() {
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat("sv-SE", {
       style: "currency",
-      currency: currency || "SEK",
+      currency: currency || "EUR",
       minimumFractionDigits: 0,
     }).format(val);
 
