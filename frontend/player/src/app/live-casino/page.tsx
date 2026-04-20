@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import { LiveGameCard, LiveGameCardProps } from "@/components/LiveGameCard";
 
 /* ------------------------------------------------------------------ */
@@ -48,7 +50,7 @@ const LIVE_GAMES: LiveGameCardProps[] = [
   { id: "lg24", name: "Free Bet Blackjack",         provider: "Evolution",        category: "blackjack", thumbnailUrl: "", isLive: true, playerCount: 27, dealerName: "Simon",   minBet: 10,  maxBet: 25000,  tableId: "evo_fbb1" },
 ];
 
-/* Top 3 featured tables — sorted by player count */
+/* Top 3 featured tables -- sorted by player count */
 const FEATURED_GAMES = [...LIVE_GAMES]
   .sort((a, b) => b.playerCount - a.playerCount)
   .slice(0, 3);
@@ -72,24 +74,42 @@ export default function LiveCasinoPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* ============================================================ */}
-      {/*  Hero Section                                                 */}
+      {/*  Hero Section (Relume Product10 style header)                  */}
       {/* ============================================================ */}
       <section className="relative bg-gradient-to-br from-[#0f1629] via-[#1a1040] to-[#2d1b69] overflow-hidden">
         {/* Decorative glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-4 pt-12 pb-10 sm:pt-16 sm:pb-14">
-          {/* Text */}
+          {/* Header text -- Relume Product10 centered style */}
           <div className="text-center mb-10">
-            <h1 className="font-heading text-4xl sm:text-5xl font-bold text-white mb-3">
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="font-semibold text-white/60 mb-3"
+            >
+              Utforska
+            </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4"
+            >
               Live Casino
-            </h1>
-            <p className="text-white/60 text-base sm:text-lg max-w-md mx-auto">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="text-white/60 text-base sm:text-lg max-w-md mx-auto"
+            >
               Spela med riktiga dealers i realtid
-            </p>
+            </motion.p>
           </div>
 
-          {/* Featured tables — horizontal scroll on mobile, 3-col on desktop */}
+          {/* Featured tables -- horizontal scroll on mobile, 3-col on desktop */}
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none sm:grid sm:grid-cols-3 sm:overflow-visible">
             {FEATURED_GAMES.map((game) => {
               const bgGradient =
@@ -160,7 +180,7 @@ export default function LiveCasinoPage() {
       </section>
 
       {/* ============================================================ */}
-      {/*  Main content                                                 */}
+      {/*  Main content (Relume Product10 grid style)                    */}
       {/* ============================================================ */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Category filter pills */}
@@ -180,7 +200,7 @@ export default function LiveCasinoPage() {
           ))}
         </div>
 
-        {/* Game grid */}
+        {/* Game grid -- 3-col like Relume Product10 */}
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-brand-text-muted text-lg">
@@ -191,12 +211,27 @@ export default function LiveCasinoPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
             {filtered.map((game) => (
               <LiveGameCard key={game.id} {...game} />
             ))}
-          </div>
+          </motion.div>
         )}
+
+        {/* View more button -- Relume Product10 style centered */}
+        <div className="mt-10 flex justify-center">
+          <Link
+            href="/live-casino"
+            className="inline-flex items-center justify-center px-8 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
+          >
+            Visa alla bord
+          </Link>
+        </div>
 
         {/* ============================================================ */}
         {/*  Om Live Casino                                               */}

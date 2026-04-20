@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { RxChevronRight } from "react-icons/rx";
 import { api } from "@/lib/api";
 import { GameCard } from "@/components/GameCard";
 import { SportEventCard } from "@/components/SportEventCard";
@@ -105,6 +107,9 @@ const CATEGORIES = [
   { id: "live", label: "Live Casino" },
 ];
 
+/* Game thumbnail URLs for the scrolling hero grid */
+const HERO_GRID_IMAGES = PLACEHOLDER_GAMES.map((g) => g.thumbnailUrl);
+
 export default function HomePage() {
   const [games, setGames] = useState<FeaturedGame[]>(PLACEHOLDER_GAMES);
   const [events, setEvents] = useState<LiveEvent[]>(PLACEHOLDER_EVENTS);
@@ -122,7 +127,6 @@ export default function HomePage() {
       .catch(() => {});
   }, []);
 
-  // Filter games by category (client-side for demo)
   const filteredGames = games.filter((g) => {
     if (activeCategory === "popular") return g.isPopular;
     if (activeCategory === "new") return g.isNew;
@@ -133,22 +137,87 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <Hero />
+      {/* ===== Header76: Hero with scrolling game grid ===== */}
+      <HeroSection />
 
-      {/* Popular Games - Horizontal Scroll — dark section */}
+      {/* ===== Layout239: "Everything you need to win big" ===== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#010D13" }}>
+        <div className="container mx-auto">
+          <div className="flex flex-col items-center">
+            <div className="mb-12 text-center md:mb-18 lg:mb-20">
+              <div className="w-full max-w-lg">
+                <h2 className="mb-5 text-5xl font-bold text-white md:mb-6 md:text-7xl lg:text-8xl">
+                  Everything you need to win big
+                </h2>
+                <p className="text-white/70 md:text-md">
+                  We offer hundreds of casino games and live dealers ready to
+                  play. Sports betting runs alongside it all, giving you options
+                  that matter.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 items-start justify-center gap-y-12 md:grid-cols-3 md:gap-x-8 md:gap-y-16 lg:gap-x-12">
+              <Link href="/sports" className="flex w-full flex-col items-center text-center group">
+                <div className="mb-6 md:mb-8 overflow-hidden rounded-xl">
+                  <img
+                    src="https://cdn.mint.io/production/games/images/immersive-roulette-066a301e6632725813a55e5dde308937.png"
+                    alt="Sports betting"
+                    className="w-full transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="mb-5 text-2xl font-bold text-white md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
+                  Sports betting
+                </h3>
+                <p className="text-white/60">
+                  Place bets on football, hockey, and other major sports worldwide.
+                </p>
+              </Link>
+              <Link href="/casino" className="flex w-full flex-col items-center text-center group">
+                <div className="mb-6 md:mb-8 overflow-hidden rounded-xl">
+                  <img
+                    src="https://cdn.mint.io/production/games/images/sweet_bonanza_1000-eaa318e2df1742ce95a0030564c8df04.png"
+                    alt="Casino games"
+                    className="w-full transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="mb-5 text-2xl font-bold text-white md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
+                  Casino games
+                </h3>
+                <p className="text-white/60">Slots, blackjack, roulette, and poker with real stakes.</p>
+              </Link>
+              <Link href="/live-casino" className="flex w-full flex-col items-center text-center group">
+                <div className="mb-6 md:mb-8 overflow-hidden rounded-xl">
+                  <img
+                    src="https://cdn.mint.io/production/games/images/gates_of_olympus_1000-9079a11814b04e93a159e220ce7494c3.png"
+                    alt="Live dealers"
+                    className="w-full transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="mb-5 text-2xl font-bold text-white md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
+                  Live dealers
+                </h3>
+                <p className="text-white/60">
+                  Watch the action unfold with professional dealers in real time.
+                </p>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Popular Games - Horizontal Scroll ===== */}
       <section style={{ backgroundColor: "#010D13" }}>
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-heading text-2xl font-bold text-white">
-              Populära spel
+              Populara spel
             </h2>
             <Link
               href="/casino"
               className="text-sm font-semibold"
               style={{ color: "#00CC9F" }}
             >
-              Visa alla →
+              Visa alla &rarr;
             </Link>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4">
@@ -168,16 +237,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Category Tabs + Game Grid — dark section */}
+      {/* ===== Category Tabs + Game Grid ===== */}
       <section style={{ backgroundColor: "#010D13" }}>
         <div className="max-w-7xl mx-auto px-4 pb-12">
-          {/* Category Tabs */}
           <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className="shrink-0 px-5 py-2.5 rounded-pill text-sm font-medium transition-colors"
+                className="shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
                 style={
                   activeCategory === cat.id
                     ? { backgroundColor: "#00CC9F", color: "#010D13", border: "1px solid #00CC9F" }
@@ -188,8 +256,6 @@ export default function HomePage() {
               </button>
             ))}
           </div>
-
-          {/* Game Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-6">
             {displayGames.map((game) => (
               <GameCard
@@ -206,7 +272,63 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sports Betting Preview - Dagens matcher */}
+      {/* ===== Stats15: Trust section ===== */}
+      <section className="relative px-[5%] py-16 md:py-24 lg:py-28">
+        <div className="container mx-auto relative z-10">
+          <div className="grid grid-cols-1 items-center gap-y-12 lg:grid-cols-2 lg:gap-x-[4.75rem]">
+            <div>
+              <h2 className="mb-5 text-5xl font-bold text-white md:mb-6 md:text-7xl lg:text-8xl">
+                You can trust us
+              </h2>
+              <p className="text-white/80 md:text-md">
+                Built and run by trustworthy Swedes being in the industry for 10+
+                years. No bullshit bonuses but real money cash back if you happen
+                to have a bad week.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-y-8 py-2 md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+              <div className="border-l-2 border-[#00CC9F] pl-8">
+                <p className="mb-2 text-6xl font-bold leading-[1.3] text-white md:text-[4rem] lg:text-[5rem]">
+                  2,500+
+                </p>
+                <h3 className="text-md font-bold leading-[1.4] text-white/80 md:text-xl">
+                  Games available
+                </h3>
+              </div>
+              <div className="border-l-2 border-[#00CC9F] pl-8">
+                <p className="mb-2 text-6xl font-bold leading-[1.3] text-white md:text-[4rem] lg:text-[5rem]">
+                  47,000
+                </p>
+                <h3 className="text-md font-bold leading-[1.4] text-white/80 md:text-xl">
+                  Winners this month
+                </h3>
+              </div>
+              <div className="border-l-2 border-[#00CC9F] pl-8">
+                <p className="mb-2 text-6xl font-bold leading-[1.3] text-white md:text-[4rem] lg:text-[5rem]">
+                  97.1%
+                </p>
+                <h3 className="text-md font-bold leading-[1.4] text-white/80 md:text-xl">
+                  Slot payout percentage
+                </h3>
+              </div>
+              <div className="border-l-2 border-[#00CC9F] pl-8">
+                <p className="mb-2 text-6xl font-bold leading-[1.3] text-white md:text-[4rem] lg:text-[5rem]">
+                  11,000
+                </p>
+                <h3 className="text-md font-bold leading-[1.4] text-white/80 md:text-xl">
+                  Active players
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0 z-0">
+          <div className="size-full" style={{ background: "linear-gradient(135deg, #0f1923 0%, #1a2634 50%, #0f1923 100%)" }} />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+      </section>
+
+      {/* ===== Sports Betting Preview - Dagens matcher ===== */}
       <section className="bg-brand-surface-alt py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
@@ -239,7 +361,197 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Provider Logos */}
+      {/* ===== EventItemHeader2: Countdown promo ===== */}
+      <CountdownPromo />
+
+      {/* ===== Layout300: Four steps to start playing ===== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28">
+        <div className="container mx-auto">
+          <div className="flex flex-col items-start">
+            <div className="mx-auto mb-12 w-full max-w-lg items-start justify-between gap-5 md:mb-18 lg:mb-20">
+              <p className="mb-3 text-center font-semibold text-brand-primary md:mb-4">Process</p>
+              <h2 className="mb-5 text-center text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+                Four steps to start playing
+              </h2>
+              <p className="text-center text-brand-text-muted md:text-md">
+                Getting started takes minutes. No long forms, no waiting around.
+                Just sign up and play.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 items-start gap-y-12 md:grid-cols-2 md:gap-x-8 md:gap-y-16 lg:grid-cols-4">
+              {[
+                {
+                  img: "https://cdn.mint.io/production/games/images/sweet_bonanza_1000-eaa318e2df1742ce95a0030564c8df04.png",
+                  title: "Create your account",
+                  desc: "Enter your details and verify your email. Takes less than two minutes to complete.",
+                },
+                {
+                  img: "https://cdn.mint.io/production/games/images/gates_of_olympus_1000-9079a11814b04e93a159e220ce7494c3.png",
+                  title: "Make your first deposit",
+                  desc: "Choose your payment method and add funds. Your bonus arrives instantly with the deposit.",
+                },
+                {
+                  img: "https://cdn.mint.io/production/games/images/wanted-dead-or-a-wild-79b41f71993ec33e3c6f3c5e4f48570b.png",
+                  title: "Pick your game",
+                  desc: "Browse casino games or sports betting. Start with whatever interests you most right now.",
+                },
+                {
+                  img: "https://cdn.mint.io/production/games/images/mental-ff2d4673f3bb0120fb8424fa63108311.png",
+                  title: "Cash out your winnings",
+                  desc: "Withdraw to your account anytime. Most payouts process within 24 hours without hassle.",
+                },
+              ].map((step, i) => (
+                <div key={i} className="w-full">
+                  <div className="mb-5 md:mb-6 overflow-hidden rounded-xl">
+                    <img
+                      src={step.img}
+                      alt={step.title}
+                      className="w-full object-cover"
+                    />
+                  </div>
+                  <h3 className="mb-3 text-center text-xl font-bold md:mb-4 md:text-2xl">
+                    {step.title}
+                  </h3>
+                  <p className="text-center text-brand-text-muted">
+                    {step.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 flex w-full flex-wrap items-center justify-center gap-4 md:mt-18 lg:mt-20">
+              <Link
+                href="/register"
+                className="inline-flex items-center px-6 py-3 rounded-lg border border-brand-text font-semibold text-brand-text hover:bg-brand-text hover:text-white transition-colors"
+              >
+                Start
+              </Link>
+              <Link
+                href="/casino"
+                className="inline-flex items-center gap-1 text-brand-primary font-semibold hover:underline"
+              >
+                Browse games <RxChevronRight className="inline" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Faq13: Questions ===== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28 bg-brand-surface-alt">
+        <div className="container mx-auto">
+          <div className="mb-12 w-full max-w-lg md:mb-18 lg:mb-20">
+            <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+              Questions
+            </h2>
+            <p className="text-brand-text-muted md:text-md">
+              Find answers about how SwedBet works and what we offer.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-10 gap-y-10 md:grid-cols-3 md:gap-x-8 md:gap-y-16 lg:gap-x-12">
+            {[
+              { q: "Is my money safe here?", a: "We use encryption and secure payment processors to protect your account. Your funds are held in regulated accounts and available for withdrawal anytime you need them." },
+              { q: "How fast are payouts?", a: "Most withdrawals process within 24 hours. We don't hold winnings or create delays. What you win is yours to take out immediately." },
+              { q: "What payment methods work?", a: "We accept bank transfers, credit cards, and digital wallets. Choose whatever method works best for you and deposit instantly." },
+              { q: "Can I set spending limits?", a: "Yes. You can set daily, weekly, or monthly deposit limits on your account. We also offer self-exclusion options if you need to step back." },
+              { q: "Do you have live support?", a: "Our support team is available 24/7 through live chat and email. We respond quickly because your questions matter." },
+              { q: "What games can I play?", a: "We offer over 2,500 games including slots, table games, live dealers, and sports betting. New games are added regularly so there's always something fresh to try." },
+            ].map((faq, i) => (
+              <div key={i}>
+                <h3 className="mb-3 text-base font-bold md:mb-4 md:text-md">
+                  {faq.q}
+                </h3>
+                <p className="text-brand-text-muted">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-12 md:mt-18 lg:mt-20">
+            <h4 className="mb-3 text-2xl font-bold md:mb-4 md:text-3xl md:leading-[1.3] lg:text-4xl">
+              Need more help?
+            </h4>
+            <p className="text-brand-text-muted md:text-md">
+              Reach out to our team anytime for support.
+            </p>
+            <div className="mt-6 md:mt-8">
+              <Link
+                href="/contact"
+                className="inline-flex items-center px-6 py-3 rounded-lg border border-brand-text font-semibold text-brand-text hover:bg-brand-text hover:text-white transition-colors"
+              >
+                Contact us
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Cta1: Money back guarantee ===== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 gap-x-20 gap-y-12 md:gap-y-16 lg:grid-cols-2 lg:items-center">
+            <div>
+              <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+                Money back guarantee
+              </h2>
+              <p className="text-brand-text-muted md:text-md">
+                Should you have a bad betting week? We give you 10% of the losses
+                back every friday! Real money, no questions asked!
+              </p>
+              <div className="mt-6 flex flex-wrap gap-4 md:mt-8">
+                <Link
+                  href="/register"
+                  className="inline-flex items-center px-6 py-3 rounded-lg bg-brand-text text-white font-semibold hover:bg-brand-text/90 transition-colors"
+                >
+                  Sign up
+                </Link>
+                <Link
+                  href="/terms"
+                  className="inline-flex items-center px-6 py-3 rounded-lg border border-brand-text font-semibold text-brand-text hover:bg-brand-text hover:text-white transition-colors"
+                >
+                  See terms
+                </Link>
+              </div>
+            </div>
+            <div>
+              <img
+                src="https://cdn.mint.io/production/games/images/fire-in-the-hole-3-f88f7401e66348b24a9af5c684677b00.png"
+                className="w-full object-cover rounded-xl"
+                alt="Money back guarantee promotion"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Cta7: Final CTA ===== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#010D13" }}>
+        <div className="container mx-auto grid w-full grid-cols-1 items-start justify-between gap-6 md:grid-cols-[1fr_max-content] md:gap-x-12 md:gap-y-8 lg:gap-x-20">
+          <div className="md:mr-12 lg:mr-0">
+            <div className="w-full max-w-lg">
+              <h2 className="mb-3 text-4xl font-bold leading-[1.2] text-white md:mb-4 md:text-5xl lg:text-6xl">
+                Let&apos;s gooooo Sweden!
+              </h2>
+              <p className="text-white/70 md:text-md">
+                BankID login, familiar games, and real money waiting for you now.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start justify-start gap-4">
+            <Link
+              href="/register"
+              className="inline-flex items-center px-6 py-3 rounded-lg bg-white text-[#010D13] font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Play
+            </Link>
+            <Link
+              href="/casino"
+              className="inline-flex items-center px-6 py-3 rounded-lg border border-white font-semibold text-white hover:bg-white hover:text-[#010D13] transition-colors"
+            >
+              Explore
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Provider Logos ===== */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="font-heading text-lg font-bold text-brand-text text-center mb-8">
           Spelleverantorer
@@ -258,94 +570,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Varfor Swedbet */}
-      <section className="bg-brand-surface-alt py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="font-heading text-2xl font-bold text-brand-text text-center mb-10">
-            Varfor Swedbet?
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {/* Card 1 */}
-            <div className="bg-white rounded-2xl p-6 shadow-card text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-primary/10 flex items-center justify-center">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="text-brand-primary"
-                >
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </div>
-              <h3 className="font-heading text-lg font-bold text-brand-text mb-2">
-                Snabba uttag
-              </h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">
-                Fa dina vinster direkt med Swish och Trustly. Uttag bearbetas
-                inom minuter, inte dagar.
-              </p>
-            </div>
-            {/* Card 2 */}
-            <div className="bg-white rounded-2xl p-6 shadow-card text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-accent/10 flex items-center justify-center">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="text-brand-accent"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <h3 className="font-heading text-lg font-bold text-brand-text mb-2">
-                Svenskt spelbolag
-              </h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">
-                Licensierat av Spelinspektionen. Tryggt, sakert och fullt
-                lagligt for svenska spelare.
-              </p>
-            </div>
-            {/* Card 3 */}
-            <div className="bg-white rounded-2xl p-6 shadow-card text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-warning/10 flex items-center justify-center">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="text-brand-warning"
-                >
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              </div>
-              <h3 className="font-heading text-lg font-bold text-brand-text mb-2">
-                Basta spelen
-              </h3>
-              <p className="text-sm text-brand-text-muted leading-relaxed">
-                Over 2000 spel fran varldens basta leverantorer. Slots, live
-                casino, bordsspel och jackpottar.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Payment Methods */}
+      {/* ===== Payment Methods ===== */}
       <section className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex flex-wrap items-center justify-center gap-6">
           {["Swish", "Trustly", "Visa", "Mastercard", "Bankoverfor."].map(
             (method) => (
               <div
                 key={method}
-                className="px-5 py-2.5 rounded-pill border border-brand-border text-sm font-medium text-brand-text-muted"
+                className="px-5 py-2.5 rounded-full border border-brand-border text-sm font-medium text-brand-text-muted"
               >
                 {method}
               </div>
@@ -354,45 +586,149 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Responsible Gambling */}
+      {/* ===== Responsible Gambling ===== */}
       <ResponsibleGambling />
     </div>
   );
 }
 
-/** Hero section — content from local files, no CMS dependency. */
-function Hero() {
+/** Hero section with animated scrolling game image grid (Header76 pattern) */
+function HeroSection() {
   const { locale } = useLocale();
   const content = locale === "en" ? heroContent.en : heroContent.sv;
 
+  const col1Images = HERO_GRID_IMAGES.slice(0, 5);
+  const col2Images = HERO_GRID_IMAGES.slice(5, 10);
+  /* Duplicate for seamless loop */
+  const col1Loop = [...col1Images, ...col1Images];
+  const col2Loop = [...col2Images, ...col2Images];
+
   return (
     <section
-      className="relative overflow-hidden"
+      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0"
       style={{ background: `linear-gradient(135deg, ${heroGradient.from}, ${heroGradient.to})` }}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(0,102,255,0.3)_0%,_transparent_60%)]" />
-      <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Left: text content */}
-          <div className="max-w-xl">
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
-              {content.headline}
-            </h1>
-            <p className="mt-4 text-lg sm:text-xl text-white/70 max-w-md">
-              {content.subheadline}
-            </p>
-            <div className="mt-8">
-              <QuickDeposit />
-            </div>
+      <div className="mx-[5%] max-w-[40rem] justify-self-start lg:ml-[5vw] lg:mr-20 lg:justify-self-end">
+        <h1 className="mb-5 text-5xl font-bold text-white md:mb-6 md:text-7xl lg:text-8xl">
+          {content.headline}
+        </h1>
+        <p className="text-white/70 md:text-md">
+          {content.subheadline}
+        </p>
+        <div className="mt-6 md:mt-8">
+          <QuickDeposit />
+        </div>
+      </div>
+      <div className="h-[30rem] overflow-hidden pl-[5vw] pr-[5vw] md:h-[40rem] lg:h-screen lg:pl-0">
+        <div className="grid w-full grid-cols-2 gap-x-4">
+          {/* Column 1: scrolls up */}
+          <div className="-mt-[120%] grid size-full animate-loop-vertically columns-2 grid-cols-1 gap-4 self-center">
+            {col1Loop.map((src, i) => (
+              <div key={`c1-${i}`} className="grid size-full grid-cols-1 gap-4">
+                <div className="relative w-full pt-[120%]">
+                  <img
+                    className="absolute inset-0 size-full object-cover rounded-xl"
+                    src={src}
+                    alt={`Game thumbnail ${i + 1}`}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
-          {/* Right on desktop, below on mobile: hero image */}
-          <div className="shrink-0">
-            <img
-              src={heroImage}
-              alt=""
-              className="max-h-[200px] md:max-h-[320px] w-auto object-contain drop-shadow-2xl"
-            />
+          {/* Column 2: scrolls up (offset) */}
+          <div className="grid size-full animate-loop-vertically grid-cols-1 gap-4">
+            {col2Loop.map((src, i) => (
+              <div key={`c2-${i}`} className="grid size-full grid-cols-1 gap-4">
+                <div className="relative w-full pt-[120%]">
+                  <img
+                    className="absolute inset-0 size-full object-cover rounded-xl"
+                    src={src}
+                    alt={`Game thumbnail ${i + 1}`}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Countdown promo section (EventItemHeader2 pattern) */
+function CountdownPromo() {
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+
+  useEffect(() => {
+    /* Target date: 30 days from now as a placeholder */
+    const target = new Date();
+    target.setDate(target.getDate() + 18);
+    target.setHours(target.getHours() + 7);
+
+    const tick = () => {
+      const now = new Date();
+      const diff = Math.max(0, target.getTime() - now.getTime());
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      setCountdown({ days, hours, mins, secs });
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="relative px-[5%] py-16 md:py-24 lg:py-28 bg-brand-surface-alt">
+      <div className="mx-auto flex w-full max-w-lg flex-col items-center text-center">
+        <h2 className="mt-3 text-5xl font-bold md:mt-4 md:text-7xl lg:text-8xl">
+          Sweden is playing the World Cup!
+        </h2>
+        <p className="mt-5 text-brand-text-muted text-base md:mt-6 md:text-md">
+          You are never more Swedish than when being abroad!
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-4 border border-brand-border rounded-xl px-4 py-4 sm:flex-nowrap sm:px-6 bg-white">
+          <div className="flex min-w-[4.5rem] flex-col items-center">
+            <span className="text-4xl font-bold leading-[1.2] md:text-5xl lg:text-6xl">
+              {countdown.days}
+            </span>
+            <span className="text-brand-text-muted text-sm">Days</span>
+          </div>
+          <div className="hidden w-px bg-brand-border sm:block" />
+          <div className="flex min-w-[4.5rem] flex-col items-center">
+            <span className="text-4xl font-bold leading-[1.2] md:text-5xl lg:text-6xl">
+              {countdown.hours}
+            </span>
+            <span className="text-brand-text-muted text-sm">Hours</span>
+          </div>
+          <div className="hidden w-px bg-brand-border sm:block" />
+          <div className="flex min-w-[4.5rem] flex-col items-center">
+            <span className="text-4xl font-bold leading-[1.2] md:text-5xl lg:text-6xl">
+              {countdown.mins}
+            </span>
+            <span className="text-brand-text-muted text-sm">Mins</span>
+          </div>
+          <div className="hidden w-px bg-brand-border sm:block" />
+          <div className="flex min-w-[4.5rem] flex-col items-center">
+            <span className="text-4xl font-bold leading-[1.2] md:text-5xl lg:text-6xl">
+              {countdown.secs}
+            </span>
+            <span className="text-brand-text-muted text-sm">Secs</span>
+          </div>
+        </div>
+        <div className="mt-6 w-full max-w-sm md:mt-8">
+          <Link
+            href="/register"
+            className="inline-flex items-center justify-center w-full px-6 py-3 rounded-lg bg-brand-text text-white font-semibold hover:bg-brand-text/90 transition-colors"
+          >
+            Claim bonus
+          </Link>
+          <p className="mt-4 text-xs text-brand-text-muted">
+            By claiming your bonus you agree to our terms and responsible gaming
+            policies.
+          </p>
         </div>
       </div>
     </section>

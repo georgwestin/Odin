@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api";
 import { SportEventCard } from "@/components/SportEventCard";
 
@@ -66,7 +67,7 @@ const EVENTS: SportEvent[] = [
     sportId: "football",
     sportName: "Fotboll",
     competitionName: "Allsvenskan",
-    homeTeam: "Malmö FF",
+    homeTeam: "Malm\u00f6 FF",
     awayTeam: "AIK",
     score: { home: 1, away: 0 },
     startTime: new Date().toISOString(),
@@ -81,8 +82,8 @@ const EVENTS: SportEvent[] = [
     sportId: "ice-hockey",
     sportName: "Ishockey",
     competitionName: "SHL",
-    homeTeam: "Färjestad",
-    awayTeam: "Frölunda",
+    homeTeam: "F\u00e4rjestad",
+    awayTeam: "Fr\u00f6lunda",
     score: { home: 3, away: 2 },
     startTime: new Date().toISOString(),
     isLive: true,
@@ -127,7 +128,7 @@ const EVENTS: SportEvent[] = [
     sportId: "football",
     sportName: "Fotboll",
     competitionName: "Allsvenskan",
-    homeTeam: "Djurgården",
+    homeTeam: "Djurg\u00e5rden",
     awayTeam: "Hammarby",
     startTime: new Date(Date.now() + 7200000).toISOString(),
     isLive: false,
@@ -140,8 +141,8 @@ const EVENTS: SportEvent[] = [
     sportId: "football",
     sportName: "Fotboll",
     competitionName: "Allsvenskan",
-    homeTeam: "IFK Göteborg",
-    awayTeam: "BK Häcken",
+    homeTeam: "IFK G\u00f6teborg",
+    awayTeam: "BK H\u00e4cken",
     startTime: new Date(Date.now() + 7800000).toISOString(),
     isLive: false,
     markets: [
@@ -209,8 +210,8 @@ const EVENTS: SportEvent[] = [
     sportId: "ice-hockey",
     sportName: "Ishockey",
     competitionName: "SHL",
-    homeTeam: "Luleå",
-    awayTeam: "Skellefteå",
+    homeTeam: "Lule\u00e5",
+    awayTeam: "Skellefte\u00e5",
     startTime: new Date(Date.now() + 10800000).toISOString(),
     isLive: false,
     markets: [
@@ -222,7 +223,7 @@ const EVENTS: SportEvent[] = [
     sportId: "ice-hockey",
     sportName: "Ishockey",
     competitionName: "SHL",
-    homeTeam: "Djurgården Hockey",
+    homeTeam: "Djurg\u00e5rden Hockey",
     awayTeam: "HV71",
     startTime: new Date(Date.now() + 14400000).toISOString(),
     isLive: false,
@@ -264,7 +265,7 @@ const EVENTS: SportEvent[] = [
     sportId: "football",
     sportName: "Fotboll",
     competitionName: "Bundesliga",
-    homeTeam: "Bayern München",
+    homeTeam: "Bayern M\u00fcnchen",
     awayTeam: "Dortmund",
     startTime: new Date(Date.now() + 86400000).toISOString(),
     isLive: false,
@@ -293,7 +294,7 @@ const EVENTS: SportEvent[] = [
     sportName: "Handboll",
     competitionName: "Handbollsligan",
     homeTeam: "IFK Kristianstad",
-    awayTeam: "Alingsås HK",
+    awayTeam: "Aling\u00e5s HK",
     startTime: new Date(Date.now() + 50400000).toISOString(),
     isLive: false,
     markets: [
@@ -370,6 +371,60 @@ export default function SportsPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* ===================== HERO BANNER (Relume Header65 style) ===================== */}
+      <section className="relative px-[5%] py-16 md:py-24 lg:py-28 overflow-hidden">
+        <div className="container relative z-10 max-w-lg text-center mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-3 font-semibold text-white/80 md:mb-4"
+          >
+            Wager
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-5 text-4xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl"
+          >
+            Sportsbetting
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-white/70 md:text-lg"
+          >
+            De b&auml;sta oddsen p&aring; alla matcher. Spela live eller p&aring; kommande evenemang.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-6 flex flex-wrap items-center justify-center gap-4 md:mt-8"
+          >
+            <a
+              href="#live-events"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-[#1a1040] font-bold text-sm hover:bg-white/90 transition-colors"
+            >
+              Se live
+            </a>
+            <a
+              href="#upcoming"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-white/30 text-white font-bold text-sm hover:bg-white/10 transition-colors"
+            >
+              Kommande matcher
+            </a>
+          </motion.div>
+        </div>
+        <div className="absolute inset-0 z-0">
+          <div className="size-full bg-gradient-to-br from-[#0f1629] via-[#1a1040] to-[#2d1b69]" />
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
+      </section>
+
+      {/* ===================== MAIN CONTENT ===================== */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex gap-6">
           {/* ===================== LEFT SIDEBAR (desktop) ===================== */}
@@ -428,16 +483,16 @@ export default function SportsPage() {
               ))}
             </nav>
 
-            {/* A-Ö browse */}
+            {/* A-O browse */}
             <div className="mt-6 pt-4 border-t border-brand-border">
               <button className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-brand-text-muted hover:bg-brand-surface-alt transition-colors">
-                <span className="text-base">A-Ö</span>
-                <span>Alla sporter A-Ö</span>
+                <span className="text-base">A-&Ouml;</span>
+                <span>Alla sporter A-&Ouml;</span>
               </button>
             </div>
           </aside>
 
-          {/* ===================== MAIN CONTENT ===================== */}
+          {/* ===================== MAIN CONTENT AREA ===================== */}
           <div className="flex-1 min-w-0">
             {/* Mobile sport pills (horizontal scroll) */}
             <div className="lg:hidden flex gap-2 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4">
@@ -475,7 +530,7 @@ export default function SportsPage() {
 
             {/* ---- LIVE SECTION ---- */}
             {liveEvents.length > 0 && (
-              <section className="mb-8">
+              <section id="live-events" className="mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-danger text-white text-xs font-bold">
                     <span className="relative flex h-2 w-2">
@@ -545,7 +600,7 @@ export default function SportsPage() {
             )}
 
             {/* ---- UPCOMING EVENTS ---- */}
-            <section>
+            <section id="upcoming">
               <h2 className="font-heading text-lg font-bold text-brand-text mb-4">
                 Kommande matcher
               </h2>
@@ -559,8 +614,11 @@ export default function SportsPage() {
               ) : (
                 <div className="space-y-4">
                   {groupedUpcoming.map(([league, leagueEvents]) => (
-                    <div
+                    <motion.div
                       key={league}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
                       className="rounded-xl border border-brand-border overflow-hidden"
                     >
                       {/* League header */}
@@ -603,7 +661,7 @@ export default function SportsPage() {
                           markets={event.markets}
                         />
                       ))}
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               )}

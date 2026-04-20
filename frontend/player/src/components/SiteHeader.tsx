@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { RxChevronDown } from "react-icons/rx";
 import { useAuth } from "@/lib/auth";
 import { useWallet } from "@/stores/wallet";
+import { useLocale } from "@/lib/locale-context";
 
 const homeCategories = [
   { href: "/casino?cat=popular", label: "Popular Slots", icon: "thumbsup" },
@@ -46,12 +49,29 @@ const liveCategories = [
   { href: "/live-casino?cat=game-shows", label: "Game Shows" },
 ];
 
+/** Simple hook to replace useMediaQuery from relume */
+function useIsMobile(breakpoint = 991) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [breakpoint]);
+  return isMobile;
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const { balance, currency, fetchBalance } = useWallet();
+  const { locale } = useLocale();
+  const isMobile = useIsMobile();
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -59,12 +79,24 @@ export function SiteHeader() {
     }
   }, [isAuthenticated, fetchBalance]);
 
+  /* Close mobile menu on route change */
+  useEffect(() => {
+    setMobileOpen(false);
+    setMoreOpen(false);
+  }, [pathname]);
+
   const navLinks = [
     { href: "/sports", label: "SPORT" },
     { href: "/casino", label: "SLOTS" },
     { href: "/casino?category=table", label: "BLACKJACK" },
     { href: "/casino?category=roulette", label: "ROULETTE" },
     { href: "/live-casino", label: "LIVE" },
+  ];
+
+  const moreLinks = [
+    { href: "/support", label: locale === "sv" ? "Support" : "Support" },
+    { href: "/about", label: locale === "sv" ? "Hur det fungerar" : "How it works" },
+    { href: "/contact", label: locale === "sv" ? "Kontakta oss" : "Contact us" },
   ];
 
   const isActive = (href: string) => {
@@ -79,12 +111,16 @@ export function SiteHeader() {
     }).format(amount) + " kr";
   };
 
+  const animateMobileMenu = mobileOpen ? "open" : "close";
+  const animateMenuButton = mobileOpen ? ["open", "rotatePhase"] : "closed";
+  const animateMoreMenu = moreOpen ? "open" : "close";
+  const animateMoreIcon = moreOpen ? "rotated" : "initial";
+
   return (
     <header className="sticky top-0 z-50">
-      {/* Header bar: gradient from yellow (left) to blue (right) */}
+      {/* Main header bar */}
       <div className="header-gradient">
-        <div className="max-w-[1400px] mx-auto px-4 h-16 flex items-center">
-
+        <div className="max-w-[1400px] mx-auto px-4 flex items-center min-h-16 md:min-h-[4.5rem]">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <img
@@ -97,8 +133,8 @@ export function SiteHeader() {
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Nav Links — right aligned, separated by dots */}
-          <div className="hidden md:flex items-center">
+          {/* Desktop nav with Relume animated dropdown for "More" */}
+          <div className="hidden lg:flex items-center">
             {navLinks.map((link, i) => (
               <span key={link.href} className="flex items-center">
                 <Link
@@ -113,21 +149,71 @@ export function SiteHeader() {
                   {link.label}
                 </Link>
                 {i < navLinks.length - 1 && (
-                  <span className="text-[#fdf04d]/60 text-xs select-none">●</span>
+                  <span className="text-[#fdf04d]/60 text-xs select-none">&#x25CF;</span>
                 )}
               </span>
             ))}
+
+            {/* More dropdown (Relume pattern) */}
+            <div
+              className="relative"
+              onMouseEnter={() => !isMobile && setMoreOpen(true)}
+              onMouseLeave={() => !isMobile && setMoreOpen(false)}
+            >
+              <button
+                className="flex items-center gap-1 px-3 py-1.5 text-xl tracking-wide text-[#fdf04d] hover:text-white transition-colors"
+                style={{ fontFamily: "'Agdasima', sans-serif", fontWeight: 700 }}
+                onClick={() => setMoreOpen((v) => !v)}
+              >
+                <span className="text-[#fdf04d]/60 text-xs select-none mr-2">&#x25CF;</span>
+                MORE
+                <motion.span
+                  variants={{ rotated: { rotate: 180 }, initial: { rotate: 0 } }}
+                  animate={animateMoreIcon}
+                  transition={{ duration: 0.3 }}
+                  className="inline-flex"
+                >
+                  <RxChevronDown className="text-[#fdf04d]" />
+                </motion.span>
+              </button>
+              <AnimatePresence>
+                {moreOpen && (
+                  <motion.nav
+                    variants={{
+                      open: { opacity: 1, y: 0, display: "block" },
+                      close: { opacity: 0, y: "10%", display: "none" },
+                    }}
+                    initial="close"
+                    animate="open"
+                    exit="close"
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 z-50 mt-1 min-w-[180px] rounded-xl border border-white/10 bg-[#1a2634] p-2 shadow-xl"
+                  >
+                    {moreLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block rounded-lg px-4 py-2.5 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        onClick={() => setMoreOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </motion.nav>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* CTA / Auth */}
-          <div className="flex items-center gap-3 ml-8">
+          <div className="flex items-center gap-3 ml-4 lg:ml-8">
             {isAuthenticated ? (
               <>
                 <Link
                   href="/wallet"
                   className="hidden sm:inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full text-sm font-semibold bg-white text-[#272b33] hover:bg-gray-50 transition-colors"
                 >
-                  <span>Sätt in och spela</span>
+                  <span>Satt in och spela</span>
                   <span className="w-8 h-8 rounded-full bg-[#2c5aa0] flex items-center justify-center">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10" />
@@ -159,8 +245,8 @@ export function SiteHeader() {
                           <p className="text-xs text-gray-500">Saldo</p>
                           <p className="text-sm font-bold text-[#272b33]">{formatBalance(balance)}</p>
                         </div>
-                        <Link href="/wallet" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Sätt in</Link>
-                        <Link href="/account" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Kontoinställningar</Link>
+                        <Link href="/wallet" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Satt in</Link>
+                        <Link href="/account" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Kontoinstellningar</Link>
                         <Link href="/bonuses" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Erbjudanden</Link>
                         <div className="border-t border-gray-100 mt-1 pt-1">
                           <button onClick={() => { setUserMenuOpen(false); logout(); }} className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50">Logga ut</button>
@@ -176,7 +262,7 @@ export function SiteHeader() {
                   href="/register"
                   className="hidden sm:inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full text-sm font-semibold bg-white text-[#272b33] hover:bg-gray-50 transition-colors"
                 >
-                  <span>Sätt in och spela</span>
+                  <span>Satt in och spela</span>
                   <span className="w-8 h-8 rounded-full bg-[#2c5aa0] flex items-center justify-center">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10" />
@@ -200,79 +286,116 @@ export function SiteHeader() {
             )}
           </div>
 
-          {/* Mobile hamburger — right side, white */}
+          {/* Mobile hamburger with Relume framer-motion animation */}
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-[#2c5aa0]/10 transition-colors shrink-0 ml-3"
+            className="lg:hidden -mr-2 flex size-12 flex-col items-center justify-center ml-3"
+            onClick={() => setMobileOpen((v) => !v)}
             aria-label="Menu"
           >
-            <span className={`block w-6 h-0.5 bg-[#2c5aa0] transition-transform ${mobileOpen ? "rotate-45 translate-y-1" : ""}`} />
-            <span className={`block w-6 h-0.5 bg-[#2c5aa0] transition-opacity ${mobileOpen ? "opacity-0" : ""}`} />
-            <span className={`block w-6 h-0.5 bg-[#2c5aa0] transition-transform ${mobileOpen ? "-rotate-45 -translate-y-1" : ""}`} />
+            <motion.span
+              className="my-[3px] h-0.5 w-6 bg-[#2c5aa0]"
+              animate={animateMenuButton}
+              variants={{
+                open: { translateY: 8, transition: { delay: 0.1 } },
+                rotatePhase: { rotate: -45, transition: { delay: 0.2 } },
+                closed: { translateY: 0, rotate: 0, transition: { duration: 0.2 } },
+              }}
+            />
+            <motion.span
+              className="my-[3px] h-0.5 w-6 bg-[#2c5aa0]"
+              animate={animateMobileMenu}
+              variants={{
+                open: { width: 0, transition: { duration: 0.1 } },
+                close: { width: "1.5rem", transition: { delay: 0.3, duration: 0.2 } },
+              }}
+            />
+            <motion.span
+              className="my-[3px] h-0.5 w-6 bg-[#2c5aa0]"
+              animate={animateMenuButton}
+              variants={{
+                open: { translateY: -8, transition: { delay: 0.1 } },
+                rotatePhase: { rotate: 45, transition: { delay: 0.2 } },
+                closed: { translateY: 0, rotate: 0, transition: { duration: 0.2 } },
+              }}
+            />
           </button>
-
         </div>
-      </div>
 
-      {/* Row 3: Category Bar (blue gradient) — contextual per section */}
-      <CategoryBar pathname={pathname} />
-
-      {/* Mobile Slide-in Menu */}
-      {mobileOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
-            onClick={() => setMobileOpen(false)}
-          />
-          {/* Left panel */}
-          <div className="fixed top-0 right-0 bottom-0 w-72 bg-white z-50 md:hidden overflow-y-auto shadow-xl">
-            {/* Panel header */}
-            <div className="flex items-center justify-between px-4 h-16" style={{ backgroundColor: "#fdf04d" }}>
-              <img src="/logo-swedbet.png" alt="SwedBet" style={{ height: 32 }} />
-              <button onClick={() => setMobileOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/10">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c5aa0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-
-            {/* CTA */}
-            <div className="px-4 py-3">
+        {/* Mobile slide-down menu (Relume pattern with framer-motion) */}
+        <motion.div
+          variants={{
+            open: { height: "var(--height-open, 100dvh)" },
+            close: { height: "var(--height-closed, 0)" },
+          }}
+          initial="close"
+          animate={animateMobileMenu}
+          transition={{ duration: 0.4 }}
+          className="overflow-hidden lg:hidden lg:[--height-closed:auto] lg:[--height-open:auto]"
+          style={{ backgroundColor: "#fdf04d" }}
+        >
+          <div className="px-[5%] pb-6">
+            {/* Main nav links */}
+            {navLinks.map((link) => (
               <Link
-                href={isAuthenticated ? "/wallet" : "/register"}
+                key={link.href}
+                href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-lg text-sm font-bold text-white"
-                style={{ backgroundColor: "#2c5aa0" }}
+                className={`block py-3 text-lg font-bold first:pt-7 ${
+                  isActive(link.href)
+                    ? "text-[#2c5aa0]"
+                    : "text-[#272b33]"
+                }`}
+                style={{ fontFamily: "'Agdasima', sans-serif" }}
               >
-                Sätt in och spela
+                {link.label}
               </Link>
-            </div>
+            ))}
 
-            {/* Main nav */}
-            <div className="px-2">
-              <p className="px-3 pt-3 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Menu</p>
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold ${
-                    isActive(link.href)
-                      ? "bg-[#2c5aa0]/10 text-[#2c5aa0]"
-                      : "text-[#272b33] hover:bg-gray-50"
-                  }`}
-                  style={{ fontFamily: "'Agdasima', sans-serif", fontSize: 16 }}
+            {/* More dropdown in mobile */}
+            <div>
+              <button
+                className="flex w-full items-center justify-between gap-2 py-3 text-left text-lg font-bold text-[#272b33]"
+                style={{ fontFamily: "'Agdasima', sans-serif" }}
+                onClick={() => setMoreOpen((v) => !v)}
+              >
+                <span>MORE</span>
+                <motion.span
+                  variants={{ rotated: { rotate: 180 }, initial: { rotate: 0 } }}
+                  animate={animateMoreIcon}
+                  transition={{ duration: 0.3 }}
                 >
-                  {link.label}
-                </Link>
-              ))}
+                  <RxChevronDown />
+                </motion.span>
+              </button>
+              <AnimatePresence>
+                <motion.nav
+                  variants={{
+                    open: { visibility: "visible" as const, opacity: 1, height: "auto" },
+                    close: { visibility: "hidden" as const, opacity: 0, height: 0 },
+                  }}
+                  animate={animateMoreMenu}
+                  initial="close"
+                  exit="close"
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  {moreLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block py-3 pl-[5%] text-base text-[#272b33]/80 hover:text-[#272b33]"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </motion.nav>
+              </AnimatePresence>
             </div>
 
-            {/* Category links for current section */}
-            <div className="px-2 mt-2">
-              <p className="px-3 pt-3 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Quick Links</p>
+            {/* Quick links for current section */}
+            <div className="mt-4 pt-4 border-t border-[#272b33]/10">
+              <p className="text-[10px] font-bold text-[#272b33]/40 uppercase tracking-wider mb-2">Quick Links</p>
               {(pathname.startsWith("/sports") ? sportCategories :
                 pathname.startsWith("/live-casino") ? liveCategories :
                 pathname.startsWith("/casino") && pathname.includes("roulette") ? rouletteCategories :
@@ -284,56 +407,60 @@ export function SiteHeader() {
                   key={cat.href}
                   href={cat.href}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                  className="flex items-center gap-2 py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]"
                 >
-                  <MenuIcon name={(cat as any).icon} color="#6b7280" />
+                  <MenuIcon name={(cat as any).icon} color="#272b33" />
                   {cat.label}
                 </Link>
               ))}
             </div>
 
+            {/* CTA button */}
+            <div className="mt-6">
+              <Link
+                href={isAuthenticated ? "/wallet" : "/register"}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-lg text-sm font-bold text-white"
+                style={{ backgroundColor: "#2c5aa0" }}
+              >
+                Satt in och spela
+              </Link>
+            </div>
+
             {/* Account links */}
-            <div className="px-2 mt-2 border-t border-gray-100">
-              <p className="px-3 pt-3 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Account</p>
+            <div className="mt-4 pt-4 border-t border-[#272b33]/10">
               {isAuthenticated ? (
                 <>
-                  <Link href="/wallet" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+                  <Link href="/wallet" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
                     Wallet
                   </Link>
-                  <Link href="/account" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+                  <Link href="/account" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
                     Account Settings
-                  </Link>
-                  <Link href="/bonuses" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
-                    Bonuses
                   </Link>
                   <button
                     onClick={() => { setMobileOpen(false); logout(); }}
-                    className="w-full text-left px-3 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50"
+                    className="w-full text-left py-2 text-sm text-red-600"
                   >
                     Log out
                   </button>
                 </>
               ) : (
                 <>
-                  <Link href="/login" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+                  <Link href="/login" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
                     Log in
                   </Link>
-                  <Link href="/register" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+                  <Link href="/register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
                     Register
                   </Link>
                 </>
               )}
             </div>
-
-            {/* Support */}
-            <div className="px-2 mt-2 pb-6 border-t border-gray-100">
-              <Link href="/support" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 mt-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
-                Support
-              </Link>
-            </div>
           </div>
-        </>
-      )}
+        </motion.div>
+      </div>
+
+      {/* Category Bar (blue gradient) */}
+      <CategoryBar pathname={pathname} />
     </header>
   );
 }
@@ -357,7 +484,6 @@ function MenuIcon({ name, color = "white" }: { name?: string; color?: string }) 
   }
 }
 
-// Contextual category bar — shows different categories based on current section
 function CategoryBar({ pathname }: { pathname: string }) {
   let categories: { href: string; label: string; isHighlight?: boolean }[];
   let searchPlaceholder: string;
@@ -384,7 +510,6 @@ function CategoryBar({ pathname }: { pathname: string }) {
     searchPlaceholder = "Search slots...";
     gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
   } else {
-    // Home
     categories = homeCategories;
     searchPlaceholder = "Search...";
     gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
@@ -398,7 +523,7 @@ function CategoryBar({ pathname }: { pathname: string }) {
             <Link
               key={cat.href}
               href={cat.href}
-              className="shrink-0 inline-flex items-center gap-1.5 px-4 py-1 rounded-pill text-xs font-bold text-white"
+              className="shrink-0 inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold text-white"
               style={{ backgroundColor: "#44c868" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -420,7 +545,7 @@ function CategoryBar({ pathname }: { pathname: string }) {
           )
         )}
         {/* Search */}
-        <div className="shrink-0 ml-auto flex items-center gap-1.5 bg-white/15 rounded-pill px-3 py-1">
+        <div className="shrink-0 ml-auto flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-1">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
             <circle cx="11" cy="11" r="8" />
             <path d="M21 21l-4.35-4.35" />

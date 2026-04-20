@@ -112,13 +112,13 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen bg-white font-body">
-      {/* Top bar */}
+      {/* Top bar -- Relume-style clean header */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-[5%] py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => router.back()}
-              className="shrink-0 w-9 h-9 rounded-full bg-[#f5f5f7] flex items-center justify-center text-gray-500 hover:text-[#272b33] hover:bg-gray-200 transition-colors"
+              className="shrink-0 w-10 h-10 rounded-full bg-[#f5f5f7] flex items-center justify-center text-gray-500 hover:text-[#272b33] hover:bg-gray-200 transition-colors"
             >
               <svg
                 width="18"
@@ -149,8 +149,8 @@ export default function GamePage() {
         </div>
       </div>
 
-      {/* Game iframe container — 16:9 */}
-      <div className="max-w-[1400px] mx-auto px-4 pt-4">
+      {/* Game iframe container -- 16:9 */}
+      <div className="max-w-[1400px] mx-auto px-[5%] pt-6">
         <div className="relative w-full rounded-2xl overflow-hidden bg-[#1A1A2E] shadow-card" style={{ aspectRatio: "16/9" }}>
           {!isAuthenticated && !authLoading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-white">
@@ -222,10 +222,10 @@ export default function GamePage() {
         </div>
       </div>
 
-      {/* Game Info Card */}
+      {/* Game Info Card -- Relume-style clean spacing */}
       {game && (
-        <div className="max-w-[1400px] mx-auto px-4 pt-6">
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-card">
+        <div className="max-w-[1400px] mx-auto px-[5%] pt-8">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-card">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
               {infoItems.map((item) => (
                 <div key={item.label} className="text-center">
@@ -242,9 +242,9 @@ export default function GamePage() {
         </div>
       )}
 
-      {/* Related Games */}
-      <div className="max-w-[1400px] mx-auto px-4 pt-8 pb-12">
-        <h3 className="text-base font-bold text-[#272b33] mb-4 font-body">
+      {/* Related Games -- Relume-style section */}
+      <div className="max-w-[1400px] mx-auto px-[5%] pt-10 pb-16">
+        <h3 className="text-lg font-bold text-[#272b33] mb-5 font-body">
           Liknande spel
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">

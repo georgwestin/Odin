@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import { GameCard } from "@/components/GameCard";
 
@@ -36,9 +38,9 @@ const PROVIDERS = [
 ];
 
 const SORT_OPTIONS = [
-  { id: "popular", label: "Populära" },
+  { id: "popular", label: "Popul\u00e4ra" },
   { id: "new", label: "Nya" },
-  { id: "az", label: "A-Ö" },
+  { id: "az", label: "A-\u00d6" },
 ];
 
 const PLACEHOLDER_GAMES: Game[] = [
@@ -102,6 +104,78 @@ const PLACEHOLDER_GAMES: Game[] = [
 ];
 
 const PAGE_SIZE = 20;
+
+/* ------------------------------------------------------------------ */
+/*  Featured games carousel (Relume Gallery19 style)                   */
+/* ------------------------------------------------------------------ */
+
+function FeaturedCarousel({ games }: { games: Game[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const featured = games.filter((g) => g.isPopular).slice(0, 8);
+
+  const scrollTo = (index: number) => {
+    if (!scrollRef.current) return;
+    const child = scrollRef.current.children[index] as HTMLElement;
+    if (child) {
+      child.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+      setActiveIndex(index);
+    }
+  };
+
+  return (
+    <section className="px-[5%] py-12 md:py-16 lg:py-20">
+      <div className="container mx-auto">
+        <div className="mb-8 text-center md:mb-12">
+          <h2 className="mb-3 text-3xl font-bold text-white md:text-5xl lg:text-6xl">
+            Popul&auml;ra spel
+          </h2>
+          <p className="text-white/60 md:text-lg">
+            De mest spelade spelen just nu
+          </p>
+        </div>
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto pb-4 scrollbar-none md:gap-4"
+        >
+          {featured.map((game, i) => (
+            <div
+              key={game.id}
+              className="shrink-0 w-[45%] md:w-[24%]"
+              onMouseEnter={() => setActiveIndex(i)}
+            >
+              <GameCard
+                id={game.id}
+                name={game.name}
+                provider={game.provider}
+                thumbnailUrl={game.thumbnailUrl}
+                rtp={game.rtp}
+                isNew={game.isNew}
+                isPopular={game.isPopular}
+                isExclusive={game.isExclusive}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 flex items-center justify-center gap-1">
+          {featured.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              className={`inline-block size-2 rounded-full transition-colors ${
+                activeIndex === i ? "bg-white" : "bg-white/30"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Page Component                                                     */
+/* ------------------------------------------------------------------ */
 
 export default function CasinoPage() {
   const searchParams = useSearchParams();
@@ -192,35 +266,37 @@ export default function CasinoPage() {
 
   return (
     <div className="min-h-screen bg-white font-body">
-      {/* Promotional Banner */}
-      <div className="max-w-[1400px] mx-auto px-4 pt-5 pb-2">
-        <div
-          className="rounded-2xl px-6 py-5 md:px-10 md:py-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-          style={{
-            background: "linear-gradient(135deg, #6366f1 0%, #818cf8 40%, #a5b4fc 100%)",
-          }}
-        >
-          <div>
-            <p className="text-white/70 text-xs font-semibold tracking-wider uppercase mb-1 font-body">
-              Swedbet Casino
-            </p>
-            <h2 className="text-white text-xl md:text-2xl font-bold font-body">
-              Veckans topplista
-            </h2>
-            <p className="text-white/80 text-sm mt-1 font-body">
-              Upptäck de mest spelade spelen just nu
-            </p>
-          </div>
-          <a
-            href="#games"
-            className="shrink-0 bg-white text-[#6366f1] font-bold text-sm px-7 py-2.5 rounded-full hover:bg-white/90 transition-colors font-body"
-          >
-            Spela nu
-          </a>
-        </div>
+      {/* ===================== HERO / Featured Carousel (Relume Gallery19 style) ===================== */}
+      <div style={{ backgroundColor: "#010D13" }}>
+        <FeaturedCarousel games={games} />
       </div>
 
-      {/* Filter Bar — sticky below header */}
+      {/* ===================== Browse header (Relume Product2 style) ===================== */}
+      <section className="px-[5%] pt-12 pb-4 md:pt-16 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 items-end gap-6 md:grid-cols-[1fr_max-content] lg:gap-12">
+            <div className="max-w-lg">
+              <p className="mb-2 font-semibold text-brand-text-muted text-sm md:mb-3">Utforska</p>
+              <h1 className="mb-2 text-3xl font-bold text-brand-text md:mb-3 md:text-5xl lg:text-6xl">
+                Slots
+              </h1>
+              <p className="text-brand-text-muted md:text-lg">
+                Hitta ditt n&auml;sta favoritspel i v&aring;r samling.
+              </p>
+            </div>
+            <div className="hidden md:flex">
+              <Link
+                href="/casino"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
+              >
+                Visa alla
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Filter Bar -- sticky below header */}
       <div className="sticky top-[132px] z-30 bg-white border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto px-4 py-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Search input */}
@@ -239,7 +315,7 @@ export default function CasinoPage() {
             </svg>
             <input
               type="text"
-              placeholder="Sök spel eller leverantör..."
+              placeholder="S\u00f6k spel eller leverant\u00f6r..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -259,7 +335,7 @@ export default function CasinoPage() {
                 }}
                 className="flex items-center gap-2 bg-[#f5f5f7] rounded-full px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-200 transition-colors font-body whitespace-nowrap"
               >
-                <span>{providerFilter === "all" ? "Leverantör" : providerFilter}</span>
+                <span>{providerFilter === "all" ? "Leverant\u00f6r" : providerFilter}</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M3 5l3 3 3-3" />
                 </svg>
@@ -272,7 +348,7 @@ export default function CasinoPage() {
                       onClick={() => { setProviderFilter("all"); setProviderDropdownOpen(false); setVisibleCount(PAGE_SIZE); }}
                       className={`w-full text-left px-4 py-2 text-sm font-body hover:bg-gray-50 ${providerFilter === "all" ? "font-semibold text-[#0066FF]" : "text-[#272b33]"}`}
                     >
-                      Alla leverantörer
+                      Alla leverant&ouml;rer
                     </button>
                     {providers.map((p) => (
                       <button
@@ -323,14 +399,14 @@ export default function CasinoPage() {
         </div>
       </div>
 
-      {/* Game Grid — dark background like mint.io */}
+      {/* Game Grid -- dark background */}
       <div id="games" style={{ backgroundColor: "#010D13" }}>
         <div className="max-w-[1400px] mx-auto px-4 pt-6 pb-12">
           {filtered.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-500 text-lg font-body">Inga spel hittades.</p>
               <p className="text-gray-600 text-sm mt-1 font-body">
-                Prova att ändra din sökning eller dina filter.
+                Prova att &auml;ndra din s&ouml;kning eller dina filter.
               </p>
             </div>
           ) : (
@@ -384,6 +460,98 @@ export default function CasinoPage() {
           )}
         </div>
       </div>
+
+      {/* ===================== CTA Banner (Relume Cta31 style) ===================== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28 bg-white">
+        <div className="container mx-auto flex flex-col items-center">
+          <div className="mb-12 max-w-lg text-center">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-5 text-3xl font-bold text-brand-text md:text-5xl lg:text-6xl"
+            >
+              Skaffa din v&auml;lkomstbonus
+            </motion.h2>
+            <p className="text-brand-text-muted md:text-lg">
+              Nya spelare f&aring;r upp till 500 bonuskrediter p&aring; sin f&ouml;rsta ins&auml;ttning. S&auml;kert spel garanterat.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:mt-8">
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-brand-primary text-white font-bold text-sm hover:bg-brand-primary/90 transition-colors"
+              >
+                Spela
+              </Link>
+              <Link
+                href="/bonuses"
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
+              >
+                L&auml;s mer
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== FAQ Section (Relume Faq14 style) ===================== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28 bg-gray-50">
+        <div className="container mx-auto">
+          <div className="mx-auto mb-12 w-full max-w-lg text-center md:mb-16">
+            <h2 className="mb-4 text-3xl font-bold text-brand-text md:text-5xl">
+              Fr&aring;gor
+            </h2>
+            <p className="text-brand-text-muted md:text-lg">
+              Allt du beh&ouml;ver veta om v&aring;ra spel.
+            </p>
+          </div>
+          <div className="container grid grid-cols-1 items-start justify-center gap-y-10 md:grid-cols-3 md:gap-x-8 lg:gap-x-12">
+            {[
+              { q: "&Auml;r spelen r&auml;ttvisa?", a: "Alla v&aring;ra spel anv&auml;nder certifierad RNG-teknik och granskas regelbundet." },
+              { q: "Vad &auml;r RTP?", a: "Return to Player visar procentandelen av insatta pengar som &aring;terbetalas till spelare &ouml;ver tid." },
+              { q: "Kan jag spela p&aring; mobilen?", a: "Ja, v&aring;r plattform fungerar s&ouml;ml&ouml;st p&aring; alla enheter och webbl&auml;sare." },
+              { q: "Hur fungerar uttag?", a: "Vinster bearbetas inom 24 timmar till din ursprungliga betalningsmetod." },
+              { q: "&Auml;r mina pengar s&auml;kra?", a: "Vi anv&auml;nder bankniv&aring;kryptering och h&aring;ller alla spelarkonton p&aring; separata konton." },
+              { q: "Vilka spel har b&auml;st odds?", a: "Blackjack och baccarat erbjuder vanligtvis de h&ouml;gsta RTP-v&auml;rdena." },
+            ].map((item) => (
+              <div key={item.q} className="flex w-full flex-col items-center text-center">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/10">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-brand-primary">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </div>
+                <h3
+                  className="mb-2 font-bold text-brand-text md:text-lg"
+                  dangerouslySetInnerHTML={{ __html: item.q }}
+                />
+                <p
+                  className="text-sm text-brand-text-muted"
+                  dangerouslySetInnerHTML={{ __html: item.a }}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-12 text-center">
+            <h4 className="mb-3 text-xl font-bold text-brand-text md:text-2xl">
+              Beh&ouml;ver du mer hj&auml;lp?
+            </h4>
+            <p className="text-brand-text-muted md:text-lg">
+              V&aring;rt supportteam &auml;r redo att svara p&aring; alla dina fr&aring;gor.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/support"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
+              >
+                Kontakta oss
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

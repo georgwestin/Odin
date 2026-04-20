@@ -102,3 +102,12 @@ select {
   appearance: none;
   padding-right: 36px;
 }
+
+/* Scrolling game image grid animation (Relume Header76 pattern) */
+@keyframes loop-vertically {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+.animate-loop-vertically {
+  animation: loop-vertically 20s linear infinite;
+}

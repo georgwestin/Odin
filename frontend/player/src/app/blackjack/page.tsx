@@ -1,0 +1,179 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { GameCard } from "@/components/GameCard";
+
+/* ------------------------------------------------------------------ */
+/*  Blackjack game data                                                */
+/* ------------------------------------------------------------------ */
+
+interface Game {
+  id: string;
+  name: string;
+  provider: string;
+  category: string;
+  thumbnailUrl: string;
+  rtp: string;
+  isNew: boolean;
+  isPopular: boolean;
+  isExclusive: boolean;
+}
+
+const BLACKJACK_GAMES: Game[] = [
+  { id: "blackjack-classic", name: "Blackjack Classic", provider: "Evolution", category: "table", thumbnailUrl: "https://cdn.mint.io/production/games/images/blackjack-classic-d8f428d769ac1da330f108587a3d8abc.png", rtp: "99.50%", isNew: false, isPopular: true, isExclusive: false },
+  { id: "power-blackjack", name: "Power Blackjack", provider: "Evolution", category: "live", thumbnailUrl: "https://cdn.mint.io/production/games/images/power-blackjack-101a9f456267277ba54612308f582f9e.png", rtp: "98.80%", isNew: false, isPopular: true, isExclusive: false },
+  { id: "bj-infinite", name: "Infinite Blackjack", provider: "Evolution", category: "live", thumbnailUrl: "https://cdn.mint.io/production/games/images/blackjack-classic-d8f428d769ac1da330f108587a3d8abc.png", rtp: "99.47%", isNew: false, isPopular: true, isExclusive: false },
+  { id: "bj-lightning", name: "Lightning Blackjack", provider: "Evolution", category: "live", thumbnailUrl: "https://cdn.mint.io/production/games/images/power-blackjack-101a9f456267277ba54612308f582f9e.png", rtp: "99.56%", isNew: true, isPopular: true, isExclusive: false },
+  { id: "bj-free-bet", name: "Free Bet Blackjack", provider: "Evolution", category: "live", thumbnailUrl: "https://cdn.mint.io/production/games/images/blackjack-classic-d8f428d769ac1da330f108587a3d8abc.png", rtp: "98.45%", isNew: false, isPopular: false, isExclusive: false },
+  { id: "bj-vip", name: "Blackjack VIP", provider: "Evolution", category: "live", thumbnailUrl: "https://cdn.mint.io/production/games/images/power-blackjack-101a9f456267277ba54612308f582f9e.png", rtp: "99.50%", isNew: false, isPopular: false, isExclusive: true },
+  { id: "bj-speed", name: "Speed Blackjack", provider: "Pragmatic Play", category: "live", thumbnailUrl: "https://cdn.mint.io/production/games/images/blackjack-classic-d8f428d769ac1da330f108587a3d8abc.png", rtp: "99.28%", isNew: true, isPopular: false, isExclusive: false },
+  { id: "bj-multihand", name: "Multihand Blackjack", provider: "Play'n GO", category: "table", thumbnailUrl: "https://cdn.mint.io/production/games/images/power-blackjack-101a9f456267277ba54612308f582f9e.png", rtp: "99.60%", isNew: false, isPopular: false, isExclusive: false },
+];
+
+const SORT_OPTIONS = [
+  { id: "popular", label: "Popul\u00e4ra" },
+  { id: "new", label: "Nya" },
+  { id: "az", label: "A-\u00d6" },
+  { id: "rtp", label: "H\u00f6gst RTP" },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Page Component                                                     */
+/* ------------------------------------------------------------------ */
+
+export default function BlackjackPage() {
+  const [sortBy, setSortBy] = useState("popular");
+
+  const sorted = useMemo(() => {
+    const games = [...BLACKJACK_GAMES];
+    if (sortBy === "popular") {
+      return games.sort((a, b) => {
+        if (a.isPopular && !b.isPopular) return -1;
+        if (!a.isPopular && b.isPopular) return 1;
+        return 0;
+      });
+    } else if (sortBy === "new") {
+      return games.sort((a, b) => {
+        if (a.isNew && !b.isNew) return -1;
+        if (!a.isNew && b.isNew) return 1;
+        return 0;
+      });
+    } else if (sortBy === "az") {
+      return games.sort((a, b) => a.name.localeCompare(b.name, "sv"));
+    } else if (sortBy === "rtp") {
+      return games.sort((a, b) => parseFloat(b.rtp) - parseFloat(a.rtp));
+    }
+    return games;
+  }, [sortBy]);
+
+  return (
+    <div className="min-h-screen bg-white font-body">
+      {/* ===================== HERO SECTION (Relume Product2 style) ===================== */}
+      <section className="px-[5%] py-16 md:py-24 lg:py-28">
+        <div className="container mx-auto">
+          <div className="mb-12 grid grid-cols-1 items-end gap-8 md:mb-16 md:grid-cols-[1fr_max-content] lg:mb-20 lg:gap-20">
+            <div className="max-w-lg">
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="mb-3 font-semibold text-brand-text-muted md:mb-4"
+              >
+                Utforska
+              </motion.p>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="mb-3 text-4xl font-bold text-brand-text md:mb-4 md:text-6xl lg:text-7xl"
+              >
+                Blackjack
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="text-brand-text-muted md:text-lg"
+              >
+                Hitta ditt n&auml;sta favoritbord i v&aring;r samling av blackjack-spel.
+              </motion.p>
+            </div>
+            <div className="hidden md:flex">
+              <Link
+                href="/casino"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-brand-border text-brand-text font-semibold text-sm hover:bg-brand-surface-alt transition-colors"
+              >
+                Visa alla spel
+              </Link>
+            </div>
+          </div>
+
+          {/* Sort pills */}
+          <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-none mb-2">
+            {SORT_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => setSortBy(opt.id)}
+                className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${
+                  sortBy === opt.id
+                    ? "bg-brand-primary text-white border-brand-primary"
+                    : "bg-white text-brand-text-muted border-brand-border hover:text-brand-text hover:border-brand-text-muted"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Game Grid (Relume Product2 style -- 4 col) */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="grid grid-cols-2 gap-x-5 gap-y-8 md:gap-x-8 md:gap-y-12 lg:grid-cols-4"
+          >
+            {sorted.map((game) => (
+              <GameCard
+                key={game.id}
+                id={game.id}
+                name={game.name}
+                provider={game.provider}
+                thumbnailUrl={game.thumbnailUrl}
+                rtp={game.rtp}
+                isNew={game.isNew}
+                isPopular={game.isPopular}
+                isExclusive={game.isExclusive}
+              />
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ===================== INFO SECTION ===================== */}
+      <section className="px-[5%] py-16 md:py-24 bg-gray-50">
+        <div className="container mx-auto max-w-3xl">
+          <h2 className="text-2xl font-bold text-brand-text mb-6 md:text-3xl">
+            Om Blackjack
+          </h2>
+          <div className="text-brand-text-muted text-sm leading-relaxed space-y-4">
+            <p>
+              Blackjack &auml;r ett av de mest popul&auml;ra casinospelen i v&auml;rlden, k&auml;nt f&ouml;r sin
+              kombination av strategi och tur. M&aring;let &auml;r att sl&aring; dealern genom att f&aring; en hand
+              som &auml;r n&auml;rmare 21 utan att g&aring; &ouml;ver.
+            </p>
+            <p>
+              V&aring;rt utbud inkluderar klassisk blackjack, lightning-varianter med
+              multiplicerade vinster, och livebord med professionella dealers. Med RTP-v&auml;rden
+              upp till 99.60% erbjuder blackjack n&aring;gra av de b&auml;sta oddsen i hela casinot.
+            </p>
+            <p className="text-xs text-brand-text-muted/60">
+              18+ | Spela ansvarsfullt | Stodlinjen.se
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
