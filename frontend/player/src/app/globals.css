@@ -30,6 +30,11 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 * {
@@ -58,6 +63,16 @@ body {
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Header gradient: yellow-to-blue on desktop, solid yellow on mobile */
+.header-gradient {
+  background: #fdf04d;
+}
+@media (min-width: 768px) {
+  .header-gradient {
+    background: linear-gradient(to right, #fdf04d 0%, #fdf04d 25%, #4a7ec0 55%, #2c5aa0 100%);
+  }
 }
 
 /* Focus visible styles for accessibility */

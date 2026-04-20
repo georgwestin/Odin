@@ -21,8 +21,11 @@ export default function RootLayout({
   return (
     <html lang="sv">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="180x180" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Agdasima:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </head>

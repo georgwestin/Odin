@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "cdn.mint.io",
       },
+      {
+        protocol: "https",
+        hostname: "winna.imgix.net",
+      },
     ],
   },
 };

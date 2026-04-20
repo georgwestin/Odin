@@ -29,12 +29,12 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-1 mb-3">
-              <span
-                className="text-xl tracking-tight text-white"
-                style={{ fontFamily: "'Asap', sans-serif", fontWeight: 700, fontStyle: "italic" }}
+              <div
+                className="flex items-center justify-center rounded-lg overflow-hidden"
+                style={{ backgroundColor: "#fdf04d", height: 32, padding: "0 6px" }}
               >
-                $wedBet.com
-              </span>
+                <img src="/logo-swedbet.png" alt="SwedBet" style={{ height: 24 }} />
+              </div>
             </div>
             <p className="text-sm leading-relaxed">
               {isSv
