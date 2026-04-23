@@ -49,7 +49,7 @@ const PLACEHOLDER_BONUSES: Bonus[] = [
   {
     id: "b3",
     name: "Helgbonus",
-    description: "50% omladdningsbonus upp till 500 kr",
+    description: "50% omladdningsbonus upp till 500 €",
     type: "reload",
     status: "claimable",
     amount: 0,

@@ -16,6 +16,8 @@ export function setTokens(access: string, refresh: string) {
   if (typeof window !== "undefined") {
     localStorage.setItem("odin_access_token", access);
     localStorage.setItem("odin_refresh_token", refresh);
+    // Also set cookie so server-side middleware can check auth
+    document.cookie = `odin_access_token=${access};path=/;max-age=900;SameSite=Lax`;
   }
 }
 
@@ -34,6 +36,7 @@ export function clearTokens() {
   if (typeof window !== "undefined") {
     localStorage.removeItem("odin_access_token");
     localStorage.removeItem("odin_refresh_token");
+    document.cookie = "odin_access_token=;path=/;max-age=0";
   }
 }
 

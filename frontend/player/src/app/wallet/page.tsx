@@ -444,8 +444,8 @@ export default function WalletPage() {
               {processing
                 ? "Bearbetar..."
                 : activeTab === "deposit"
-                ? `Satt in ${amount ? amount + " kr" : ""}`
-                : `Ta ut ${amount ? amount + " kr" : ""}`}
+                ? `Satt in ${amount ? amount + " €" : ""}`
+                : `Ta ut ${amount ? amount + " €" : ""}`}
             </button>
           </form>
         )}

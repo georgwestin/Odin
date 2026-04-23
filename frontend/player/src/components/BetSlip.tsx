@@ -219,7 +219,7 @@ export function BetSlip() {
                       type="number"
                       min="0"
                       step="1"
-                      placeholder="0 kr"
+                      placeholder="0 €"
                       value={stakes[sel.id] || ""}
                       onChange={(e) =>
                         setStake(sel.id, parseFloat(e.target.value) || 0)
@@ -263,7 +263,7 @@ export function BetSlip() {
                     type="number"
                     min="0"
                     step="1"
-                    placeholder="0 kr"
+                    placeholder="0 €"
                     value={accumulatorStake || ""}
                     onChange={(e) =>
                       setAccumulatorStake(parseFloat(e.target.value) || 0)
