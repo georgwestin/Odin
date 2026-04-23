@@ -16,7 +16,7 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
     dateOfBirth: "",
-    personnummer: "",
+    country: "SE",
     acceptTerms: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -36,23 +36,23 @@ export default function RegisterPage() {
     const errs: Record<string, string> = {};
 
     if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errs.email = "Ange en giltig e-postadress.";
+      errs.email = "Please enter a valid email address.";
     }
 
     if (!form.username || form.username.length < 3) {
-      errs.username = "Anvandarnamn maste vara minst 3 tecken.";
+      errs.username = "Username must be at least 3 characters.";
     }
 
     if (!form.password || form.password.length < 8) {
-      errs.password = "Losenord maste vara minst 8 tecken.";
+      errs.password = "Password must be at least 8 characters.";
     }
 
     if (form.password !== form.confirmPassword) {
-      errs.confirmPassword = "Losenorden matchar inte.";
+      errs.confirmPassword = "Passwords do not match.";
     }
 
     if (!form.dateOfBirth) {
-      errs.dateOfBirth = "Fodelsedatum kravs.";
+      errs.dateOfBirth = "Date of birth is required.";
     } else {
       const dob = new Date(form.dateOfBirth);
       const today = new Date();
@@ -65,16 +65,12 @@ export default function RegisterPage() {
         age--;
       }
       if (age < 18) {
-        errs.dateOfBirth = "Du maste vara minst 18 ar for att registrera dig.";
+        errs.dateOfBirth = "You must be at least 18 years old.";
       }
     }
 
-    if (!form.personnummer || !/^\d{6,8}-?\d{4}$/.test(form.personnummer)) {
-      errs.personnummer = "Ange ett giltigt personnummer (YYMMDD-XXXX).";
-    }
-
     if (!form.acceptTerms) {
-      errs.acceptTerms = "Du maste acceptera villkoren.";
+      errs.acceptTerms = "You must accept the terms.";
     }
 
     setErrors(errs);
@@ -93,15 +89,15 @@ export default function RegisterPage() {
         email: form.email,
         password: form.password,
         username: form.username,
-        dateOfBirth: form.dateOfBirth,
-        country: "Sweden",
-        acceptTerms: form.acceptTerms,
+        date_of_birth: form.dateOfBirth,
+        country: form.country,
+        player_currency: "EUR",
       });
       router.push("/");
     } catch (err) {
       const apiErr = err as ApiError;
       setApiError(
-        apiErr.message || "Registreringen misslyckades. Forsok igen."
+        apiErr.message || "Registration failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -273,32 +269,6 @@ export default function RegisterPage() {
               )}
               <p className="text-xs text-brand-text-muted mt-1">
                 Du maste vara 18 ar eller aldre for att registrera dig.
-              </p>
-            </div>
-
-            {/* Personnummer */}
-            <div>
-              <label
-                htmlFor="personnummer"
-                className="block text-sm font-medium text-brand-text mb-1.5"
-              >
-                Personnummer
-              </label>
-              <input
-                id="personnummer"
-                type="text"
-                value={form.personnummer}
-                onChange={(e) => updateField("personnummer", e.target.value)}
-                placeholder="YYMMDD-XXXX"
-                className={inputClass("personnummer")}
-              />
-              {errors.personnummer && (
-                <p className="text-xs text-brand-danger mt-1">
-                  {errors.personnummer}
-                </p>
-              )}
-              <p className="text-xs text-brand-text-muted mt-1">
-                Kravs for verifiering enligt svensk spellag.
               </p>
             </div>
 

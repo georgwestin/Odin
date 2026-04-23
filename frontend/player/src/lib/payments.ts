@@ -1,4 +1,20 @@
-import { api } from "@/lib/api";
+import { getAccessToken } from "@/lib/api";
+
+const WALLET_API = process.env.NEXT_PUBLIC_WALLET_API_URL || "http://localhost:8002";
+
+async function walletFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = getAccessToken();
+  const res = await fetch(`${WALLET_API}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options?.headers || {}),
+    },
+  });
+  if (!res.ok) throw new Error(`Wallet API error: ${res.status}`);
+  return res.json();
+}
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -116,10 +132,9 @@ export async function initiateDeposit(
     return mockInitiateDeposit(amount, currency, region);
   }
 
-  return api.post<DepositResponse>("/wallet/deposit/initiate", {
-    amount,
-    currency,
-    region,
+  return walletFetch<DepositResponse>("/wallet/deposit/initiate", {
+    method: "POST",
+    body: JSON.stringify({ amount, currency, region }),
   });
 }
 
@@ -130,5 +145,5 @@ export async function getDepositStatus(
     return mockGetDepositStatus(paymentId);
   }
 
-  return api.get<DepositStatus>(`/wallet/deposit/status/${paymentId}`);
+  return walletFetch<DepositStatus>(`/wallet/deposit/status/${paymentId}`);
 }

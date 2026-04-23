@@ -29,9 +29,11 @@ export interface RegisterData {
   email: string;
   password: string;
   username: string;
-  dateOfBirth: string;
+  date_of_birth: string;
   country: string;
-  acceptTerms: boolean;
+  player_currency?: string;
+  first_name?: string;
+  last_name?: string;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -41,22 +43,27 @@ export const useAuth = create<AuthState>((set) => ({
 
   login: async (email: string, password: string) => {
     const res = await api.post<{
-      accessToken: string;
-      refreshToken: string;
-      user: User;
+      access_token: string;
+      refresh_token: string;
+      player: User;
     }>("/auth/login", { email, password });
-    setTokens(res.accessToken, res.refreshToken);
-    set({ user: res.user, isAuthenticated: true, isLoading: false });
+    setTokens(res.access_token, res.refresh_token);
+    set({ user: res.player, isAuthenticated: true, isLoading: false });
   },
 
   register: async (data: RegisterData) => {
     const res = await api.post<{
-      accessToken: string;
-      refreshToken: string;
-      user: User;
+      access_token?: string;
+      refresh_token?: string;
+      player: User;
     }>("/auth/register", data);
-    setTokens(res.accessToken, res.refreshToken);
-    set({ user: res.user, isAuthenticated: true, isLoading: false });
+    if (res.access_token && res.refresh_token) {
+      setTokens(res.access_token, res.refresh_token);
+      set({ user: res.player, isAuthenticated: true, isLoading: false });
+    } else {
+      // Registration doesn't auto-login, redirect to login
+      set({ user: null, isAuthenticated: false, isLoading: false });
+    }
   },
 
   logout: () => {

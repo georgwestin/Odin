@@ -81,11 +81,10 @@ type Player struct {
 	LastName       string     `json:"last_name" db:"last_name"`
 	Phone          string     `json:"phone,omitempty" db:"phone"`
 	DateOfBirth    time.Time  `json:"date_of_birth" db:"date_of_birth"`
-	Country        string     `json:"country" db:"country"`
-	PlayerCurrency string     `json:"player_currency" db:"player_currency"` // Currency for wallet and bonusWallet
+	Country        string     `json:"country" db:"country_code"`
+	PlayerCurrency string     `json:"player_currency" db:"player_currency"`
 	KYCStatus      KYCStatus  `json:"kyc_status" db:"kyc_status"`
-	Status         string     `json:"status" db:"status"`
-	Roles          []string   `json:"roles" db:"roles"`
+	IsActive       bool       `json:"is_active" db:"is_active"`
 	LastLoginAt    *time.Time `json:"last_login_at,omitempty" db:"last_login_at"`
 	LastLoginIP    string     `json:"last_login_ip,omitempty" db:"last_login_ip"`
 	CreatedAt      time.Time  `json:"created_at" db:"created_at"`

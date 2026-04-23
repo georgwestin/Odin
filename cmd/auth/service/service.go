@@ -115,8 +115,7 @@ func (s *Service) Register(ctx context.Context, req *RegisterRequest) (*Register
 		Country:      req.Country,
 		PlayerCurrency: req.PlayerCurrency,
 		KYCStatus:    models.KYCPending,
-		Status:       models.PlayerStatusActive,
-		Roles:        []string{"player"},
+		IsActive:     true,
 		CreatedAt:    now,
 		UpdatedAt:    now,
 	}
@@ -221,8 +220,8 @@ func (s *Service) Login(ctx context.Context, req *LoginRequest) (*LoginResult, e
 		return nil, httperr.ErrNotFound
 	}
 
-	// Check account status.
-	if player.Status != models.PlayerStatusActive {
+	// Check account is active.
+	if !player.IsActive {
 		return nil, httperr.ErrForbidden
 	}
 
@@ -254,7 +253,7 @@ func (s *Service) Login(ctx context.Context, req *LoginRequest) (*LoginResult, e
 		PlayerID:  player.ID,
 		Email:     player.Email,
 		KYCStatus: string(player.KYCStatus),
-		Roles:     player.Roles,
+		Roles:     []string{"player"},
 		BrandID:   player.BrandID,
 	}
 
@@ -325,7 +324,7 @@ func (s *Service) Refresh(ctx context.Context, refreshToken, ip, userAgent strin
 	if err != nil {
 		return nil, fmt.Errorf("find player: %w", err)
 	}
-	if player == nil || player.Status != models.PlayerStatusActive {
+	if player == nil || !player.IsActive {
 		return nil, httperr.ErrForbidden
 	}
 
@@ -339,7 +338,7 @@ func (s *Service) Refresh(ctx context.Context, refreshToken, ip, userAgent strin
 		PlayerID:  player.ID,
 		Email:     player.Email,
 		KYCStatus: string(player.KYCStatus),
-		Roles:     player.Roles,
+		Roles:     []string{"player"},
 		BrandID:   player.BrandID,
 	}
 
