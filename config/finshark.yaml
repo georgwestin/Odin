@@ -1,0 +1,11 @@
+finshark:
+  client_id: "2bf1f041-2d5c-2c9b-996c-d7afe2993332"
+  client_secret: "ced70365-7696-639c-17e8-893e52b39241"
+  auth_url: "https://auth.finshark.io/connect/token"
+  api_url: "https://api.finshark.io"
+  creditor_name: "SwedBet"
+  creditor_account: "SE0000000000000000"
+  creditor_account_type: "IBAN"
+  webhook_base_url: "https://api.swedbet.com"
+  default_region: "SE"
+  default_payment_product: "se-domestic-credit-transfer"

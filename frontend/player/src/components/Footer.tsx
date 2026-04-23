@@ -47,7 +47,7 @@ export function Footer() {
             <Link href="/" className="mb-5 md:mb-6 inline-block">
               <div
                 className="flex items-center justify-center rounded-lg overflow-hidden"
-                style={{ backgroundColor: "#fdf04d", height: 32, padding: "0 6px" }}
+                style={{ backgroundColor: "#FFD100", height: 32, padding: "0 6px" }}
               >
                 <img src="/logo-swedbet.png" alt="SwedBet" style={{ height: 24 }} />
               </div>

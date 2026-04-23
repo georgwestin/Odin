@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useWallet } from "@/stores/wallet";
 
 const PAYMENT_METHODS = [
@@ -38,11 +39,16 @@ export default function WalletPage() {
     text: string;
   } | null>(null);
   const [page, setPage] = useState(1);
+  const [showWithdrawTooltip, setShowWithdrawTooltip] = useState(false);
 
   useEffect(() => {
     fetchBalance();
     fetchTransactions(1, 20);
   }, [fetchBalance, fetchTransactions]);
+
+  const pendingDeposits = transactions.filter(
+    (tx) => tx.type === "deposit" && tx.status === "pending"
+  );
 
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat("sv-SE", {
@@ -207,6 +213,120 @@ export default function WalletPage() {
             </p>
           </div>
         </div>
+
+        {/* Quick Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <Link
+            href="/wallet/deposit"
+            className="flex items-center gap-4 bg-[#004B9A] hover:bg-[#003d7a] text-white rounded-2xl p-5 shadow-card transition-colors group"
+          >
+            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M12 5V19M5 12H19"
+                  stroke="white"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="font-heading font-bold text-lg">Deposit</p>
+              <p className="text-white/70 text-sm">
+                Add funds via open banking
+              </p>
+            </div>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              className="ml-auto opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+            >
+              <path
+                d="M7 4L13 10L7 16"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+
+          <div className="relative">
+            <button
+              onMouseEnter={() => setShowWithdrawTooltip(true)}
+              onMouseLeave={() => setShowWithdrawTooltip(false)}
+              onClick={() => setShowWithdrawTooltip(!showWithdrawTooltip)}
+              className="w-full flex items-center gap-4 bg-white text-brand-text rounded-2xl p-5 shadow-card border border-brand-border opacity-70 cursor-not-allowed"
+            >
+              <div className="w-12 h-12 rounded-full bg-brand-surface-alt flex items-center justify-center shrink-0">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M12 19V5M5 12L12 5L19 12"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div className="text-left">
+                <p className="font-heading font-bold text-lg">Withdraw</p>
+                <p className="text-brand-text-muted text-sm">
+                  Withdraw to your bank
+                </p>
+              </div>
+            </button>
+            {showWithdrawTooltip && (
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#1a2634] text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10">
+                Coming soon
+                <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1a2634] rotate-45 -mt-1" />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Pending Deposits */}
+        {pendingDeposits.length > 0 && (
+          <div className="bg-yellow-50 border border-brand-warning/20 rounded-2xl p-5 mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-5 h-5 border-2 border-brand-warning border-t-transparent rounded-full animate-spin" />
+              <h3 className="font-heading font-bold text-brand-text text-sm">
+                Pending Deposits
+              </h3>
+            </div>
+            <div className="space-y-2">
+              {pendingDeposits.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span className="text-brand-text-muted">
+                    {new Date(tx.createdAt).toLocaleDateString("sv-SE")}{" "}
+                    {new Date(tx.createdAt).toLocaleTimeString("sv-SE", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                  <span className="font-semibold text-brand-warning">
+                    +{formatCurrency(tx.amount)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-1 bg-white rounded-xl p-1 mb-6 border border-brand-border">

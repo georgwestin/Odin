@@ -9,7 +9,7 @@ interface LocaleContextValue {
 }
 
 const LocaleContext = createContext<LocaleContextValue>({
-  locale: "sv",
+  locale: "en",
   setLocale: () => {},
 });
 
@@ -18,15 +18,21 @@ export function useLocale() {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("sv");
+  const [locale, setLocaleState] = useState<Locale>("en");
   const [mounted, setMounted] = useState(false);
 
-  // Read locale from cookie on mount
+  // Read locale from URL path first, then cookie
   useEffect(() => {
-    const cookieMatch = document.cookie.match(/odin_locale=(\w+)/);
-    const cookieLang = cookieMatch ? cookieMatch[1] : null;
-    if (cookieLang && isValidLocale(cookieLang)) {
-      setLocaleState(cookieLang);
+    const pathSegment = window.location.pathname.split("/")[1];
+    if (pathSegment === "sv") {
+      setLocaleState("sv");
+    } else if (pathSegment === "fi") {
+      setLocaleState("fi");
+    } else if (pathSegment === "no") {
+      setLocaleState("no");
+    } else {
+      // Default: English for / and all other paths
+      setLocaleState("en");
     }
     setMounted(true);
   }, []);
@@ -36,9 +42,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     setLocaleState(newLocale);
   }
 
-  // Always render "sv" on server to match initial client render
+  // Always render "en" on server to match initial client render
   const value = {
-    locale: mounted ? locale : "sv",
+    locale: mounted ? locale : "en",
     setLocale,
   };
 

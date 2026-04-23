@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 
+	"github.com/odin-platform/odin/cmd/wallet/finshark"
 	"github.com/odin-platform/odin/cmd/wallet/handler"
 	"github.com/odin-platform/odin/cmd/wallet/repository"
 	"github.com/odin-platform/odin/cmd/wallet/service"
@@ -70,6 +71,10 @@ func main() {
 	svc := service.New(repo, kafkaProducer, logger)
 	h := handler.New(svc, logger)
 
+	// Initialize FinShark payment handler.
+	fsCfg := finshark.DefaultConfig()
+	fsh := finshark.NewHandler(fsCfg, database.Pool, svc, logger)
+
 	// Build router with common middleware.
 	r := chi.NewRouter()
 	for _, m := range mw.Common(logger, "wallet") {
@@ -83,7 +88,7 @@ func main() {
 		w.Write([]byte(`{"status":"ok","service":"wallet"}`))
 	})
 
-	registerRoutes(r, h, jwtMgr, cfg.InternalAuthToken)
+	registerRoutes(r, h, fsh, jwtMgr, cfg.InternalAuthToken)
 
 	// Start HTTP server.
 	addr := fmt.Sprintf(":%d", cfg.Port)

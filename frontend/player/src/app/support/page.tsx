@@ -88,7 +88,7 @@ function AccordionItem({ item, isOpen, onToggle }: { item: FaqItem; isOpen: bool
     <div className="border-b border-white/10 overflow-hidden">
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-white md:py-5 md:text-base hover:text-[#fdf04d] transition-colors"
+        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-white md:py-5 md:text-base hover:text-[#FFD100] transition-colors"
       >
         <span>{item.question}</span>
         <svg
@@ -144,7 +144,7 @@ export default function SupportPage() {
   return (
     <div className="min-h-screen font-body">
       {/* ===================== HEADER SECTION ===================== */}
-      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#2c5aa0" }}>
+      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#004B9A" }}>
         <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -222,11 +222,11 @@ export default function SupportPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 text-sm focus:outline-none focus:border-[#fdf04d] transition-colors"
+                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 text-sm focus:outline-none focus:border-[#FFD100] transition-colors"
               />
               <button
                 className="px-8 py-3 rounded-lg font-bold text-sm text-white transition-colors"
-                style={{ backgroundColor: "#2c5aa0" }}
+                style={{ backgroundColor: "#004B9A" }}
               >
                 Submit
               </button>
@@ -236,13 +236,13 @@ export default function SupportPage() {
       </section>
 
       {/* ===================== CONTACT INFO SECTION ===================== */}
-      <section className="px-[5%] py-16 md:py-24" style={{ backgroundColor: "#fdf04d" }}>
+      <section className="px-[5%] py-16 md:py-24" style={{ backgroundColor: "#FFD100" }}>
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
             {/* Live Chat */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(44,90,160,0.1)" }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#2c5aa0" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#004B9A" }}>
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                 </svg>
               </div>
@@ -255,7 +255,7 @@ export default function SupportPage() {
             {/* Email */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(44,90,160,0.1)" }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#2c5aa0" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#004B9A" }}>
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
@@ -269,7 +269,7 @@ export default function SupportPage() {
             {/* Phone */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(44,90,160,0.1)" }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#2c5aa0" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#004B9A" }}>
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                 </svg>
               </div>

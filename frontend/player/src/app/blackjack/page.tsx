@@ -71,7 +71,7 @@ export default function BlackjackPage() {
   return (
     <div className="min-h-screen font-body">
       {/* ===================== HEADER SECTION ===================== */}
-      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#2c5aa0" }}>
+      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#004B9A" }}>
         <div className="container mx-auto max-w-6xl">
           <div className="max-w-xl">
             <motion.p
@@ -108,7 +108,7 @@ export default function BlackjackPage() {
                 onClick={() => setSortBy(opt.id)}
                 className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${
                   sortBy === opt.id
-                    ? "bg-white text-[#2c5aa0] border-white"
+                    ? "bg-white text-[#004B9A] border-white"
                     : "bg-transparent text-white/80 border-white/30 hover:border-white hover:text-white"
                 }`}
               >
@@ -147,7 +147,7 @@ export default function BlackjackPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#2c5aa0]">
+                    <div className="w-full h-full flex items-center justify-center bg-[#004B9A]">
                       <span className="text-white/60 text-3xl font-bold">
                         {game.name.charAt(0)}
                       </span>
@@ -192,7 +192,7 @@ export default function BlackjackPage() {
                   {/* Play now button */}
                   <button
                     className="mt-3 w-full py-2.5 rounded-lg text-sm font-bold transition-colors"
-                    style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+                    style={{ backgroundColor: "#FFD100", color: "#1a2634" }}
                   >
                     {idx === 0 ? "View all" : "Play now"}
                   </button>

@@ -1,24 +1,23 @@
 export const heroContent = {
   sv: {
-    headline: "Välkommen till SwedBet",
-    subheadline: "Det smarta spelbolaget. Casino, betting och live casino med snabba uttag.",
-    ctaText: "Sätt in & Spela",
+    headline: "Spela som en svensk, var du än bor",
+    subheadline: "Spelen du känner, tryggheten du litar på, BankID-inloggningen som känns som hemma. Betta på sport, snurra slots och ta ut snabbt oavsett var du befinner dig.",
+    ctaText: "Spela nu",
     ctaUrl: "/register",
   },
   en: {
-    headline: "Welcome to SwedBet",
-    subheadline: "The smart gaming company. Casino, betting and live casino with fast withdrawals.",
-    ctaText: "Deposit & Play",
+    headline: "Play like a Swede, live anywhere",
+    subheadline: "The games you know, the security you trust, the BankID login that feels like home. Bet on sports, spin slots, and cash out fast no matter where you are.",
+    ctaText: "Play Now",
     ctaUrl: "/register",
   },
 };
 
 // Hero background image — update this path when changing the hero image
-// Can be a local file in /public or an external URL
 export const heroImage = "/images/hero-image.png";
 
 // Hero gradient colors
 export const heroGradient = {
-  from: "#0f1923",
-  to: "#0066FF",
+  from: "#004B9A",
+  to: "#004B9A",
 };

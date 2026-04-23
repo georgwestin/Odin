@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #0066FF;
-  --brand-primary-hover: #0052CC;
+  --brand-primary: #004B9A;
+  --brand-primary-hover: #003d7a;
   --brand-secondary: #1A1A2E;
   --brand-accent: #44c868;
   --brand-accent-hover: #3ab85c;
   --brand-surface: #FFFFFF;
   --brand-surface-alt: #F5F5F7;
   --brand-background: #FFFFFF;
-  --brand-text: #272b33;
+  --brand-text: #000000;
   --brand-text-muted: #6b7280;
   --brand-border: #E8E8ED;
   --brand-success: #34C759;
@@ -20,8 +20,8 @@
   --brand-blue-bar: #5b8fd4;
   --brand-blue-bar-light: #7ba8e0;
   --brand-rg-badge: #3bb78f;
-  --font-heading: 'Asap', system-ui, -apple-system, sans-serif;
-  --font-body: 'Asap', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
@@ -65,14 +65,9 @@ html {
   scrollbar-width: none;
 }
 
-/* Header gradient: yellow-to-blue on desktop, solid yellow on mobile */
+/* Header background */
 .header-gradient {
-  background: #fdf04d;
-}
-@media (min-width: 768px) {
-  .header-gradient {
-    background: linear-gradient(to right, #fdf04d 0%, #fdf04d 25%, #4a7ec0 55%, #2c5aa0 100%);
-  }
+  background: #FFD100;
 }
 
 /* Focus visible styles for accessibility */
@@ -110,4 +105,13 @@ select {
 }
 .animate-loop-vertically {
   animation: loop-vertically 20s linear infinite;
+}
+
+/* Horizontal scrolling carousel for mobile */
+@keyframes loop-horizontally {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-loop-horizontally {
+  animation: loop-horizontally 15s linear infinite;
 }

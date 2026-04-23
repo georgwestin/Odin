@@ -372,7 +372,7 @@ export default function SportsPage() {
   return (
     <div className="min-h-screen">
       {/* ===================== HERO BANNER (Figma: yellow bg) ===================== */}
-      <section className="relative px-[5%] py-16 md:py-24 lg:py-28 overflow-hidden" style={{ backgroundColor: "#fdf04d" }}>
+      <section className="relative px-[5%] py-16 md:py-24 lg:py-28 overflow-hidden" style={{ backgroundColor: "#FFD100" }}>
         <div className="container relative z-10 max-w-xl mx-auto text-center">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -386,7 +386,7 @@ export default function SportsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-5 text-4xl font-bold text-[#1a2634] md:mb-6 md:text-6xl lg:text-7xl"
+            className="mb-5 text-4xl font-bold text-[#004B9A] md:mb-6 md:text-6xl lg:text-7xl"
           >
             Sport iFrame Goes here
           </motion.h1>
@@ -407,7 +407,7 @@ export default function SportsPage() {
             <a
               href="#live-events"
               className="inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-sm text-white transition-colors"
-              style={{ backgroundColor: "#2c5aa0" }}
+              style={{ backgroundColor: "#004B9A" }}
             >
               Bet
             </a>
@@ -435,7 +435,7 @@ export default function SportsPage() {
                 onClick={() => setSelectedSport("all")}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   selectedSport === "all"
-                    ? "bg-[#2c5aa0] text-white"
+                    ? "bg-[#004B9A] text-white"
                     : "text-brand-text hover:bg-brand-surface-alt"
                 }`}
               >
@@ -460,7 +460,7 @@ export default function SportsPage() {
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     selectedSport === sport.id
-                      ? "bg-[#2c5aa0] text-white"
+                      ? "bg-[#004B9A] text-white"
                       : "text-brand-text hover:bg-brand-surface-alt"
                   }`}
                 >
@@ -501,7 +501,7 @@ export default function SportsPage() {
                 }}
                 className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                   selectedSport === "all"
-                    ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
+                    ? "bg-[#004B9A] text-white border-[#004B9A]"
                     : "bg-white text-brand-text border-brand-border"
                 }`}
               >
@@ -516,7 +516,7 @@ export default function SportsPage() {
                   }}
                   className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                     selectedSport === sport.id
-                      ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
+                      ? "bg-[#004B9A] text-white border-[#004B9A]"
                       : "bg-white text-brand-text border-brand-border"
                   }`}
                 >
@@ -573,7 +573,7 @@ export default function SportsPage() {
                   onClick={() => setActiveLeague(null)}
                   className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                     activeLeague === null
-                      ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
+                      ? "bg-[#004B9A] text-white border-[#004B9A]"
                       : "bg-white text-brand-text border-brand-border hover:border-brand-text-muted"
                   }`}
                 >
@@ -587,7 +587,7 @@ export default function SportsPage() {
                     }
                     className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                       activeLeague === league
-                        ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
+                        ? "bg-[#004B9A] text-white border-[#004B9A]"
                         : "bg-white text-brand-text border-brand-border hover:border-brand-text-muted"
                     }`}
                   >

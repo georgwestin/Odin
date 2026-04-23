@@ -86,11 +86,12 @@ export function SiteHeader() {
   }, [pathname]);
 
   const navLinks = [
-    { href: "/sports", label: "SPORT" },
-    { href: "/casino", label: "SLOTS" },
-    { href: "/casino?category=table", label: "BLACKJACK" },
-    { href: "/casino?category=roulette", label: "ROULETTE" },
-    { href: "/live-casino", label: "LIVE" },
+    { href: "/sports", label: "Sports Betting" },
+    { href: "/casino", label: "Slots" },
+    { href: "/casino?category=instant", label: "Originals" },
+    { href: "/blackjack", label: "BlackJack" },
+    { href: "/roulette", label: "Roulette" },
+    { href: "/live-casino", label: "Live" },
   ];
 
   const moreLinks = [
@@ -133,25 +134,20 @@ export function SiteHeader() {
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Desktop nav with Relume animated dropdown for "More" */}
+          {/* Desktop nav */}
           <div className="hidden lg:flex items-center">
-            {navLinks.map((link, i) => (
-              <span key={link.href} className="flex items-center">
-                <Link
-                  href={link.href}
-                  className={`px-3 py-1.5 text-xl tracking-wide transition-colors ${
-                    isActive(link.href)
-                      ? "text-[#fdf04d]"
-                      : "text-[#fdf04d] hover:text-white"
-                  }`}
-                  style={{ fontFamily: "'Agdasima', sans-serif", fontWeight: 700 }}
-                >
-                  {link.label}
-                </Link>
-                {i < navLinks.length - 1 && (
-                  <span className="text-[#fdf04d]/60 text-xs select-none">&#x25CF;</span>
-                )}
-              </span>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 text-base transition-colors ${
+                  isActive(link.href)
+                    ? "text-[#004B9A] font-semibold"
+                    : "text-[#1a1a2e] hover:text-[#004B9A]"
+                }`}
+              >
+                {link.label}
+              </Link>
             ))}
 
             {/* More dropdown (Relume pattern) */}
@@ -161,19 +157,17 @@ export function SiteHeader() {
               onMouseLeave={() => !isMobile && setMoreOpen(false)}
             >
               <button
-                className="flex items-center gap-1 px-3 py-1.5 text-xl tracking-wide text-[#fdf04d] hover:text-white transition-colors"
-                style={{ fontFamily: "'Agdasima', sans-serif", fontWeight: 700 }}
+                className="flex items-center gap-1 px-4 py-2 text-base text-[#1a1a2e] hover:text-[#004B9A] transition-colors"
                 onClick={() => setMoreOpen((v) => !v)}
               >
-                <span className="text-[#fdf04d]/60 text-xs select-none mr-2">&#x25CF;</span>
-                MORE
+                More
                 <motion.span
                   variants={{ rotated: { rotate: 180 }, initial: { rotate: 0 } }}
                   animate={animateMoreIcon}
                   transition={{ duration: 0.3 }}
                   className="inline-flex"
                 >
-                  <RxChevronDown className="text-[#fdf04d]" />
+                  <RxChevronDown className="text-[#1a1a2e]" />
                 </motion.span>
               </button>
               <AnimatePresence>
@@ -211,25 +205,14 @@ export function SiteHeader() {
               <>
                 <Link
                   href="/wallet"
-                  className="hidden sm:inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full text-sm font-semibold bg-white text-[#272b33] hover:bg-gray-50 transition-colors"
+                  className="hidden sm:inline-flex items-center px-6 py-2.5 bg-[#004B9A] text-white text-sm font-semibold hover:bg-[#003d7a] transition-colors"
                 >
-                  <span>Satt in och spela</span>
-                  <span className="w-8 h-8 rounded-full bg-[#2c5aa0] flex items-center justify-center">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="12" r="6" />
-                      <circle cx="12" cy="12" r="2" fill="white" />
-                      <line x1="12" y1="2" x2="12" y2="6" />
-                      <line x1="12" y1="18" x2="12" y2="22" />
-                      <line x1="2" y1="12" x2="6" y2="12" />
-                      <line x1="18" y1="12" x2="22" y2="12" />
-                    </svg>
-                  </span>
+                  Play Now
                 </Link>
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="w-8 h-8 rounded-full bg-[#2c5aa0] flex items-center justify-center text-xs font-bold text-white hover:bg-[#1e4a8a] transition-colors"
+                    className="w-8 h-8 rounded-full bg-[#004B9A] flex items-center justify-center text-xs font-bold text-white hover:bg-[#003d7a] transition-colors"
                   >
                     {user?.username?.charAt(0).toUpperCase() || "U"}
                   </button>
@@ -238,18 +221,18 @@ export function SiteHeader() {
                       <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
                       <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1">
                         <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-sm font-semibold text-[#272b33]">{user?.username}</p>
+                          <p className="text-sm font-semibold text-black">{user?.username}</p>
                           <p className="text-xs text-gray-500">{user?.email}</p>
                         </div>
                         <div className="px-4 py-2 border-b border-gray-100">
-                          <p className="text-xs text-gray-500">Saldo</p>
-                          <p className="text-sm font-bold text-[#272b33]">{formatBalance(balance)}</p>
+                          <p className="text-xs text-gray-500">Balance</p>
+                          <p className="text-sm font-bold text-black">{formatBalance(balance)}</p>
                         </div>
-                        <Link href="/wallet" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Satt in</Link>
-                        <Link href="/account" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Kontoinstellningar</Link>
-                        <Link href="/bonuses" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-[#272b33] hover:bg-gray-50">Erbjudanden</Link>
+                        <Link href="/wallet" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50">Deposit</Link>
+                        <Link href="/account" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50">Account</Link>
+                        <Link href="/bonuses" onClick={() => setUserMenuOpen(false)} className="block px-4 py-2.5 text-sm text-black hover:bg-gray-50">Bonuses</Link>
                         <div className="border-t border-gray-100 mt-1 pt-1">
-                          <button onClick={() => { setUserMenuOpen(false); logout(); }} className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50">Logga ut</button>
+                          <button onClick={() => { setUserMenuOpen(false); logout(); }} className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50">Log out</button>
                         </div>
                       </div>
                     </>
@@ -257,210 +240,119 @@ export function SiteHeader() {
                 </div>
               </>
             ) : (
-              <>
-                <Link
-                  href="/register"
-                  className="hidden sm:inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full text-sm font-semibold bg-white text-[#272b33] hover:bg-gray-50 transition-colors"
-                >
-                  <span>Satt in och spela</span>
-                  <span className="w-8 h-8 rounded-full bg-[#2c5aa0] flex items-center justify-center">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="12" r="6" />
-                      <circle cx="12" cy="12" r="2" fill="white" />
-                      <line x1="12" y1="2" x2="12" y2="6" />
-                      <line x1="12" y1="18" x2="12" y2="22" />
-                      <line x1="2" y1="12" x2="6" y2="12" />
-                      <line x1="18" y1="12" x2="22" y2="12" />
-                    </svg>
-                  </span>
-                </Link>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-[#2c5aa0] hover:underline transition-colors hidden sm:block"
-                  style={{ fontFamily: "'Asap', sans-serif" }}
-                >
-                  Logga in
-                </Link>
-              </>
+              <Link
+                href="/register"
+                className="hidden sm:inline-flex items-center px-6 py-2.5 bg-[#004B9A] text-white text-sm font-semibold hover:bg-[#003d7a] transition-colors"
+              >
+                Play Now
+              </Link>
             )}
           </div>
 
-          {/* Mobile hamburger with Relume framer-motion animation */}
+          {/* Mobile hamburger */}
           <button
-            className="lg:hidden -mr-2 flex size-12 flex-col items-center justify-center ml-3"
-            onClick={() => setMobileOpen((v) => !v)}
+            className="lg:hidden flex w-12 h-12 flex-col items-center justify-center gap-1.5 ml-3"
+            onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu"
           >
-            <motion.span
-              className="my-[3px] h-0.5 w-6 bg-[#2c5aa0]"
-              animate={animateMenuButton}
-              variants={{
-                open: { translateY: 8, transition: { delay: 0.1 } },
-                rotatePhase: { rotate: -45, transition: { delay: 0.2 } },
-                closed: { translateY: 0, rotate: 0, transition: { duration: 0.2 } },
-              }}
-            />
-            <motion.span
-              className="my-[3px] h-0.5 w-6 bg-[#2c5aa0]"
-              animate={animateMobileMenu}
-              variants={{
-                open: { width: 0, transition: { duration: 0.1 } },
-                close: { width: "1.5rem", transition: { delay: 0.3, duration: 0.2 } },
-              }}
-            />
-            <motion.span
-              className="my-[3px] h-0.5 w-6 bg-[#2c5aa0]"
-              animate={animateMenuButton}
-              variants={{
-                open: { translateY: -8, transition: { delay: 0.1 } },
-                rotatePhase: { rotate: 45, transition: { delay: 0.2 } },
-                closed: { translateY: 0, rotate: 0, transition: { duration: 0.2 } },
-              }}
-            />
+            <span className={`block w-6 h-0.5 bg-[#004B9A] transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-[#004B9A] transition-all duration-300 ${mobileOpen ? "opacity-0" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-[#004B9A] transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
           </button>
         </div>
 
-        {/* Mobile slide-down menu (Relume pattern with framer-motion) */}
-        <motion.div
-          variants={{
-            open: { height: "var(--height-open, 100dvh)" },
-            close: { height: "var(--height-closed, 0)" },
-          }}
-          initial="close"
-          animate={animateMobileMenu}
-          transition={{ duration: 0.4 }}
-          className="overflow-hidden lg:hidden lg:[--height-closed:auto] lg:[--height-open:auto]"
-          style={{ backgroundColor: "#fdf04d" }}
-        >
-          <div className="px-[5%] pb-6">
-            {/* Main nav links */}
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`block py-3 text-lg font-bold first:pt-7 ${
-                  isActive(link.href)
-                    ? "text-[#2c5aa0]"
-                    : "text-[#272b33]"
-                }`}
-                style={{ fontFamily: "'Agdasima', sans-serif" }}
-              >
-                {link.label}
-              </Link>
-            ))}
+      </div>
 
-            {/* More dropdown in mobile */}
-            <div>
-              <button
-                className="flex w-full items-center justify-between gap-2 py-3 text-left text-lg font-bold text-[#272b33]"
-                style={{ fontFamily: "'Agdasima', sans-serif" }}
-                onClick={() => setMoreOpen((v) => !v)}
-              >
-                <span>MORE</span>
-                <motion.span
-                  variants={{ rotated: { rotate: 180 }, initial: { rotate: 0 } }}
-                  animate={animateMoreIcon}
-                  transition={{ duration: 0.3 }}
-                >
-                  <RxChevronDown />
-                </motion.span>
-              </button>
-              <AnimatePresence>
-                <motion.nav
-                  variants={{
-                    open: { visibility: "visible" as const, opacity: 1, height: "auto" },
-                    close: { visibility: "hidden" as const, opacity: 0, height: 0 },
-                  }}
-                  animate={animateMoreMenu}
-                  initial="close"
-                  exit="close"
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
-                >
-                  {moreLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block py-3 pl-[5%] text-base text-[#272b33]/80 hover:text-[#272b33]"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </motion.nav>
-              </AnimatePresence>
-            </div>
-
-            {/* Quick links for current section */}
-            <div className="mt-4 pt-4 border-t border-[#272b33]/10">
-              <p className="text-[10px] font-bold text-[#272b33]/40 uppercase tracking-wider mb-2">Quick Links</p>
-              {(pathname.startsWith("/sports") ? sportCategories :
-                pathname.startsWith("/live-casino") ? liveCategories :
-                pathname.startsWith("/casino") && pathname.includes("roulette") ? rouletteCategories :
-                pathname.startsWith("/casino") && pathname.includes("table") ? blackjackCategories :
-                pathname.startsWith("/casino") ? slotCategories :
-                homeCategories
-              ).map((cat) => (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
+      {/* Mobile slide-in menu from right */}
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
+          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileOpen(false)}
+      />
+      {/* Panel */}
+      <div
+        className={`fixed top-0 right-0 bottom-0 w-72 z-50 lg:hidden overflow-y-auto shadow-xl transition-transform duration-300 flex flex-col ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        style={{ backgroundColor: "#FFD100" }}
+      >
+              {/* Panel header */}
+              <div className="flex items-center justify-between px-5 h-16">
+                <img src="/logo-swedbet.png" alt="SwedBet" style={{ height: 28 }} />
+                <button
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2 py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]"
+                  className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-black/5"
                 >
-                  <MenuIcon name={(cat as any).icon} color="#272b33" />
-                  {cat.label}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004B9A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* CTA */}
+              <div className="px-5 py-3">
+                <Link
+                  href={isAuthenticated ? "/wallet" : "/register"}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center w-full py-3 text-sm font-semibold text-white"
+                  style={{ backgroundColor: "#004B9A" }}
+                >
+                  Play Now
                 </Link>
-              ))}
-            </div>
+              </div>
 
-            {/* CTA button */}
-            <div className="mt-6">
-              <Link
-                href={isAuthenticated ? "/wallet" : "/register"}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-lg text-sm font-bold text-white"
-                style={{ backgroundColor: "#2c5aa0" }}
-              >
-                Satt in och spela
-              </Link>
-            </div>
-
-            {/* Account links */}
-            <div className="mt-4 pt-4 border-t border-[#272b33]/10">
-              {isAuthenticated ? (
-                <>
-                  <Link href="/wallet" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
-                    Wallet
-                  </Link>
-                  <Link href="/account" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
-                    Account Settings
-                  </Link>
-                  <button
-                    onClick={() => { setMobileOpen(false); logout(); }}
-                    className="w-full text-left py-2 text-sm text-red-600"
+              {/* White section below Play Now */}
+              <div className="bg-white flex-1">
+              {/* Nav links */}
+              <div className="px-5 pt-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block py-3 text-base font-semibold border-b border-gray-100 ${
+                      isActive(link.href) ? "text-[#004B9A]" : "text-[#1a1a2e]"
+                    }`}
                   >
-                    Log out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
-                    Log in
+                    {link.label}
                   </Link>
-                  <Link href="/register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#272b33]/70 hover:text-[#272b33]">
-                    Register
+                ))}
+                {/* More links */}
+                {moreLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block py-3 text-base font-semibold text-[#1a1a2e] border-b border-gray-100"
+                  >
+                    {link.label}
                   </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </motion.div>
+                ))}
+              </div>
+
+              {/* Account */}
+              <div className="px-5 mt-4 pt-4 border-t border-gray-200">
+                {isAuthenticated ? (
+                  <>
+                    <Link href="/wallet" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#1a1a2e]/70 hover:text-[#1a1a2e]">Wallet</Link>
+                    <Link href="/account" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#1a1a2e]/70 hover:text-[#1a1a2e]">Account</Link>
+                    <button onClick={() => { setMobileOpen(false); logout(); }} className="w-full text-left py-2 text-sm text-red-600">Log out</button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#1a1a2e]/70 hover:text-[#1a1a2e]">Log in</Link>
+                    <Link href="/register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm text-[#1a1a2e]/70 hover:text-[#1a1a2e]">Register</Link>
+                  </>
+                )}
+              </div>
+              </div>{/* end white section */}
       </div>
 
       {/* Category Bar (blue gradient) */}
-      <CategoryBar pathname={pathname} />
+      {/* CategoryBar hidden for now */}
     </header>
   );
 }
@@ -492,27 +384,27 @@ function CategoryBar({ pathname }: { pathname: string }) {
   if (pathname.startsWith("/live-casino")) {
     categories = liveCategories;
     searchPlaceholder = "Search live games...";
-    gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
+    gradient = "linear-gradient(to right, #004B9A 0%, #4a8bc7 60%, #6ba3d9 100%)";
   } else if (pathname.startsWith("/sports")) {
     categories = sportCategories;
     searchPlaceholder = "Search teams or leagues...";
-    gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
+    gradient = "linear-gradient(to right, #004B9A 0%, #4a8bc7 60%, #6ba3d9 100%)";
   } else if (pathname.startsWith("/casino") && pathname.includes("roulette")) {
     categories = rouletteCategories;
     searchPlaceholder = "Search roulette...";
-    gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
+    gradient = "linear-gradient(to right, #004B9A 0%, #4a8bc7 60%, #6ba3d9 100%)";
   } else if (pathname.startsWith("/casino") && pathname.includes("table")) {
     categories = blackjackCategories;
     searchPlaceholder = "Search blackjack...";
-    gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
+    gradient = "linear-gradient(to right, #004B9A 0%, #4a8bc7 60%, #6ba3d9 100%)";
   } else if (pathname.startsWith("/casino")) {
     categories = slotCategories;
     searchPlaceholder = "Search slots...";
-    gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
+    gradient = "linear-gradient(to right, #004B9A 0%, #4a8bc7 60%, #6ba3d9 100%)";
   } else {
     categories = homeCategories;
     searchPlaceholder = "Search...";
-    gradient = "linear-gradient(to right, #2c5aa0 0%, #4a8bc7 60%, #6ba3d9 100%)";
+    gradient = "linear-gradient(to right, #004B9A 0%, #4a8bc7 60%, #6ba3d9 100%)";
   }
 
   return (

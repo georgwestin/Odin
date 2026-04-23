@@ -119,8 +119,8 @@ export default function LiveCasinoPage() {
                 onClick={() => setCategory(cat.id)}
                 className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${
                   category === cat.id
-                    ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
-                    : "bg-white text-[#6b7a8d] border-gray-300 hover:border-[#2c5aa0] hover:text-[#2c5aa0]"
+                    ? "bg-[#004B9A] text-white border-[#004B9A]"
+                    : "bg-white text-[#6b7a8d] border-gray-300 hover:border-[#004B9A] hover:text-[#004B9A]"
                 }`}
               >
                 {cat.label}
@@ -214,7 +214,7 @@ export default function LiveCasinoPage() {
                     {/* Play now / View all button */}
                     <button
                       className="mt-3 w-full py-2.5 rounded-lg text-sm font-bold transition-colors"
-                      style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+                      style={{ backgroundColor: "#FFD100", color: "#1a2634" }}
                     >
                       {idx < 3 ? "View all" : "Play now"}
                     </button>
@@ -280,7 +280,7 @@ export default function LiveCasinoPage() {
                     </div>
                     <button
                       className="mt-3 w-full py-2.5 rounded-lg text-sm font-bold transition-colors"
-                      style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+                      style={{ backgroundColor: "#FFD100", color: "#1a2634" }}
                     >
                       Play now
                     </button>
@@ -295,7 +295,7 @@ export default function LiveCasinoPage() {
             <Link
               href="/live-casino"
               className="inline-flex items-center justify-center px-10 py-3.5 rounded-lg font-bold text-sm transition-colors"
-              style={{ backgroundColor: "#fdf04d", color: "#1a2634" }}
+              style={{ backgroundColor: "#FFD100", color: "#1a2634" }}
             >
               Play now
             </Link>

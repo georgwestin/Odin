@@ -141,15 +141,15 @@ export default function HomePage() {
       <HeroSection />
 
       {/* ===== Layout239: "Everything you need to win big" ===== */}
-      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#010D13" }}>
+      <section className="px-[5%] py-16 md:py-24 lg:py-28" style={{ backgroundColor: "#FFD100" }}>
         <div className="container mx-auto">
           <div className="flex flex-col items-center">
             <div className="mb-12 text-center md:mb-18 lg:mb-20">
               <div className="w-full max-w-lg">
-                <h2 className="mb-5 text-5xl font-bold text-white md:mb-6 md:text-7xl lg:text-8xl">
+                <h2 className="mb-5 text-4xl font-bold text-[#004B9A] md:mb-6 md:text-6xl lg:text-7xl">
                   Everything you need to win big
                 </h2>
-                <p className="text-white/70 md:text-md">
+                <p className="text-black/70 md:text-md">
                   We offer hundreds of casino games and live dealers ready to
                   play. Sports betting runs alongside it all, giving you options
                   that matter.
@@ -165,10 +165,10 @@ export default function HomePage() {
                     className="w-full transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="mb-5 text-2xl font-bold text-white md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
+                <h3 className="mb-5 text-2xl font-bold text-black md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
                   Sports betting
                 </h3>
-                <p className="text-white/60">
+                <p className="text-black/70">
                   Place bets on football, hockey, and other major sports worldwide.
                 </p>
               </Link>
@@ -180,10 +180,10 @@ export default function HomePage() {
                     className="w-full transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="mb-5 text-2xl font-bold text-white md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
+                <h3 className="mb-5 text-2xl font-bold text-black md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
                   Casino games
                 </h3>
-                <p className="text-white/60">Slots, blackjack, roulette, and poker with real stakes.</p>
+                <p className="text-black/70">Slots, blackjack, roulette, and poker with real stakes.</p>
               </Link>
               <Link href="/live-casino" className="flex w-full flex-col items-center text-center group">
                 <div className="mb-6 md:mb-8 overflow-hidden rounded-xl">
@@ -193,10 +193,10 @@ export default function HomePage() {
                     className="w-full transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="mb-5 text-2xl font-bold text-white md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
+                <h3 className="mb-5 text-2xl font-bold text-black md:mb-6 md:text-3xl md:leading-[1.3] lg:text-4xl">
                   Live dealers
                 </h3>
-                <p className="text-white/60">
+                <p className="text-black/70">
                   Watch the action unfold with professional dealers in real time.
                 </p>
               </Link>
@@ -205,79 +205,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== Popular Games - Horizontal Scroll ===== */}
-      <section style={{ backgroundColor: "#010D13" }}>
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-heading text-2xl font-bold text-white">
-              Populara spel
-            </h2>
-            <Link
-              href="/casino"
-              className="text-sm font-semibold"
-              style={{ color: "#00CC9F" }}
-            >
-              Visa alla &rarr;
-            </Link>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-none -mx-4 px-4">
-            {games.slice(0, 8).map((game) => (
-              <div key={game.id} className="shrink-0 w-40 sm:w-48">
-                <GameCard
-                  id={game.id}
-                  name={game.name}
-                  provider={game.provider}
-                  thumbnailUrl={game.thumbnailUrl}
-                  isNew={game.isNew}
-                  isPopular={game.isPopular}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== Category Tabs + Game Grid ===== */}
-      <section style={{ backgroundColor: "#010D13" }}>
-        <div className="max-w-7xl mx-auto px-4 pb-12">
-          <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className="shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
-                style={
-                  activeCategory === cat.id
-                    ? { backgroundColor: "#00CC9F", color: "#010D13", border: "1px solid #00CC9F" }
-                    : { backgroundColor: "transparent", color: "#6b7a8d", border: "1px solid #28323D" }
-                }
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-6">
-            {displayGames.map((game) => (
-              <GameCard
-                key={game.id}
-                id={game.id}
-                name={game.name}
-                provider={game.provider}
-                thumbnailUrl={game.thumbnailUrl}
-                isNew={game.isNew}
-                isPopular={game.isPopular}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ===== Stats15: Trust section ===== */}
-      <section className="relative px-[5%] py-16 md:py-24 lg:py-28">
+      <section className="relative px-[5%] py-16 md:py-24 lg:py-28 overflow-hidden">
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/sweden-audience.webp')" }}
+        />
+        <div className="absolute inset-0 bg-[#004B9A]/50" />
         <div className="container mx-auto relative z-10">
           <div className="grid grid-cols-1 items-center gap-y-12 lg:grid-cols-2 lg:gap-x-[4.75rem]">
             <div>
-              <h2 className="mb-5 text-5xl font-bold text-white md:mb-6 md:text-7xl lg:text-8xl">
+              <h2 className="mb-5 text-4xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl">
                 You can trust us
               </h2>
               <p className="text-white/80 md:text-md">
@@ -321,10 +260,6 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </div>
-        <div className="absolute inset-0 z-0">
-          <div className="size-full" style={{ background: "linear-gradient(135deg, #0f1923 0%, #1a2634 50%, #0f1923 100%)" }} />
-          <div className="absolute inset-0 bg-black/30" />
         </div>
       </section>
 
@@ -370,7 +305,7 @@ export default function HomePage() {
           <div className="flex flex-col items-start">
             <div className="mx-auto mb-12 w-full max-w-lg items-start justify-between gap-5 md:mb-18 lg:mb-20">
               <p className="mb-3 text-center font-semibold text-brand-primary md:mb-4">Process</p>
-              <h2 className="mb-5 text-center text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+              <h2 className="mb-5 text-center text-4xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl">
                 Four steps to start playing
               </h2>
               <p className="text-center text-brand-text-muted md:text-md">
@@ -440,7 +375,7 @@ export default function HomePage() {
       <section className="px-[5%] py-16 md:py-24 lg:py-28 bg-brand-surface-alt">
         <div className="container mx-auto">
           <div className="mb-12 w-full max-w-lg md:mb-18 lg:mb-20">
-            <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+            <h2 className="mb-5 text-4xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl">
               Questions
             </h2>
             <p className="text-brand-text-muted md:text-md">
@@ -488,7 +423,7 @@ export default function HomePage() {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 gap-x-20 gap-y-12 md:gap-y-16 lg:grid-cols-2 lg:items-center">
             <div>
-              <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+              <h2 className="mb-5 text-4xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl">
                 Money back guarantee
               </h2>
               <p className="text-brand-text-muted md:text-md">
@@ -605,49 +540,88 @@ function HeroSection() {
 
   return (
     <section
-      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0"
+      className="relative overflow-hidden"
       style={{ background: `linear-gradient(135deg, ${heroGradient.from}, ${heroGradient.to})` }}
     >
-      <div className="mx-[5%] max-w-[40rem] justify-self-start lg:ml-[5vw] lg:mr-20 lg:justify-self-end">
-        <h1 className="mb-5 text-5xl font-bold text-white md:mb-6 md:text-7xl lg:text-8xl">
-          {content.headline}
-        </h1>
-        <p className="text-white/70 md:text-md">
-          {content.subheadline}
-        </p>
-        <div className="mt-6 md:mt-8">
-          <QuickDeposit />
-        </div>
-      </div>
-      <div className="h-[30rem] overflow-hidden pl-[5vw] pr-[5vw] md:h-[40rem] lg:h-screen lg:pl-0">
-        <div className="grid w-full grid-cols-2 gap-x-4">
-          {/* Column 1: scrolls up */}
-          <div className="-mt-[120%] grid size-full animate-loop-vertically columns-2 grid-cols-1 gap-4 self-center">
-            {col1Loop.map((src, i) => (
-              <div key={`c1-${i}`} className="grid size-full grid-cols-1 gap-4">
-                <div className="relative w-full pt-[120%]">
+      <div className="max-w-[1400px] mx-auto px-[5%] py-10 md:py-8">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          {/* Left: text */}
+          <div className="flex-1 md:max-w-xl w-full">
+            <h1 className="mb-4 text-3xl font-bold text-white md:mb-6 md:text-6xl lg:text-7xl">
+              {content.headline}
+            </h1>
+            <p className="text-white/70 md:text-lg">
+              {content.subheadline}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-4 md:mt-8">
+              <Link
+                href={content.ctaUrl}
+                className="inline-flex items-center px-8 py-3 bg-[#FFD100] text-black text-base font-semibold hover:bg-[#e6bc00] transition-colors"
+              >
+                {content.ctaText}
+              </Link>
+            </div>
+            {/* Mobile horizontal carousel */}
+            <div className="md:hidden mt-8 overflow-hidden">
+              <div className="animate-loop-horizontally flex gap-3 w-max">
+                {[
+                  "/images/captain-kraken-megaways.webp",
+                  "/images/crashgame.webp",
+                  "/images/dragon-tiger.webp",
+                  "/images/good-girl-bad-girl.webp",
+                  "/images/haunted-crypt.webp",
+                  "/images/immersive-roulette.webp",
+                  "/images/jelly-express.webp",
+                  "/images/original_dice.webp",
+                  "/images/starlight-princess.webp",
+                  "/images/captain-kraken-megaways.webp",
+                  "/images/crashgame.webp",
+                  "/images/dragon-tiger.webp",
+                  "/images/good-girl-bad-girl.webp",
+                  "/images/haunted-crypt.webp",
+                  "/images/immersive-roulette.webp",
+                  "/images/jelly-express.webp",
+                  "/images/original_dice.webp",
+                  "/images/starlight-princess.webp",
+                ].map((src, i) => (
                   <img
-                    className="absolute inset-0 size-full object-cover rounded-xl"
+                    key={i}
                     src={src}
-                    alt={`Game thumbnail ${i + 1}`}
+                    alt=""
+                    className="w-20 h-20 object-cover rounded-lg shrink-0"
                   />
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-          {/* Column 2: scrolls up (offset) */}
-          <div className="grid size-full animate-loop-vertically grid-cols-1 gap-4">
-            {col2Loop.map((src, i) => (
-              <div key={`c2-${i}`} className="grid size-full grid-cols-1 gap-4">
-                <div className="relative w-full pt-[120%]">
+          {/* Right: scrolling game images (desktop only) */}
+          <div className="hidden md:block w-[300px] lg:w-[380px] h-[500px] overflow-hidden rounded-2xl shrink-0">
+            <div className="grid grid-cols-2 gap-3">
+              {/* Column 1 */}
+              <div className="animate-loop-vertically flex flex-col gap-3" style={{ marginTop: "-100%" }}>
+                {col1Loop.map((src, i) => (
                   <img
-                    className="absolute inset-0 size-full object-cover rounded-xl"
+                    key={`c1-${i}`}
+                    className="w-full rounded-xl"
+                    style={{ aspectRatio: "3/4" }}
                     src={src}
-                    alt={`Game thumbnail ${i + 1}`}
+                    alt=""
                   />
-                </div>
+                ))}
               </div>
-            ))}
+              {/* Column 2 */}
+              <div className="animate-loop-vertically flex flex-col gap-3">
+                {col2Loop.map((src, i) => (
+                  <img
+                    key={`c2-${i}`}
+                    className="w-full rounded-xl"
+                    style={{ aspectRatio: "3/4" }}
+                    src={src}
+                    alt=""
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -660,10 +634,8 @@ function CountdownPromo() {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
 
   useEffect(() => {
-    /* Target date: 30 days from now as a placeholder */
-    const target = new Date();
-    target.setDate(target.getDate() + 18);
-    target.setHours(target.getHours() + 7);
+    /* 15th June 2026 at 04:00 CET (03:00 UTC) */
+    const target = new Date("2026-06-15T03:00:00Z");
 
     const tick = () => {
       const now = new Date();
