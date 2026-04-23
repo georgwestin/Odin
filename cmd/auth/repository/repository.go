@@ -27,13 +27,13 @@ func New(pool *pgxpool.Pool) *Repository {
 func (r *Repository) CreatePlayer(ctx context.Context, p *models.Player) error {
 	query := `
 		INSERT INTO players (id, brand_id, email, username, password_hash, first_name, last_name,
-			date_of_birth, country, currency, kyc_status, status, roles, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`
+			date_of_birth, country_code, player_currency, kyc_status, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`
 
 	_, err := r.pool.Exec(ctx, query,
 		p.ID, p.BrandID, p.Email, p.Username, p.PasswordHash,
 		p.FirstName, p.LastName, p.DateOfBirth, p.Country, p.PlayerCurrency,
-		p.KYCStatus, p.Status, p.Roles, p.CreatedAt, p.UpdatedAt,
+		p.KYCStatus, p.CreatedAt, p.UpdatedAt,
 	)
 	if err != nil {
 		return fmt.Errorf("insert player: %w", err)
@@ -45,7 +45,7 @@ func (r *Repository) CreatePlayer(ctx context.Context, p *models.Player) error {
 func (r *Repository) FindByEmail(ctx context.Context, brandID uuid.UUID, email string) (*models.Player, error) {
 	query := `
 		SELECT id, brand_id, email, username, password_hash, first_name, last_name,
-			date_of_birth, country, currency, kyc_status, status, roles,
+			date_of_birth, country_code, player_currency, kyc_status,
 			last_login_at, created_at, updated_at
 		FROM players
 		WHERE brand_id = $1 AND email = $2`
@@ -54,7 +54,7 @@ func (r *Repository) FindByEmail(ctx context.Context, brandID uuid.UUID, email s
 	err := r.pool.QueryRow(ctx, query, brandID, email).Scan(
 		&p.ID, &p.BrandID, &p.Email, &p.Username, &p.PasswordHash,
 		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.PlayerCurrency,
-		&p.KYCStatus, &p.Status, &p.Roles, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
+		&p.KYCStatus, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -69,7 +69,7 @@ func (r *Repository) FindByEmail(ctx context.Context, brandID uuid.UUID, email s
 func (r *Repository) FindByUsername(ctx context.Context, brandID uuid.UUID, username string) (*models.Player, error) {
 	query := `
 		SELECT id, brand_id, email, username, password_hash, first_name, last_name,
-			date_of_birth, country, currency, kyc_status, status, roles,
+			date_of_birth, country_code, player_currency, kyc_status,
 			last_login_at, created_at, updated_at
 		FROM players
 		WHERE brand_id = $1 AND username = $2`
@@ -78,7 +78,7 @@ func (r *Repository) FindByUsername(ctx context.Context, brandID uuid.UUID, user
 	err := r.pool.QueryRow(ctx, query, brandID, username).Scan(
 		&p.ID, &p.BrandID, &p.Email, &p.Username, &p.PasswordHash,
 		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.PlayerCurrency,
-		&p.KYCStatus, &p.Status, &p.Roles, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
+		&p.KYCStatus, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -93,7 +93,7 @@ func (r *Repository) FindByUsername(ctx context.Context, brandID uuid.UUID, user
 func (r *Repository) FindByID(ctx context.Context, id uuid.UUID) (*models.Player, error) {
 	query := `
 		SELECT id, brand_id, email, username, password_hash, first_name, last_name,
-			date_of_birth, country, currency, kyc_status, status, roles,
+			date_of_birth, country_code, player_currency, kyc_status,
 			last_login_at, created_at, updated_at
 		FROM players
 		WHERE id = $1`
@@ -102,7 +102,7 @@ func (r *Repository) FindByID(ctx context.Context, id uuid.UUID) (*models.Player
 	err := r.pool.QueryRow(ctx, query, id).Scan(
 		&p.ID, &p.BrandID, &p.Email, &p.Username, &p.PasswordHash,
 		&p.FirstName, &p.LastName, &p.DateOfBirth, &p.Country, &p.PlayerCurrency,
-		&p.KYCStatus, &p.Status, &p.Roles, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
+		&p.KYCStatus, &p.LastLoginAt, &p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

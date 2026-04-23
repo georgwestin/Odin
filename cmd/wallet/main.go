@@ -77,6 +77,22 @@ func main() {
 
 	// Build router with common middleware.
 	r := chi.NewRouter()
+
+	// CORS — allow frontend origins.
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Request-ID, X-Brand-ID")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(204)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	})
+
 	for _, m := range mw.Common(logger, "wallet") {
 		r.Use(m)
 	}

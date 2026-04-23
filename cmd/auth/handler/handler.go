@@ -109,6 +109,10 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	brandID, _ := middleware.GetBrandID(r.Context())
+	// Default to SwedBet brand if no brand resolved
+	if brandID == uuid.Nil {
+		brandID = uuid.MustParse("00000000-0000-0000-0000-000000000002")
+	}
 
 	result, err := h.svc.Register(r.Context(), &service.RegisterRequest{
 		Email:       strings.ToLower(strings.TrimSpace(req.Email)),
@@ -150,6 +154,9 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	brandID, _ := middleware.GetBrandID(r.Context())
+	if brandID == uuid.Nil {
+		brandID = uuid.MustParse("00000000-0000-0000-0000-000000000002")
+	}
 	ip := clientIP(r)
 
 	result, err := h.svc.Login(r.Context(), &service.LoginRequest{
