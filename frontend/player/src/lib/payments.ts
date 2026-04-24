@@ -31,10 +31,11 @@ export enum PaymentStatus {
 export type ScaMethod = "redirect" | "qr";
 
 export interface DepositResponse {
-  paymentId: string;
-  redirectUrl?: string;
-  qrCodeData?: string;
-  scaMethod: ScaMethod;
+  payment_id: string;
+  redirect_url?: string;
+  qr_code_data?: string;
+  sca_method?: string;
+  status?: string;
 }
 
 export interface DepositStatus {
@@ -94,9 +95,9 @@ async function mockInitiateDeposit(
   const callbackUrl = `${window.location.origin}/wallet/deposit/callback?paymentId=${paymentId}`;
 
   return {
-    paymentId,
-    redirectUrl: callbackUrl,
-    scaMethod: "redirect",
+    payment_id: paymentId,
+    redirect_url: callbackUrl,
+    sca_method: "redirect",
   };
 }
 
@@ -132,9 +133,10 @@ export async function initiateDeposit(
     return mockInitiateDeposit(amount, currency, region);
   }
 
+  const redirectUrl = `${window.location.origin}/wallet/deposit/callback`;
   return walletFetch<DepositResponse>("/wallet/deposit/initiate", {
     method: "POST",
-    body: JSON.stringify({ amount, currency, region }),
+    body: JSON.stringify({ amount, currency, region, redirect_url: redirectUrl }),
   });
 }
 
