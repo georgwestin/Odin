@@ -55,13 +55,13 @@ async function refreshAccessToken(): Promise<boolean> {
       const res = await fetch(`${API_BASE}/auth/refresh`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: refresh }),
+        body: JSON.stringify({ refresh_token: refresh }),
       });
 
       if (!res.ok) return false;
 
       const data = await res.json();
-      setTokens(data.accessToken, data.refreshToken);
+      setTokens(data.access_token || data.accessToken, data.refresh_token || data.refreshToken);
       return true;
     } catch {
       return false;
