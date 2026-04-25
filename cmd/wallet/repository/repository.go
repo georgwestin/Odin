@@ -26,12 +26,12 @@ func New(pool *pgxpool.Pool) *Repository {
 // CreateWallet inserts a new wallet row.
 func (r *Repository) CreateWallet(ctx context.Context, w *models.Wallet) error {
 	query := `
-		INSERT INTO wallets (id, player_id, brand_id, currency, balance, bonus_balance, locked_balance, version, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+		INSERT INTO wallets (id, player_id, currency, balance, bonus_balance, version, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
 	_, err := r.pool.Exec(ctx, query,
-		w.ID, w.PlayerID, w.BrandID, w.Currency,
-		w.Balance, w.BonusBalance, w.LockedBalance,
+		w.ID, w.PlayerID, w.Currency,
+		w.Balance, w.BonusBalance,
 		w.Version, w.CreatedAt, w.UpdatedAt,
 	)
 	if err != nil {
@@ -44,14 +44,14 @@ func (r *Repository) CreateWallet(ctx context.Context, w *models.Wallet) error {
 // when called within a transaction.
 func (r *Repository) GetWalletByPlayerID(ctx context.Context, playerID, brandID uuid.UUID) (*models.Wallet, error) {
 	query := `
-		SELECT id, player_id, brand_id, currency, balance, bonus_balance, locked_balance, version, created_at, updated_at
+		SELECT id, player_id, currency, balance, bonus_balance, version, created_at, updated_at
 		FROM wallets
-		WHERE player_id = $1 AND brand_id = $2`
+		WHERE player_id = $1`
 
 	w := &models.Wallet{}
-	err := r.pool.QueryRow(ctx, query, playerID, brandID).Scan(
-		&w.ID, &w.PlayerID, &w.BrandID, &w.Currency,
-		&w.Balance, &w.BonusBalance, &w.LockedBalance,
+	err := r.pool.QueryRow(ctx, query, playerID).Scan(
+		&w.ID, &w.PlayerID, &w.Currency,
+		&w.Balance, &w.BonusBalance,
 		&w.Version, &w.CreatedAt, &w.UpdatedAt,
 	)
 	if err != nil {
@@ -66,15 +66,15 @@ func (r *Repository) GetWalletByPlayerID(ctx context.Context, playerID, brandID 
 // GetWalletForUpdate acquires a row-level lock on the wallet within a transaction.
 func (r *Repository) GetWalletForUpdate(ctx context.Context, tx pgx.Tx, walletID uuid.UUID) (*models.Wallet, error) {
 	query := `
-		SELECT id, player_id, brand_id, currency, balance, bonus_balance, locked_balance, version, created_at, updated_at
+		SELECT id, player_id, currency, balance, bonus_balance, version, created_at, updated_at
 		FROM wallets
 		WHERE id = $1
 		FOR UPDATE`
 
 	w := &models.Wallet{}
 	err := tx.QueryRow(ctx, query, walletID).Scan(
-		&w.ID, &w.PlayerID, &w.BrandID, &w.Currency,
-		&w.Balance, &w.BonusBalance, &w.LockedBalance,
+		&w.ID, &w.PlayerID, &w.Currency,
+		&w.Balance, &w.BonusBalance,
 		&w.Version, &w.CreatedAt, &w.UpdatedAt,
 	)
 	if err != nil {
@@ -106,8 +106,8 @@ func (r *Repository) UpdateWalletBalance(ctx context.Context, tx pgx.Tx, walletI
 // CheckIdempotencyKey returns the existing ledger entry if the key has been seen before.
 func (r *Repository) CheckIdempotencyKey(ctx context.Context, tx pgx.Tx, key string) (*models.LedgerEntry, error) {
 	query := `
-		SELECT id, wallet_id, player_id, brand_id, transaction_type, amount,
-			balance_before, balance_after, currency,
+		SELECT id, wallet_id, type, amount,
+			balance_before, balance_after,
 			base_amount, base_currency, player_amount, player_currency,
 			report_amount, report_currency,
 			COALESCE(bet_amount, 0), COALESCE(bet_currency, ''),
@@ -119,9 +119,8 @@ func (r *Repository) CheckIdempotencyKey(ctx context.Context, tx pgx.Tx, key str
 
 	e := &models.LedgerEntry{}
 	err := tx.QueryRow(ctx, query, key).Scan(
-		&e.ID, &e.WalletID, &e.PlayerID, &e.BrandID,
+		&e.ID, &e.WalletID,
 		&e.TransactionType, &e.Amount, &e.BalanceBefore, &e.BalanceAfter,
-		&e.Currency,
 		&e.BaseAmount, &e.BaseCurrency, &e.PlayerAmount, &e.PlayerCurrency,
 		&e.ReportAmount, &e.ReportCurrency,
 		&e.BetAmount, &e.BetCurrency,
@@ -141,26 +140,35 @@ func (r *Repository) CheckIdempotencyKey(ctx context.Context, tx pgx.Tx, key str
 // InsertLedgerEntry appends a new entry to the immutable ledger.
 func (r *Repository) InsertLedgerEntry(ctx context.Context, tx pgx.Tx, e *models.LedgerEntry) error {
 	query := `
-		INSERT INTO ledger_entries (id, wallet_id, player_id, brand_id, transaction_type, amount,
-			balance_before, balance_after, currency,
+		INSERT INTO ledger_entries (id, wallet_id, type, amount,
+			balance_before, balance_after,
 			base_amount, base_currency, player_amount, player_currency,
 			report_amount, report_currency, bet_amount, bet_currency,
 			exchange_rate_info,
 			reference_id, reference_type,
 			idempotency_key, description, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-			NULLIF($16, '0'), NULLIF($17, ''),
-			NULLIF($18, ''),
-			$19, $20, $21, $22, $23)`
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+			$13, $14, $15, $16, $17, $18, $19, $20)`
+
+	// Convert empty bet amount/currency to nil for nullable columns
+	var betAmount interface{}
+	var betCurrency interface{}
+	if string(e.BetAmount) != "" && string(e.BetAmount) != "0" {
+		betAmount = string(e.BetAmount)
+		betCurrency = string(e.BetCurrency)
+	}
+	var exchangeInfo interface{}
+	if e.ExchangeRateInfo != "" {
+		exchangeInfo = e.ExchangeRateInfo
+	}
 
 	_, err := tx.Exec(ctx, query,
-		e.ID, e.WalletID, e.PlayerID, e.BrandID,
+		e.ID, e.WalletID,
 		e.TransactionType, e.Amount, e.BalanceBefore, e.BalanceAfter,
-		e.Currency,
 		e.BaseAmount, e.BaseCurrency, e.PlayerAmount, e.PlayerCurrency,
 		e.ReportAmount, e.ReportCurrency,
-		string(e.BetAmount), string(e.BetCurrency),
-		e.ExchangeRateInfo,
+		betAmount, betCurrency,
+		exchangeInfo,
 		e.ReferenceID, e.ReferenceType,
 		e.IdempotencyKey, e.Description, e.CreatedAt,
 	)
@@ -178,8 +186,8 @@ func (r *Repository) ListTransactions(ctx context.Context, walletID uuid.UUID, c
 
 	if cursor != nil {
 		query := `
-			SELECT id, wallet_id, player_id, brand_id, transaction_type, amount,
-				balance_before, balance_after, currency,
+			SELECT id, wallet_id, type, amount,
+				balance_before, balance_after,
 				base_amount, base_currency, player_amount, player_currency,
 				report_amount, report_currency,
 				COALESCE(bet_amount, 0), COALESCE(bet_currency, ''),
@@ -194,8 +202,8 @@ func (r *Repository) ListTransactions(ctx context.Context, walletID uuid.UUID, c
 		rows, err = r.pool.Query(ctx, query, walletID, cursor.CreatedAt, cursor.ID, limit)
 	} else {
 		query := `
-			SELECT id, wallet_id, player_id, brand_id, transaction_type, amount,
-				balance_before, balance_after, currency,
+			SELECT id, wallet_id, type, amount,
+				balance_before, balance_after,
 				base_amount, base_currency, player_amount, player_currency,
 				report_amount, report_currency,
 				COALESCE(bet_amount, 0), COALESCE(bet_currency, ''),
@@ -217,9 +225,8 @@ func (r *Repository) ListTransactions(ctx context.Context, walletID uuid.UUID, c
 	for rows.Next() {
 		var e models.LedgerEntry
 		if err := rows.Scan(
-			&e.ID, &e.WalletID, &e.PlayerID, &e.BrandID,
+			&e.ID, &e.WalletID,
 			&e.TransactionType, &e.Amount, &e.BalanceBefore, &e.BalanceAfter,
-			&e.Currency,
 			&e.BaseAmount, &e.BaseCurrency, &e.PlayerAmount, &e.PlayerCurrency,
 			&e.ReportAmount, &e.ReportCurrency,
 			&e.BetAmount, &e.BetCurrency,
@@ -250,7 +257,7 @@ func (r *Repository) GetDepositSum(ctx context.Context, walletID uuid.UUID, sinc
 		SELECT COALESCE(SUM(amount::numeric), 0)::text
 		FROM ledger_entries
 		WHERE wallet_id = $1
-		  AND transaction_type = 'deposit'
+		  AND type = 'deposit'
 		  AND created_at >= $2`
 
 	var sum string
