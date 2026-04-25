@@ -40,18 +40,21 @@ export const useWallet = create<WalletState>((set) => ({
 
   fetchBalance: async () => {
     try {
-      const data = await api.get<{
-        balance: number;
-        bonusBalance: number;
-        currency: string;
-      }>("/wallet/balance");
+      const { getAccessToken } = await import("@/lib/api");
+      const token = getAccessToken();
+      const WALLET_URL = process.env.NEXT_PUBLIC_WALLET_API_URL || "http://localhost:8002";
+      const res = await fetch(`${WALLET_URL}/wallet/balance`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("Failed to fetch balance");
+      const data = await res.json();
       set({
-        balance: data.balance,
-        bonusBalance: data.bonusBalance,
-        currency: data.currency,
+        balance: parseFloat(data.balance) || 0,
+        bonusBalance: parseFloat(data.bonus_balance) || 0,
+        currency: data.currency || "EUR",
       });
     } catch {
-      set({ error: "Kunde inte hamta saldo" });
+      set({ error: "Could not fetch balance" });
     }
   },
 
