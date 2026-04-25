@@ -44,6 +44,22 @@ const (
 	EventPayoutStatusChanged  = "payoutStatusChanged"
 )
 
+// Payout status constants.
+const (
+	PayoutStatusCreated    = "CREATED"
+	PayoutStatusInProgress = "IN_PROGRESS"
+	PayoutStatusCompleted  = "COMPLETED"
+	PayoutStatusFailed     = "FAILED"
+	PayoutStatusRejected   = "REJECTED"
+)
+
+// Sandbox settlement account IDs.
+const (
+	SettlementAccountSEK = "DB41FDC2-0B81-11EE-BE56-0242AC120002"
+	SettlementAccountEUR = "394EC41E-8363-4903-9380-F35E05405DE3"
+	SettlementAccountDKK = "F267BC3C-754A-47A9-9892-854122672307"
+)
+
 // Common payment product IDs.
 const (
 	ProductSEDomesticCreditTransfer = "se-domestic-credit-transfer"
@@ -163,6 +179,55 @@ type WebhookPayload struct {
 	PaymentID         string `json:"paymentId"`
 	Status            string `json:"status"`
 	ExternalReference string `json:"externalReference,omitempty"`
+}
+
+// CreatePayoutRequest is the payload sent to POST /v1/payouts.
+type CreatePayoutRequest struct {
+	SettlementAccountID string  `json:"settlementAccountId"`
+	Amount              float64 `json:"amount"`
+	Currency            string  `json:"currency"`
+	ExternalReference   string  `json:"externalReference"`
+}
+
+// PayoutResponse is the response from creating or fetching a payout.
+type PayoutResponse struct {
+	ID                string  `json:"id"`
+	Status            string  `json:"status"`
+	CreatedAt         string  `json:"createdAt,omitempty"`
+	Amount            float64 `json:"amount"`
+	Currency          string  `json:"currency"`
+	ExternalReference string  `json:"externalReference,omitempty"`
+	ClientID          string  `json:"clientId,omitempty"`
+	ClientAccess      string  `json:"clientAccess,omitempty"`
+}
+
+// AuthorizePayoutRequest is the payload sent to POST /v1/payouts/{id}/authorize.
+type AuthorizePayoutRequest struct {
+	CreditorPaymentID string `json:"creditorPaymentId"`
+}
+
+// SettlementAccountForCurrency returns the sandbox settlement account ID for
+// the given currency code.
+func SettlementAccountForCurrency(currency string) string {
+	switch currency {
+	case "SEK":
+		return SettlementAccountSEK
+	case "EUR":
+		return SettlementAccountEUR
+	case "DKK":
+		return SettlementAccountDKK
+	default:
+		return SettlementAccountEUR
+	}
+}
+
+// IsPayoutTerminalStatus returns true if the payout status is a final state.
+func IsPayoutTerminalStatus(status string) bool {
+	switch status {
+	case PayoutStatusCompleted, PayoutStatusFailed, PayoutStatusRejected:
+		return true
+	}
+	return false
 }
 
 // TokenResponse is the OAuth2 token response from the auth endpoint.

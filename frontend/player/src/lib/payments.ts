@@ -149,3 +149,101 @@ export async function getDepositStatus(
 
   return walletFetch<DepositStatus>(`/wallet/deposit/status/${paymentId}`);
 }
+
+// ── Withdrawal types ──────────────────────────────────────────────────
+
+export interface WithdrawalResponse {
+  payment_id: string;
+  status: string;
+  amount: number;
+  currency: string;
+}
+
+// ── Withdrawal mock mode ──────────────────────────────────────────────
+
+const mockWithdrawals = new Map<
+  string,
+  { status: PaymentStatus; amount: number; currency: string; createdAt: number }
+>();
+
+async function mockInitiateWithdrawal(
+  amount: number,
+  currency: string
+): Promise<WithdrawalResponse> {
+  await new Promise((r) => setTimeout(r, 1000));
+
+  const paymentId = "wd_" + Math.random().toString(36).slice(2, 12);
+  mockWithdrawals.set(paymentId, {
+    status: PaymentStatus.CREATED,
+    amount,
+    currency,
+    createdAt: Date.now(),
+  });
+
+  // Simulate status progression in background
+  setTimeout(() => {
+    const p = mockWithdrawals.get(paymentId);
+    if (p) p.status = PaymentStatus.IN_PROGRESS;
+  }, 2000);
+
+  setTimeout(() => {
+    const p = mockWithdrawals.get(paymentId);
+    if (p) p.status = PaymentStatus.COMPLETED;
+  }, 5000);
+
+  return {
+    payment_id: paymentId,
+    status: "CREATED",
+    amount,
+    currency,
+  };
+}
+
+async function mockGetWithdrawalStatus(
+  paymentId: string
+): Promise<DepositStatus> {
+  await new Promise((r) => setTimeout(r, 300));
+
+  const withdrawal = mockWithdrawals.get(paymentId);
+  if (!withdrawal) {
+    return {
+      status: PaymentStatus.COMPLETED,
+      amount: 0,
+      currency: "EUR",
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  return {
+    status: withdrawal.status,
+    amount: withdrawal.amount,
+    currency: withdrawal.currency,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+// ── Withdrawal public API ─────────────────────────────────────────────
+
+export async function initiateWithdrawal(
+  amount: number,
+  currency: string
+): Promise<WithdrawalResponse> {
+  if (MOCK_MODE) {
+    return mockInitiateWithdrawal(amount, currency);
+  }
+
+  return walletFetch<WithdrawalResponse>("/wallet/withdraw/initiate", {
+    method: "POST",
+    body: JSON.stringify({ amount, currency }),
+  });
+}
+
+export async function getWithdrawalStatus(
+  paymentId: string
+): Promise<DepositStatus> {
+  if (MOCK_MODE) {
+    return mockGetWithdrawalStatus(paymentId);
+  }
+
+  return walletFetch<DepositStatus>(`/wallet/withdraw/status/${paymentId}`);
+}

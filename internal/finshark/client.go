@@ -256,6 +256,77 @@ func (c *Client) RefundPayment(ctx context.Context, id string, amount *PaymentAm
 	return &resp, nil
 }
 
+// CreatePayout creates a new payout request.
+func (c *Client) CreatePayout(ctx context.Context, req CreatePayoutRequest) (*PayoutResponse, error) {
+	body, status, err := c.doRequest(ctx, http.MethodPost, "/v1/payouts", req)
+	if err != nil {
+		return nil, err
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("finshark: create payout returned status %d: %s", status, string(body))
+	}
+
+	var resp PayoutResponse
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return nil, fmt.Errorf("finshark: decode create payout response: %w", err)
+	}
+	return &resp, nil
+}
+
+// AuthorizePayout authorizes a payout using the original deposit's payment ID.
+func (c *Client) AuthorizePayout(ctx context.Context, payoutID string, req AuthorizePayoutRequest) (*PayoutResponse, error) {
+	body, status, err := c.doRequest(ctx, http.MethodPost, "/v1/payouts/"+payoutID+"/authorize", req)
+	if err != nil {
+		return nil, err
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("finshark: authorize payout returned status %d: %s", status, string(body))
+	}
+
+	var resp PayoutResponse
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return nil, fmt.Errorf("finshark: decode authorize payout response: %w", err)
+	}
+	return &resp, nil
+}
+
+// GetPayout retrieves the current status of a payout.
+func (c *Client) GetPayout(ctx context.Context, id string) (*PayoutResponse, error) {
+	body, status, err := c.doRequest(ctx, http.MethodGet, "/v1/payouts/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+	if status == http.StatusNotFound {
+		return nil, fmt.Errorf("finshark: payout %s not found", id)
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("finshark: get payout returned status %d: %s", status, string(body))
+	}
+
+	var resp PayoutResponse
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return nil, fmt.Errorf("finshark: decode get payout response: %w", err)
+	}
+	return &resp, nil
+}
+
+// ListPayouts returns all payouts.
+func (c *Client) ListPayouts(ctx context.Context) ([]PayoutResponse, error) {
+	body, status, err := c.doRequest(ctx, http.MethodGet, "/v1/payouts", nil)
+	if err != nil {
+		return nil, err
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("finshark: list payouts returned status %d: %s", status, string(body))
+	}
+
+	var resp []PayoutResponse
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return nil, fmt.Errorf("finshark: decode list payouts response: %w", err)
+	}
+	return resp, nil
+}
+
 // RegisterWebhook registers a new webhook for the given event.
 func (c *Client) RegisterWebhook(ctx context.Context, event, webhookURL string) (*WebhookResponse, error) {
 	req := CreateWebhookRequest{
