@@ -21,10 +21,11 @@ func registerRoutes(r chi.Router, h *handler.Handler, fsh *fshandler.Handler, jw
 
 		// FinShark payment routes.
 		r.Post("/wallet/deposit/initiate", fsh.DepositHandler)
-		r.Get("/wallet/deposit/status/{id}", fsh.PaymentStatusHandler)
 	})
 
-	// FinShark callback routes (no player auth, called by bank redirect / FinShark).
+	// FinShark callback and status routes (no player auth required).
+	// Status uses the unguessable payment UUID as authorization.
+	r.Get("/wallet/deposit/status/{id}", fsh.PaymentStatusHandler)
 	r.Get("/wallet/deposit/callback", fsh.DepositCallbackHandler)
 	r.Post("/wallet/webhooks/finshark", fsh.WebhookHandler)
 

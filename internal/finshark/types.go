@@ -134,6 +134,7 @@ type ScaMethod struct {
 type PaymentDetailsResponse struct {
 	PaymentResponse
 	AuthorizationID string      `json:"authorizationId,omitempty"`
+	ProviderID      string      `json:"providerId,omitempty"`
 	ScaMethods      []ScaMethod `json:"scaMethods,omitempty"`
 }
 
